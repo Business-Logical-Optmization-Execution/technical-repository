@@ -1,0 +1,4 @@
+# Build context do backend
+target/
+.idea/
+.git*

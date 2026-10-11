@@ -1,0 +1,45 @@
+services:
+  db:
+    build: ./database
+    image: blox-db
+    environment:
+      MYSQL_DATABASE: controle_estoque
+      MYSQL_USER: ${DB_USERNAME:?Defina DB_USERNAME no arquivo .env (copie .env.example)}
+      MYSQL_PASSWORD: ${DB_PASSWORD:?Defina DB_PASSWORD no arquivo .env (copie .env.example)}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Defina DB_ROOT_PASSWORD no arquivo .env (copie .env.example)}
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+    networks:
+      - blox-net
+    # Porta 3306 NAO publicada no host (evita conflito com MySQL local).
+    # Para acesso externo (ex.: DBeaver), publique numa porta alternativa:
+    # ports:
+    #   - "3307:3306"
+
+  backend:
+    build: ./backend/blox
+    image: blox-backend
+    environment:
+      DB_URL: ${DB_URL:-jdbc:mysql://db:3306/controle_estoque}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - blox-net
+
+volumes:
+  db-data:
+
+networks:
+  blox-net:
