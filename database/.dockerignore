@@ -1,0 +1,4 @@
+# Modelos e documentos do Workbench não entram no build context
+*.mwb
+*.mwb.bak
+*.pdf
