@@ -1,0 +1,29 @@
+/* Quadrado de 44 × 44 (área clicável mínima do brief, WCAG 2.5.5) com o ícone no centro. */
+.botaoIcone {
+    width: var(--area-clicavel-min);
+    height: var(--area-clicavel-min);
+    padding: 0;
+    border: none;
+    border-radius: var(--raio-8);
+
+    /* Sem fundo, como a seta "Voltar" da TL05. O ícone do Lucide usa a cor do texto (currentColor). */
+    background-color: transparent;
+    color: var(--cor-primaria);
+
+    cursor: pointer;
+
+    /* inline-flex: centraliza o ícone por dentro sem esticar o botão por fora (igual ao Botao). */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+        background-color: var(--cor-primaria-suave);
+    }
+}
+
+/* Mesmo padrão de desabilitado do Botao. */
+.botaoIcone:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

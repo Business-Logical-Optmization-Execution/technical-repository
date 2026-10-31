@@ -1,0 +1,9 @@
+# Documentação de trabalho do grupo (plano e design brief)
+docs/
+
+# Regras e configurações locais do Claude Code
+CLAUDE.md
+.claude/
+
+# Página temporária de testes da Etapa 1 (apagar na Etapa 6)
+frontend/src/pages/vitrine/

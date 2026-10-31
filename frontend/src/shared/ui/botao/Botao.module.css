@@ -1,0 +1,61 @@
+.botao {
+    height: var(--altura-botao-secundario);
+    border-radius: var(--raio-8);
+    padding: 0 20px;
+
+    font-size: var(--texto-botao-tamanho);
+    font-weight: var(--texto-botao-peso);
+    line-height: var(--texto-botao-altura);
+
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: var(--espaco-8);
+}
+
+.larguraTotal {
+    width: 100%;
+}
+
+.botao:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.primario {
+    background-color: var(--cor-primaria);
+    color: var(--cor-branco);
+    border: none;
+    height: var(--altura-botao-principal);
+
+    &:hover:not(:disabled) {
+        background-color: var(--cor-primaria-hover);
+    }
+}
+
+.secundario {
+    background-color: var(--cor-branco);
+    color: var(--cor-primaria);
+    border: 1px solid var(--cor-borda);
+
+    &:hover:not(:disabled) {
+        background-color: var(--cor-primaria-suave);
+    }
+}
+
+.destrutivo {
+    background-color: var(--cor-erro);
+    color: var(--cor-branco);
+    border: none;
+    height: var(--altura-botao-principal);
+}
+
+.link {
+    background-color: transparent;
+    color: var(--cor-primaria);
+    text-decoration: underline;
+    border: none;
+}
