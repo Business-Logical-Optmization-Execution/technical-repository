@@ -1,0 +1,60 @@
+/*
+ * CSS Modules: cada classe daqui vira um nome único no HTML
+ * (ex.: .pagina -> _pagina_x7k2a), então não colide com outras páginas.
+ * Só tokens: nenhum valor solto.
+ */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-32);
+  padding: var(--espaco-32);
+}
+
+.titulo {
+  font-size: var(--texto-h1-tamanho);
+  font-weight: var(--texto-h1-peso);
+  line-height: var(--texto-h1-altura);
+}
+
+.descricao {
+  margin-top: var(--espaco-8);
+  color: var(--cor-texto-secundario);
+}
+
+/* Cada componente testado ganha um "card" (regra do brief: sem sombra, borda --cor-divisoria). */
+.secao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-24);
+  padding: var(--espaco-24);
+  background-color: var(--cor-branco);
+  border: 1px solid var(--cor-divisoria);
+  border-radius: var(--raio-12);
+}
+
+.tituloSecao {
+  font-size: var(--texto-h2-tamanho);
+  font-weight: var(--texto-h2-peso);
+  line-height: var(--texto-h2-altura);
+}
+
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-12);
+}
+
+.tituloGrupo {
+  font-size: var(--texto-rotulo-tamanho);
+  font-weight: var(--texto-rotulo-peso);
+  line-height: var(--texto-rotulo-altura);
+  color: var(--cor-texto-secundario);
+}
+
+/* Itens lado a lado, quebrando linha quando não couber (8 px entre botões, como no Figma). */
+.linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espaco-8);
+}
