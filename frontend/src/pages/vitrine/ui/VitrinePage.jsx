@@ -1,12 +1,18 @@
 // Importa o CSS Module como um objeto: estilos.pagina, estilos.secao...
 import estilos from './VitrinePage.module.css'
-import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha, Modal, Gaveta } from '@/shared/ui'
+import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha, Modal, Gaveta, useToast } from '@/shared/ui'
+import { formatarQuantidade, formatarMoeda, formatarDataHora, formatarDataRelativa, normalizarTexto, nomeProduto } from '@/shared/lib'
 import { ArrowLeft, Pencil, Search, X } from 'lucide-react'
 
 import { useState } from 'react'
 
 // Página de testes da Etapa 1. Cada exercício acrescenta uma <section>
 // com o componente novo em todos os estados pedidos no "Pronto quando".
+// Datas de exemplo para formatarDataRelativa (fora do componente: new Date() não é puro).
+const agora = new Date()
+const ontem = new Date(agora)
+ontem.setDate(agora.getDate() - 1)
+
 export function VitrinePage() {
 
   const [valorCampo, setValorCampo] = useState('')
@@ -14,6 +20,7 @@ export function VitrinePage() {
   const [modalAberto, setModalAberto] = useState(false)
   const [gavetaAberta, setGavetaAberta] = useState(false)
   const [painelAberto, setPainelAberto] = useState(false)
+  const toast = useToast()
 
   return (
     <main className={estilos.pagina}>
@@ -127,6 +134,45 @@ export function VitrinePage() {
           <Gaveta aberto={painelAberto} aoFechar={() => setPainelAberto(false)} titulo="Usuário" lado="direita">
             <p>Painel lateral de Usuários (TL18).</p>
           </Gaveta>
+        </div>
+
+        </section>
+
+        <section className={estilos.secao} aria-labelledby="secao-toast">
+        <h2 id="secao-toast" className={estilos.tituloSecao}>
+          Toast
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>Sucesso e erro (somem em 5 s)</h3>
+          <div className={estilos.linha}>
+            <Botao variante="secundario" onClick={() => toast.sucesso('Entrada registrada. Quantidade agora: 12 un.')}>Toast de sucesso</Botao>
+            <Botao variante="secundario" onClick={() => toast.erro('Não foi possível registrar. Verifique a conexão e tente de novo.')}>Toast de erro</Botao>
+          </div>
+        </div>
+
+        </section>
+
+        <section className={estilos.secao} aria-labelledby="secao-formatadores">
+        <h2 id="secao-formatadores" className={estilos.tituloSecao}>
+          Formatadores
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>shared/lib</h3>
+          <ul>
+            <li>formatarQuantidade(15) → {formatarQuantidade(15)}</li>
+            <li>formatarQuantidade(5, {'{ sinal: true }'}) → {formatarQuantidade(5, { sinal: true })}</li>
+            <li>formatarQuantidade(-3, {'{ sinal: true }'}) → {formatarQuantidade(-3, { sinal: true })}</li>
+            <li>formatarMoeda(34.9) → {formatarMoeda(34.9)}</li>
+            <li>formatarMoeda(null) → {formatarMoeda(null)}</li>
+            <li>formatarDataHora('2026-10-31T14:32:00') → {formatarDataHora('2026-10-31T14:32:00')}</li>
+            <li>formatarDataRelativa(hoje 10:15) → {formatarDataRelativa(new Date(agora).setHours(10, 15))}</li>
+            <li>formatarDataRelativa(ontem 16:22) → {formatarDataRelativa(new Date(ontem).setHours(16, 22))}</li>
+            <li>formatarDataRelativa('2026-10-28T09:00:00') → {formatarDataRelativa('2026-10-28T09:00:00')}</li>
+            <li>normalizarTexto('Espátula') → {normalizarTexto('Espátula')}</li>
+            <li>nomeProduto(...) → {nomeProduto({ sku: 1020, nome: 'Parafuso sextavado 6 mm' })}</li>
+          </ul>
         </div>
 
         </section>
