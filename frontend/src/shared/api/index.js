@@ -1,2 +1,2 @@
 export { http } from './http'
-export { obterMensagemErro } from './erros'
+export { obterMensagemErro, obterErrosDeCampo } from './erros'

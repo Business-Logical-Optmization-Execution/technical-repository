@@ -4,6 +4,9 @@ import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha, Modal, Gavet
 import { formatarQuantidade, formatarMoeda, formatarDataHora, formatarDataRelativa, normalizarTexto, nomeProduto } from '@/shared/lib'
 import { ArrowLeft, Pencil, Search, X } from 'lucide-react'
 
+import { http, obterMensagemErro } from '@/shared/api'
+import { useRequisicao } from '@/shared/lib'
+
 import { useState } from 'react'
 
 // Página de testes da Etapa 1. Cada exercício acrescenta uma <section>
@@ -21,6 +24,7 @@ export function VitrinePage() {
   const [gavetaAberta, setGavetaAberta] = useState(false)
   const [painelAberto, setPainelAberto] = useState(false)
   const toast = useToast()
+  const { dados, carregando, erro, recarregar } = useRequisicao(() => http.get('/produtos').then((r) => r.data));
 
   return (
     <main className={estilos.pagina}>
@@ -86,23 +90,23 @@ export function VitrinePage() {
         <div className={estilos.grupo}>
           <h3 className={estilos.tituloGrupo}>Campos</h3>
 
-            <CampoTexto rotulo="Nota fiscal ou fornecedor (opcional)" placeholder="Ex.: NF 12345 ou Distribuidora X" value={valorCampo} onChange={e => setValorCampo(e.target.value)} />
-            Você digitou: {valorCampo}
-            <CampoTexto rotulo="Nota fiscal ou fornecedor" value={valorCampo2} onChange={e => setValorCampo2(e.target.value)} />
-            Você digitou: {valorCampo2}
-            <CampoTexto rotulo="Quantidade recebida" obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
-            <CampoTexto rotulo="Quantidade recebida" erro='Informe um número inteiro maior que zero.' obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
-            <CampoTexto rotulo="Nome" value="Martelo" bloqueado motivoBloqueio="Vem do Bling" />
-            <CampoTexto rotulo="Qtd" value="10" bloqueado motivoBloqueio="Muda só por movimentação" />
-            <CampoAreaTexto rotulo="Observação (opcional)" />
-            <CampoAreaTexto rotulo="Justificativa" obrigatorio erro="Escreva uma justificativa com pelo menos 10 caracteres." />
-            <CampoSenha rotulo="Senha" />
+          <CampoTexto rotulo="Nota fiscal ou fornecedor (opcional)" placeholder="Ex.: NF 12345 ou Distribuidora X" value={valorCampo} onChange={e => setValorCampo(e.target.value)} />
+          Você digitou: {valorCampo}
+          <CampoTexto rotulo="Nota fiscal ou fornecedor" value={valorCampo2} onChange={e => setValorCampo2(e.target.value)} />
+          Você digitou: {valorCampo2}
+          <CampoTexto rotulo="Quantidade recebida" obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
+          <CampoTexto rotulo="Quantidade recebida" erro='Informe um número inteiro maior que zero.' obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
+          <CampoTexto rotulo="Nome" value="Martelo" bloqueado motivoBloqueio="Vem do Bling" />
+          <CampoTexto rotulo="Qtd" value="10" bloqueado motivoBloqueio="Muda só por movimentação" />
+          <CampoAreaTexto rotulo="Observação (opcional)" />
+          <CampoAreaTexto rotulo="Justificativa" obrigatorio erro="Escreva uma justificativa com pelo menos 10 caracteres." />
+          <CampoSenha rotulo="Senha" />
 
         </div>
 
-        </section>
+      </section>
 
-        <section className={estilos.secao} aria-labelledby="secao-modal">
+      <section className={estilos.secao} aria-labelledby="secao-modal">
         <h2 id="secao-modal" className={estilos.tituloSecao}>
           Modal
         </h2>
@@ -115,9 +119,9 @@ export function VitrinePage() {
           </Modal>
         </div>
 
-        </section>
+      </section>
 
-        <section className={estilos.secao} aria-labelledby="secao-gaveta">
+      <section className={estilos.secao} aria-labelledby="secao-gaveta">
         <h2 id="secao-gaveta" className={estilos.tituloSecao}>
           Gaveta
         </h2>
@@ -136,9 +140,9 @@ export function VitrinePage() {
           </Gaveta>
         </div>
 
-        </section>
+      </section>
 
-        <section className={estilos.secao} aria-labelledby="secao-toast">
+      <section className={estilos.secao} aria-labelledby="secao-toast">
         <h2 id="secao-toast" className={estilos.tituloSecao}>
           Toast
         </h2>
@@ -151,9 +155,9 @@ export function VitrinePage() {
           </div>
         </div>
 
-        </section>
+      </section>
 
-        <section className={estilos.secao} aria-labelledby="secao-formatadores">
+      <section className={estilos.secao} aria-labelledby="secao-formatadores">
         <h2 id="secao-formatadores" className={estilos.tituloSecao}>
           Formatadores
         </h2>
@@ -175,7 +179,22 @@ export function VitrinePage() {
           </ul>
         </div>
 
-        </section>
+      </section>
+
+      <section className={estilos.secao} aria-labelledby="secao-requisicao">
+        <h2 id="secao-requisicao" className={estilos.tituloSecao}>
+          Requisição
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>shared/lib</h3>
+          {carregando ? <p>Carregando...</p> : erro ? <p>Erro: {obterMensagemErro(erro)}</p> : <p>{dados.length} produtos recebidos do backend.</p>}
+          <div className={estilos.linha}>
+            <Botao variante="secundario" onClick={recarregar}>Recarregar</Botao>
+          </div>
+        </div>
+
+      </section>
     </main>
   )
 }

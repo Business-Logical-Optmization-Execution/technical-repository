@@ -5,3 +5,10 @@ export const http = axios.create({
   baseURL: '/api',
   timeout: 10000,
 })
+
+http.interceptors.response.use(
+  (resposta) => resposta,
+  (erro) => {
+    return Promise.reject(erro);
+  }
+);
