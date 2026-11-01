@@ -1,6 +1,6 @@
 // Importa o CSS Module como um objeto: estilos.pagina, estilos.secao...
 import estilos from './VitrinePage.module.css'
-import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha } from '@/shared/ui'
+import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha, Modal, Gaveta } from '@/shared/ui'
 import { ArrowLeft, Pencil, Search, X } from 'lucide-react'
 
 import { useState } from 'react'
@@ -11,6 +11,9 @@ export function VitrinePage() {
 
   const [valorCampo, setValorCampo] = useState('')
   const [valorCampo2, setValorCampo2] = useState('')
+  const [modalAberto, setModalAberto] = useState(false)
+  const [gavetaAberta, setGavetaAberta] = useState(false)
+  const [painelAberto, setPainelAberto] = useState(false)
 
   return (
     <main className={estilos.pagina}>
@@ -88,6 +91,42 @@ export function VitrinePage() {
             <CampoAreaTexto rotulo="Justificativa" obrigatorio erro="Escreva uma justificativa com pelo menos 10 caracteres." />
             <CampoSenha rotulo="Senha" />
 
+        </div>
+
+        </section>
+
+        <section className={estilos.secao} aria-labelledby="secao-modal">
+        <h2 id="secao-modal" className={estilos.tituloSecao}>
+          Modal
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>Modais</h3>
+          {<Botao onClick={() => setModalAberto(true)}>Abrir modal</Botao>}
+          <Modal aberto={modalAberto} aoFechar={() => setModalAberto(false)} titulo="Inativar produto?" acoes={<><Botao variante="secundario" onClick={() => setModalAberto(false)}>Cancelar</Botao> <Botao variante="destrutivo" onClick={() => setModalAberto(false)}>Inativar produto</Botao></>}>
+            <p>O produto 1543 – Fita veda-rosca 18 mm deixará de aparecer nas buscas.</p>
+          </Modal>
+        </div>
+
+        </section>
+
+        <section className={estilos.secao} aria-labelledby="secao-gaveta">
+        <h2 id="secao-gaveta" className={estilos.tituloSecao}>
+          Gaveta
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>Esquerda e direita</h3>
+          <div className={estilos.linha}>
+            <Botao variante="secundario" onClick={() => setGavetaAberta(true)}>Abrir menu</Botao>
+            <Botao variante="secundario" onClick={() => setPainelAberto(true)}>Abrir painel</Botao>
+          </div>
+          <Gaveta aberto={gavetaAberta} aoFechar={() => setGavetaAberta(false)} titulo="Menu">
+            <p>Itens do menu lateral (TL02).</p>
+          </Gaveta>
+          <Gaveta aberto={painelAberto} aoFechar={() => setPainelAberto(false)} titulo="Usuário" lado="direita">
+            <p>Painel lateral de Usuários (TL18).</p>
+          </Gaveta>
         </div>
 
         </section>
