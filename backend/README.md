@@ -1,10 +1,10 @@
 # Portal Blox — Technical Repository
 
 API REST de **controle de estoque e produtos** do projeto Portal Blox: cadastro de produtos,
-usuários e perfis de acesso, com movimentações e saldos de estoque. Este repositório contém o
-**backend Spring Boot** e o **banco MySQL**, dockerizados em duas imagens independentes
-orquestradas por Docker Compose — qualquer máquina com Docker sobe o ambiente completo sem
-instalar Java, Maven ou MySQL localmente.
+fornecedores, usuários e perfis de acesso, com saldo global por produto e histórico auditável de
+movimentações. Este repositório contém o **backend Spring Boot** e o **banco MySQL**, dockerizados
+em duas imagens independentes orquestradas por Docker Compose — qualquer máquina com Docker sobe o
+ambiente completo sem instalar Java, Maven ou MySQL localmente.
 
 ---
 
@@ -46,8 +46,9 @@ O compose sobe **dois containers** em uma rede privada (`blox-net`), com um **vo
 Pontos-chave da orquestração:
 
 - **Inicialização automática**: na primeira subida (volume novo), o container do banco executa
-  `database/script-banco-v2.sql` (criação idempotente do schema `controle_estoque`, 9 tabelas e
-  seed de perfis/categorias). Em volumes já inicializados o script **não** re-executa.
+  `database/script-banco-v3.sql` (criação idempotente do schema `controle_estoque`, 8 tabelas e
+  seed de perfis/categorias) e, em seguida, `database/zz-seed-demo.sql` (dados de demonstração).
+  Em volumes já inicializados os scripts **não** re-executam.
 - **Ordem de subida garantida**: o `db` tem `healthcheck` (mysqladmin ping) e o `backend` usa
   `depends_on: condition: service_healthy` — só sobe depois que o banco responde.
 - **Conexão por variáveis de ambiente**: o `backend` resolve o banco pelo hostname `db` (rede do
@@ -58,7 +59,7 @@ Pontos-chave da orquestração:
 ### Estrutura do repositório
 
 ```
-technical-repository/
+backend/                        # raiz deste README
 ├── docker-compose.yml          # orquestração dos 2 serviços
 ├── .env.example                # modelo de variáveis de ambiente (versionado)
 ├── .env                        # valores reais (git ignorado)
@@ -74,34 +75,104 @@ technical-repository/
 │       ├── dto/ + mapper/      # contratos de entrada/saída
 │       └── exception/          # tratamento de erros
 ├── database/
-│   ├── Dockerfile              # mysql:8.4 + script de init
+│   ├── Dockerfile              # mysql:8.4 + scripts de init
 │   ├── .dockerignore
-│   └── script-banco-v2.sql     # schema + seed
+│   ├── script-banco-v3.sql     # schema + seeds mínimos (fonte canônica)
+│   ├── zz-seed-demo.sql        # dados de demonstração para testar a API
+│   └── script-banco-v2.sql     # histórico da modelagem anterior
 
 ```
 
 ### Banco de dados
 
-Schema `controle_estoque` com as tabelas: `usuarios`, `perfis_acesso`, `produtos`,
-`produtos_categorias`, `categorias`, `fornecedores`, `estoque_saldos`,
-`movimentacoes_estoque` e `campanhas`. O Hibernate roda com `ddl-auto=validate` — o schema é
-gerenciado **somente** pelo script SQL.
+Schema `controle_estoque` com 8 tabelas: `categorias`, `fornecedores`, `produtos`,
+`produto_localizacoes`, `perfis_acesso`, `usuarios`, `movimentacoes_estoque` e `campanhas`.
+O Hibernate roda com `ddl-auto=validate` — o schema é gerenciado **somente** pelo
+`database/script-banco-v3.sql`, que é a fonte canônica. O `script-banco-v2.sql` permanece no
+repositório como histórico e não é executado; o `modelagem-v2.mwb` também é histórico e um
+`modelagem-v3.mwb` pode ser gerado manualmente no MySQL Workbench quando necessário.
+
+Pontos do modelo:
+
+- `produtos.quantidade` é o **saldo global único** do produto; não existe saldo por localização.
+- Cada produto pertence a **exatamente uma** categoria (`produtos.categoria_id`); a antiga
+  tabela `produtos_categorias` não existe mais.
+- `produto_localizacoes` guarda apenas rótulos textuais (sem quantidade), com unicidade por
+  produto e comparação case-insensitive herdada da collation `utf8mb4_unicode_ci`.
+- `movimentacoes_estoque` é um **ledger imutável**: cada linha guarda produto, autor, tipo,
+  quantidade informada, variação assinada, saldo anterior, saldo posterior, justificativa,
+  origem e data. Não há endpoint de histórico/estorno neste MVP.
+- `fornecedores` guarda `nome` e `cnpj` (somente dígitos, 14 caracteres, único), sem validação
+  de dígitos verificadores.
+- A tabela `campanhas` foi preservada sem alterações.
+
+### Dados de demonstração
+
+`database/zz-seed-demo.sql` roda automaticamente logo após o schema e deixa a base pronta para
+exercitar a API:
+
+| Entidade | Conteúdo |
+|---|---|
+| Categorias | as 3 do v3 + `Parafusos` e `Porcas e Arruelas` |
+| Fornecedores | 3 ativos (`Ferragens Silva`, `Distribuidora Central`, `Aco Forte`) e 1 inativo |
+| Usuários | `ana.souza@portalblox.test` (Administrador, ativo), `bruno.lima@portalblox.test` (Operador, ativo) e `carla.dias@portalblox.test` (Operador, inativo) — senha `senha123` |
+| Produtos | 9 no total: 8 ativos (um deles com saldo 0) e 1 inativo, com categoria, fornecedor e localizações variados |
+| Movimentações | um `SALDO_INICIAL` para cada produto ativo com saldo maior que zero |
+
+O script é **idempotente**: reaplicá-lo não duplica registros. Como o entrypoint do MySQL só
+executa scripts de init em volume vazio, use um dos comandos abaixo quando precisar:
+
+```powershell
+# reaplicar o seed em um banco já existente (não duplica nada)
+cmd /c "docker compose exec -T -e MYSQL_PWD=root_password db mysql -uroot controle_estoque < database\zz-seed-demo.sql"
+
+# recriar o banco e rodar schema + seed do zero
+docker compose down -v
+docker compose up --build
+```
+
+> Dados apenas para desenvolvimento local. Para desativar, remova a linha
+> `COPY zz-seed-demo.sql` do `database/Dockerfile`.
 
 ### API (resumo)
 
 | Método | Rota | Descrição |
 |---|---|---|
-| GET | `/usuarios` | Listar usuários |
+| GET | `/usuarios` | Listar usuários (`?incluirInativos=true` opcional) |
 | GET | `/usuarios/{id}` | Buscar usuário por id |
-| POST | `/usuarios` | Cadastrar usuário |
-| PUT | `/usuarios/{id}` | Atualizar usuário |
-| DELETE | `/usuarios/{id}` | Excluir usuário |
-| GET | `/produtos` | Listar produtos |
+| POST | `/usuarios` | Cadastrar usuário (nome, e-mail, senha, perfil) |
+| PUT | `/usuarios/{id}` | Atualizar nome, e-mail e perfil — sem senha |
+| DELETE | `/usuarios/{id}` | Inativar usuário (exclusão lógica) |
+| GET | `/fornecedores` | Listar fornecedores (`?incluirInativos=true` opcional) |
+| GET | `/fornecedores/{id}` | Buscar fornecedor por id |
+| POST | `/fornecedores` | Cadastrar fornecedor (nome + CNPJ) |
+| PUT | `/fornecedores/{id}` | Atualizar fornecedor |
+| DELETE | `/fornecedores/{id}` | Inativar fornecedor |
+| GET | `/produtos` | Listar produtos (`?incluirInativos=true` opcional) |
 | GET | `/produtos/{id}` | Buscar produto por id |
-| POST | `/produtos` | Cadastrar produto |
-| PUT | `/produtos/{id}` | Atualizar produto |
-| PATCH | `/produtos/{id}/quantidade` | Ajustar quantidade em estoque |
-| DELETE | `/produtos/{id}` | Excluir produto |
+| POST | `/produtos` | Cadastrar produto (exige `usuarioId`) |
+| PUT | `/produtos/{id}` | Atualizar dados cadastrais — não altera quantidade |
+| PATCH | `/produtos/{id}/quantidade` | Ajuste auditado de saldo (`usuarioId` + `justificativa`) |
+| DELETE | `/produtos/{id}` | Inativar produto (exclusão lógica) |
+
+Regras de contrato relevantes:
+
+- **Produto** — `sku`, `nome`, `categoriaId`, `quantidade` e `usuarioId` são obrigatórios no
+  `POST` (o `usuarioId` é exigido inclusive com quantidade zero). `peso` (kg, até 3 casas),
+  `tamanho`, `descricao`, `preco`, `marca`, `fornecedorId` e `localizacoes` são opcionais.
+  `quantidade > 0` gera uma movimentação `SALDO_INICIAL`; `quantidade = 0` não gera nada.
+- **`PUT /produtos/{id}`** não recebe `quantidade` nem `usuarioId` e nunca altera o saldo.
+  Lista de localizações ausente ou `null` limpa as localizações e `fornecedorId` nulo remove
+  o vínculo. Produto inativo responde `422`.
+- **`PATCH /produtos/{id}/quantidade`** exige `quantidade`, `usuarioId` e `justificativa`; grava
+  uma movimentação `AJUSTE` com saldo anterior/posterior na mesma transação. Se o valor não
+  mudar, responde `200` sem movimentação. Produto inativo responde `422`.
+- **Fornecedor** — `cnpj` é armazenado somente com dígitos, deve ter exatamente 14 caracteres
+  e é único; os dígitos verificadores não são validados.
+- **Usuário** — `POST` exige `senha`; `PUT` não a exige nem a altera. A senha é gravada em
+  texto puro neste MVP (não há autenticação) e nunca aparece nas respostas.
+- Campos desconhecidos no JSON são ignorados pelo Jackson: `quantidade` no `PUT` de produto e
+  `senha` no `PUT` de usuário não alteram estado.
 
 Documentação interativa completa em **`http://localhost:8080/swagger-ui.html`**.
 
@@ -175,7 +246,7 @@ docker compose up --build           # subir de novo (rebuild se mudou código/Do
 ## Rodar sem Docker (desenvolvimento local)
 
 Requisitos: Java 21, Maven (ou use o wrapper) e um MySQL em `localhost:3306` com o schema
-`controle_estoque` criado (aplique `database/script-banco-v2.sql`).
+`controle_estoque` criado (aplique `database/script-banco-v3.sql`).
 
 Sem nenhuma variável `DB_*` definida, o backend usa os defaults do `application.properties`
 (`localhost:3306/controle_estoque`, usuário `root`, senha vazia):

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class UsuarioRequestDto {
+public class UsuarioAtualizacaoRequestDto {
 
 	@NotBlank
 	@Size(max = 120)
@@ -16,12 +16,8 @@ public class UsuarioRequestDto {
 	@Size(max = 180)
 	private String email;
 
-	@NotBlank
-	@Size(max = 150)
-	private String senha;
-
 	@NotNull
-	private Integer perfilAcessoId;             // relacionamento por id
+	private Integer perfilAcessoId;
 
 	public String getNome() { return nome; }
 
@@ -30,10 +26,6 @@ public class UsuarioRequestDto {
 	public String getEmail() { return email; }
 
 	public void setEmail(String email) { this.email = email; }
-
-	public String getSenha() { return senha; }
-
-	public void setSenha(String senha) { this.senha = senha; }
 
 	public Integer getPerfilAcessoId() { return perfilAcessoId; }
 
