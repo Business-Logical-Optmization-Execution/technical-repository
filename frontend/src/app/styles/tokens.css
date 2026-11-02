@@ -83,4 +83,5 @@
   --altura-botao-principal: 48px;
   --altura-botao-secundario: 44px;
   --altura-busca: 56px;
+  --altura-cabecalho: 80px; /* barra de 76 px + faixa de 4 px */
 }

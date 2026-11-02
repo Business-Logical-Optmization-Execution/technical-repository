@@ -1,10 +1,14 @@
 import { Outlet } from 'react-router-dom'
+import { Cabecalho } from '@/widgets/cabecalho'
 import estilos from './LayoutAutenticado.module.css'
 
 export function LayoutAutenticado() {
   return (
-    <main className={estilos.conteudo}>
-      <Outlet />
-    </main>
+    <>
+      <Cabecalho />
+      <main className={estilos.conteudo}>
+        <Outlet />
+      </main>
+    </>
   )
 }

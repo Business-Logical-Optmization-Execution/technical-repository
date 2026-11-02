@@ -10,3 +10,5 @@ export { Modal } from './modal'
 export { Gaveta } from './gaveta'
 export { ToastProvider, useToast } from './toast'
 export { TituloPagina } from './titulo-pagina'
+export { Avatar } from './avatar'
+    

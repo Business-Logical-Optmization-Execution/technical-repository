@@ -1,6 +1,6 @@
 .pilha {
     position: fixed;
-    top: var(--espaco-16);
+    top: calc(var(--altura-cabecalho) + var(--espaco-16));
     right: var(--espaco-16);
     z-index: 10;
     width: calc(100% - 2 * var(--espaco-16));
