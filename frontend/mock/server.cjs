@@ -74,16 +74,114 @@ server.get('/produtos/:id', (req, res) => {
   res.json(comMinimoEfetivo(produto));
 });
 
-server.patch('/produtos/:id/dados-locais', (req, res) => {
+// Lê e valida os campos comuns ao POST e ao PUT. Devolve { erroResposta } ou { campos }.
+const lerCamposProduto = (req, res, idAtual = null, errosIniciais = []) => {
+  const {
+    sku, nome, categoriaId, peso = null, tamanho = null, descricao = null, preco = null,
+    marca = null, fornecedorId = null, localizacoes = null, estoqueMinimo = null, fotoUrl = null,
+  } = req.body;
+  const erros = [...errosIniciais];
+  if (!sku || !String(sku).trim()) erros.push({ campo: 'sku', mensagem: 'Informe o SKU.' });
+  if (!nome || !String(nome).trim()) erros.push({ campo: 'nome', mensagem: 'Informe o nome.' });
+  if (categoriaId === undefined || categoriaId === null) erros.push({ campo: 'categoriaId', mensagem: 'Informe a categoria.' });
+  if (estoqueMinimo !== null && (!Number.isInteger(estoqueMinimo) || estoqueMinimo < 0)) {
+    erros.push({ campo: 'estoqueMinimo', mensagem: 'Use um número inteiro igual ou maior que zero.' });
+  }
+  if (localizacoes !== null && (!Array.isArray(localizacoes) || localizacoes.some((l) => String(l).length > 120))) {
+    erros.push({ campo: 'localizacoes', mensagem: 'Use uma lista de textos com até 120 caracteres.' });
+  }
+  if (erros.length) return { erroResposta: erro(res, 400, 'Confira os campos destacados.', erros) };
+
+  const categoria = db().get('categorias').find({ id: Number(categoriaId) }).value();
+  if (!categoria) return { erroResposta: erro(res, 404, 'Categoria não encontrada.') };
+
+  let fornecedor = null;
+  if (fornecedorId !== null) {
+    const achado = db().get('fornecedores').find({ id: Number(fornecedorId) }).value();
+    if (!achado) return { erroResposta: erro(res, 404, 'Fornecedor não encontrado.') };
+    if (!achado.ativo) return { erroResposta: erro(res, 422, 'Este fornecedor está inativo.') };
+    fornecedor = { id: achado.id, nome: achado.nome, cnpj: achado.cnpj };
+  }
+
+  const duplicado = db().get('produtos').find((p) => p.sku === sku && p.id !== idAtual).value();
+  if (duplicado) return { erroResposta: erro(res, 409, 'Já existe um produto com este SKU.') };
+
+  return {
+    campos: {
+      sku, nome, peso, tamanho, descricao, preco, marca, categoria, fornecedor,
+      localizacoes: localizacoes ?? [], estoqueMinimo, fotoUrl,
+    },
+  };
+};
+
+const registrarMovimentacao = (produto, usuario, tipo, antes, depois, observacao) => {
+  db().get('movimentacoes').push({
+    id: proximoId('movimentacoes'),
+    tipo,
+    quantidade: depois - antes,
+    quantidadeAntes: antes,
+    quantidadeDepois: depois,
+    motivo: null,
+    observacao,
+    documento: null,
+    origem: 'MANUAL',
+    dataMov: agora(),
+    produto: resumo(produto),
+    usuario: { id: usuario.id, nome: usuario.nome },
+  }).write();
+};
+
+server.post('/produtos', (req, res) => {
+  const { quantidade, usuarioId } = req.body;
+  const erros = [];
+  if (!Number.isInteger(quantidade) || quantidade < 0) erros.push({ campo: 'quantidade', mensagem: 'Use um número inteiro igual ou maior que zero.' });
+  if (usuarioId === undefined || usuarioId === null) erros.push({ campo: 'usuarioId', mensagem: 'Informe o usuário.' });
+
+  const { campos, erroResposta } = lerCamposProduto(req, res, null, erros);
+  if (erroResposta) return erroResposta;
+
+  const usuario = db().get('usuarios').find({ id: Number(usuarioId) }).value();
+  if (!usuario) return erro(res, 404, 'Usuário não encontrado.');
+
+  const produto = { id: proximoId('produtos'), ...campos, quantidade, ativo: true };
+  db().get('produtos').push(produto).write();
+  if (quantidade > 0) registrarMovimentacao(produto, usuario, 'SALDO_INICIAL', 0, quantidade, null);
+  res.status(201).json(comMinimoEfetivo(produto));
+});
+
+// Nunca altera o saldo. O que não for enviado é limpo, como no back.
+server.put('/produtos/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const ref = db().get('produtos').find({ id });
+  if (!ref.value()) return erro(res, 404, 'Produto não encontrado.');
+  if (!ref.value().ativo) return erro(res, 422, 'Este produto está inativo.');
+  const { campos, erroResposta } = lerCamposProduto(req, res, id);
+  if (erroResposta) return erroResposta;
+  ref.assign(campos).write();
+  res.json(comMinimoEfetivo(ref.value()));
+});
+
+// Ajuste auditado: valor absoluto. Sem mudança de valor, não grava movimentação.
+server.patch('/produtos/:id/quantidade', (req, res) => {
   const ref = db().get('produtos').find({ id: Number(req.params.id) });
   if (!ref.value()) return erro(res, 404, 'Produto não encontrado.');
-  const { descricao = null, localizacao = null, estoqueMinimo = null, fotoUrl = null } = req.body;
-  if (estoqueMinimo !== null && (!Number.isInteger(estoqueMinimo) || estoqueMinimo < 0)) {
-    return erro(res, 400, 'Confira os campos destacados.', [
-      { campo: 'estoqueMinimo', mensagem: 'Use um número inteiro igual ou maior que zero.' },
-    ]);
+  if (!ref.value().ativo) return erro(res, 422, 'Este produto está inativo.');
+
+  const { quantidade, usuarioId, justificativa } = req.body;
+  const erros = [];
+  if (!Number.isInteger(quantidade) || quantidade < 0) erros.push({ campo: 'quantidade', mensagem: 'Use um número inteiro igual ou maior que zero.' });
+  if (usuarioId === undefined || usuarioId === null) erros.push({ campo: 'usuarioId', mensagem: 'Informe o usuário.' });
+  if (!justificativa || !String(justificativa).trim()) erros.push({ campo: 'justificativa', mensagem: 'Informe a justificativa.' });
+  if (erros.length) return erro(res, 400, 'Confira os campos destacados.', erros);
+
+  const usuario = db().get('usuarios').find({ id: Number(usuarioId) }).value();
+  if (!usuario) return erro(res, 404, 'Usuário não encontrado.');
+
+  const antes = ref.value().quantidade;
+  if (quantidade !== antes) {
+    ref.assign({ quantidade }).write();
+    registrarMovimentacao(ref.value(), usuario, 'AJUSTE', antes, quantidade, justificativa);
   }
-  ref.assign({ descricao, localizacao, estoqueMinimo, fotoUrl }).write();
   res.json(comMinimoEfetivo(ref.value()));
 });
 
@@ -93,6 +191,13 @@ server.delete('/produtos/:id', (req, res) => {
   if (!ref.value().ativo) return erro(res, 422, 'Este produto já está inativo.');
   ref.assign({ ativo: false }).write();
   res.status(204).end();
+});
+
+// ---------- fornecedores ----------
+// Nenhuma tela usa nesta sprint. POST, PUT e DELETE ficam no CRUD automático, sem as regras do back.
+server.get('/fornecedores', (req, res) => {
+  const incluirInativos = req.query.incluirInativos === 'true';
+  res.json(db().get('fornecedores').value().filter((f) => incluirInativos || f.ativo));
 });
 
 // ---------- movimentações ----------
