@@ -1,9 +1,10 @@
 // Importa o CSS Module como um objeto: estilos.pagina, estilos.secao...
 import estilos from './VitrinePage.module.css'
-import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha } from '@/shared/ui'
-import { ArrowLeft, Pencil, Search, X } from 'lucide-react'
+import { Faixa, EstadoVazio, Skeleton, Card, Selo, Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha } from '@/shared/ui'
+import { PackageSearch, TriangleAlert, Check, ArrowLeft, Pencil, Search, X } from 'lucide-react'
 
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 // Página de testes da Etapa 1. Cada exercício acrescenta uma <section>
 // com o componente novo em todos os estados pedidos no "Pronto quando".
@@ -89,7 +90,86 @@ export function VitrinePage() {
             <CampoSenha rotulo="Senha" />
 
         </div>
+        </section>
+        <section className={estilos.secao} aria-labelledby='secao-selo'>
+          <h2 id='secao-selo' className={estilos.tituloSecao}>
+            Selo
+          </h2>
+          <div className={estilos.grupo}>
+            <h3 className={estilos.tituloGrupo}>
+              Variantes
+            </h3>
+              <div className={estilos.linha}>
 
+                <Selo variante='admin'>ADMIN</Selo>
+                <Selo variante='alerta' icone={TriangleAlert}>Qtd 2</Selo>
+                <Selo variante='erro'>Qtd 0</Selo>
+                <Selo variante='sucesso' icone={Check}>OK</Selo>
+                <Selo variante='informacao'>Manual</Selo>
+                <Selo variante='contador'>3</Selo>
+
+              </div>
+          </div>
+        </section>
+        <section className={estilos.secao} aria-labelledby='secao-card'>
+          <h2 id='secao-card' className={estilos.tituloSecao}>
+            Card
+          </h2>
+            <div className={estilos.grupo}>
+            <h3 className={estilos.tituloGrupo}>
+              Simples
+            </h3>
+              <div className={estilos.linha}>
+                <Card>1020 – Parafuso sextavado 6 mm</Card>
+              </div>
+          </div>
+
+          <div className={estilos.grupo}>
+            <h3 className={estilos.tituloGrupo}>
+              Clicável
+            </h3>
+            <div className={estilos.linha}>
+              <Card clicavel como={Link} to="/vitrine">
+                1020 – Parafuso sextavado 6 mm
+              </Card>
+            </div>
+          </div>
+        </section>
+        <section className={estilos.secao} aria-labelledby='secao-skeleton'>
+          <h2 id='secao-skeleton' className={estilos.tituloSecao}>
+            Skeleton
+          </h2>
+          <div className={estilos.grupo}>
+            <h3 className={estilos.tituloGrupo}>
+              Carregando
+            </h3>
+            <Skeleton largura="100%" altura="var(--espaco-48)"></Skeleton>
+            <Skeleton largura="40%"  altura="var(--espaco-16)"></Skeleton>
+          </div>
+        </section>
+        <section className={estilos.secao} aria-labelledby='secao-estado-vazio'>
+          <h2 id='secao-estado-vazio' className={estilos.tituloSecao}>
+            Estado Vazio
+          </h2>
+          <div className={estilos.grupo}>
+            <h3 className={estilos.tituloGrupo}>
+              Exemplos
+            </h3>
+            <EstadoVazio icone={PackageSearch} texto="Nenhum produto com estoque baixo agora." ></EstadoVazio>
+            <EstadoVazio icone={PackageSearch} texto='Nenhum produto encontrado para "parafuzo". Confira a escrita ou busque pelo código.' acao={<Botao variante="secundario">Limpar busca</Botao>}></EstadoVazio>
+            </div>
+        </section>
+        <section className={estilos.secao} aria-labelledby='secao-faixa'>
+          <h2 id='secao-faixa' className={estilos.tituloSecao}>
+            Faixa
+          </h2>
+          <div className={estilos.grupo}>
+            <h3 className={estilos.tituloGrupo}>
+              Variantes
+            </h3>
+            <Faixa variante="alerta">Sem conexão com o Bling desde 14:32. O Portal continua funcionando normalmente.</Faixa>
+            <Faixa>Importação concluída. 120 produtos atualizados.</Faixa>
+            </div>
         </section>
     </main>
   )
