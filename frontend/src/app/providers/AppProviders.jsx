@@ -1,6 +1,12 @@
 import { ToastProvider } from '@/shared/ui'
+import { SessaoProvider } from '@/entities/sessao'
 
-// Junta os providers globais. O SessaoProvider entra no exercício 2.1.
 export function AppProviders({ children }) {
-  return <ToastProvider>{children}</ToastProvider>
+  return (
+  <SessaoProvider>
+    <ToastProvider>
+      {children}
+    </ToastProvider>
+  </SessaoProvider>
+  )
 }
