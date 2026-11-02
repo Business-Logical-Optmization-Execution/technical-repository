@@ -19,29 +19,40 @@ import { IntegracaoBlingPage } from '@/pages/integracao-bling'
 import { NaoEncontradaPage } from '@/pages/nao-encontrada'
 import { VitrinePage } from '@/pages/vitrine'
 import { LayoutAutenticado } from '../layouts/LayoutAutenticado'
+import { ExigeLogin, ExigeAdmin } from './rotasProtegidas'
 
 export const router = createBrowserRouter([
   { path: ROTAS.login, element: <LoginPage /> },
   // Temporária (Etapa 1): fora do LayoutAutenticado porque ainda não há login.
   { path: ROTAS.vitrine, element: <VitrinePage /> },
   {
-    element: <LayoutAutenticado />,
+    element: <ExigeLogin />,
     children: [
-      { path: ROTAS.inicio, element: <InicioPage /> },
-      { path: ROTAS.busca, element: <BuscaPage /> },
-      { path: ROTAS.produto(':id'), element: <ProdutoDetalhePage /> },
-      { path: ROTAS.registrarEntrada(':id'), element: <RegistrarEntradaPage /> },
-      { path: ROTAS.registrarSaida(':id'), element: <RegistrarSaidaPage /> },
-      { path: ROTAS.ajustarContagem(':id'), element: <AjustarContagemPage /> },
-      { path: ROTAS.historico, element: <HistoricoPage /> },
-      { path: ROTAS.usuarios, element: <UsuariosPage /> },
-      { path: ROTAS.dashboard, element: <DashboardPage /> },
-      { path: ROTAS.perfil, element: <MeuPerfilPage /> },
-      { path: ROTAS.configuracoes, element: <ConfiguracoesPage /> },
-      { path: ROTAS.divergencias, element: <DivergenciasPage /> },
-      { path: ROTAS.divergencia(':id'), element: <ResolverDivergenciaPage /> },
-      { path: ROTAS.importar, element: <ImportarProdutosPage /> },
-      { path: ROTAS.integracao, element: <IntegracaoBlingPage /> },
+      {
+        element: <LayoutAutenticado />,
+        children: [
+          { path: ROTAS.inicio, element: <InicioPage /> },
+          { path: ROTAS.busca, element: <BuscaPage /> },
+          { path: ROTAS.produto(':id'), element: <ProdutoDetalhePage /> },
+          { path: ROTAS.registrarEntrada(':id'), element: <RegistrarEntradaPage /> },
+          { path: ROTAS.registrarSaida(':id'), element: <RegistrarSaidaPage /> },
+          { path: ROTAS.ajustarContagem(':id'), element: <AjustarContagemPage /> },
+          { path: ROTAS.perfil, element: <MeuPerfilPage /> },
+          {
+            element: <ExigeAdmin />,
+            children: [
+              { path: ROTAS.historico, element: <HistoricoPage /> },
+              { path: ROTAS.usuarios, element: <UsuariosPage /> },
+              { path: ROTAS.dashboard, element: <DashboardPage /> },
+              { path: ROTAS.configuracoes, element: <ConfiguracoesPage /> },
+              { path: ROTAS.divergencias, element: <DivergenciasPage /> },
+              { path: ROTAS.divergencia(':id'), element: <ResolverDivergenciaPage /> },
+              { path: ROTAS.importar, element: <ImportarProdutosPage /> },
+              { path: ROTAS.integracao, element: <IntegracaoBlingPage /> },
+            ],
+          },
+        ],
+      },
     ],
   },
   { path: '*', element: <NaoEncontradaPage /> },
