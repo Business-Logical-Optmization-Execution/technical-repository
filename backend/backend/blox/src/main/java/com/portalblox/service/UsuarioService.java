@@ -2,6 +2,8 @@ package com.portalblox.service;
 
 import com.portalblox.entity.PerfilAcesso;
 import com.portalblox.entity.Usuario;
+import com.portalblox.exception.DadosInvalidosException;
+import com.portalblox.exception.DetectorChaveDuplicada;
 import com.portalblox.exception.PerfilAcessoNaoEncontradoException;
 import com.portalblox.exception.UsuarioJaExisteException;
 import com.portalblox.exception.UsuarioJaInativoException;
@@ -9,6 +11,7 @@ import com.portalblox.exception.UsuarioNaoEncontradoException;
 import com.portalblox.repository.PerfilAcessoRepository;
 import com.portalblox.repository.UsuarioRepository;
 import java.util.List;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,7 +46,7 @@ public class UsuarioService {
 		}
 		usuario.setPerfilAcesso(buscarPerfil(perfilAcessoId));        // RN-08
 		usuario.setAtivo(true);
-		return usuarioRepository.save(usuario);
+		return salvar(usuario);
 	}
 
 	@Transactional
@@ -55,7 +58,7 @@ public class UsuarioService {
 		existente.setNome(dados.getNome());                           // só campos editáveis;
 		existente.setEmail(dados.getEmail());                          // senha e ativo preservados
 		existente.setPerfilAcesso(buscarPerfil(perfilAcessoId));       // RN-08
-		return usuarioRepository.save(existente);
+		return salvar(existente);
 	}
 
 	@Transactional
@@ -66,6 +69,17 @@ public class UsuarioService {
 		}
 		usuario.setAtivo(false);                                       // RN-03
 		usuarioRepository.save(usuario);
+	}
+
+	private Usuario salvar(Usuario usuario) {
+		try {
+			return usuarioRepository.saveAndFlush(usuario);
+		} catch (DataIntegrityViolationException excecao) {
+			if (DetectorChaveDuplicada.ehChaveDuplicada(excecao)) {
+				throw new UsuarioJaExisteException();
+			}
+			throw new DadosInvalidosException("Violação de integridade dos dados.");
+		}
 	}
 
 	private PerfilAcesso buscarPerfil(Integer id) {

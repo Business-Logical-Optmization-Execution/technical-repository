@@ -1,6 +1,7 @@
 package com.portalblox.controller;
 
-import com.portalblox.dto.UsuarioRequestDto;
+import com.portalblox.dto.UsuarioAtualizacaoRequestDto;
+import com.portalblox.dto.UsuarioCriacaoRequestDto;
 import com.portalblox.dto.UsuarioResponseDto;
 import com.portalblox.entity.Usuario;
 import com.portalblox.mapper.UsuarioMapper;
@@ -70,7 +71,7 @@ public class UsuarioController {
 	})
 	@PostMapping
 	public ResponseEntity<UsuarioResponseDto> cadastrar(
-			@Valid @RequestBody UsuarioRequestDto dto) {
+			@Valid @RequestBody UsuarioCriacaoRequestDto dto) {
 		Usuario usuario = UsuarioMapper.toEntity(dto);
 		Usuario salvo = usuarioService.cadastrar(usuario, dto.getPerfilAcessoId());
 		return ResponseEntity.status(201).body(UsuarioMapper.toResponseDto(salvo));
@@ -78,7 +79,8 @@ public class UsuarioController {
 
 	@Operation(summary = "Atualizar usuário",
 			description = "Altera somente nome, e-mail e perfil de acesso; senha e estado ativo "
-					+ "são sempre preservados.")
+					+ "são sempre preservados. O contrato de atualização não tem senha: "
+					+ "se o campo for enviado no JSON, é ignorado.")
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", description = "Usuário atualizado"),
 			@ApiResponse(responseCode = "400", description = "Payload inválido"),
@@ -87,7 +89,7 @@ public class UsuarioController {
 	})
 	@PutMapping("/{id}")
 	public ResponseEntity<UsuarioResponseDto> atualizar(@PathVariable Integer id,
-			@Valid @RequestBody UsuarioRequestDto dto) {
+			@Valid @RequestBody UsuarioAtualizacaoRequestDto dto) {
 		Usuario usuario = UsuarioMapper.toEntity(dto);
 		Usuario atualizado = usuarioService.atualizar(id, usuario, dto.getPerfilAcessoId());
 		return ResponseEntity.status(200).body(UsuarioMapper.toResponseDto(atualizado));
