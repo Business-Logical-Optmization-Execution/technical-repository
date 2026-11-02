@@ -1,16 +1,13 @@
 package com.portalblox.dto;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * Payload do PUT /produtos/{id}: não tem campo de quantidade —
- * o saldo só muda via PATCH /produtos/{id}/quantidade.
- */
 public class ProdutoAtualizacaoRequestDto {
 
 	@NotBlank
@@ -21,11 +18,29 @@ public class ProdutoAtualizacaoRequestDto {
 	@Size(max = 180)
 	private String nome;
 
-	@PositiveOrZero                            // opcional; a coluna aceita NULL
+	@NotNull
+	private Integer categoriaId;
+
+	@DecimalMin("0.000")
+	@Digits(integer = 7, fraction = 3)
+	private BigDecimal peso;
+
+	@Size(max = 60)
+	private String tamanho;
+
+	@Size(max = 500)
+	private String descricao;
+
+	@DecimalMin("0.000")
+	@Digits(integer = 12, fraction = 2)
 	private BigDecimal preco;
 
-	@NotNull                                   // RN-10: obrigatório; [] = sem categorias
-	private List<Integer> categoriaIds;
+	@Size(max = 120)
+	private String marca;
+
+	private Integer fornecedorId;
+
+	private List<@Size(max = 120) String> localizacoes;
 
 	public String getSku() { return sku; }
 
@@ -35,12 +50,36 @@ public class ProdutoAtualizacaoRequestDto {
 
 	public void setNome(String nome) { this.nome = nome; }
 
+	public Integer getCategoriaId() { return categoriaId; }
+
+	public void setCategoriaId(Integer categoriaId) { this.categoriaId = categoriaId; }
+
+	public BigDecimal getPeso() { return peso; }
+
+	public void setPeso(BigDecimal peso) { this.peso = peso; }
+
+	public String getTamanho() { return tamanho; }
+
+	public void setTamanho(String tamanho) { this.tamanho = tamanho; }
+
+	public String getDescricao() { return descricao; }
+
+	public void setDescricao(String descricao) { this.descricao = descricao; }
+
 	public BigDecimal getPreco() { return preco; }
 
 	public void setPreco(BigDecimal preco) { this.preco = preco; }
 
-	public List<Integer> getCategoriaIds() { return categoriaIds; }
+	public String getMarca() { return marca; }
 
-	public void setCategoriaIds(List<Integer> categoriaIds) { this.categoriaIds = categoriaIds; }
+	public void setMarca(String marca) { this.marca = marca; }
+
+	public Integer getFornecedorId() { return fornecedorId; }
+
+	public void setFornecedorId(Integer fornecedorId) { this.fornecedorId = fornecedorId; }
+
+	public List<String> getLocalizacoes() { return localizacoes; }
+
+	public void setLocalizacoes(List<String> localizacoes) { this.localizacoes = localizacoes; }
 
 }

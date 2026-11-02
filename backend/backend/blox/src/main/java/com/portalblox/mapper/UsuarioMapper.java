@@ -1,13 +1,14 @@
 package com.portalblox.mapper;
 
-import com.portalblox.dto.UsuarioRequestDto;
+import com.portalblox.dto.UsuarioAtualizacaoRequestDto;
+import com.portalblox.dto.UsuarioCriacaoRequestDto;
 import com.portalblox.dto.UsuarioResponseDto;
 import com.portalblox.entity.Usuario;
 import java.util.List;
 
 public class UsuarioMapper {
 
-	public static Usuario toEntity(UsuarioRequestDto dto) {
+	public static Usuario toEntity(UsuarioCriacaoRequestDto dto) {
 		if (dto == null) {
 			return null;
 		}
@@ -15,7 +16,17 @@ public class UsuarioMapper {
 		usuario.setNome(dto.getNome());
 		usuario.setEmail(dto.getEmail());
 		usuario.setSenha(dto.getSenha());
-		return usuario;                         // o perfil é associado pelo service
+		return usuario;
+	}
+
+	public static Usuario toEntity(UsuarioAtualizacaoRequestDto dto) {
+		if (dto == null) {
+			return null;
+		}
+		Usuario usuario = new Usuario();
+		usuario.setNome(dto.getNome());
+		usuario.setEmail(dto.getEmail());
+		return usuario;
 	}
 
 	public static UsuarioResponseDto toResponseDto(Usuario entity) {
@@ -33,7 +44,7 @@ public class UsuarioMapper {
 		perfilDto.setId(entity.getPerfilAcesso().getId());
 		perfilDto.setNome(entity.getPerfilAcesso().getNome());
 		dto.setPerfilAcesso(perfilDto);
-		return dto;                             // RN-07: a senha jamais é copiada
+		return dto;
 	}
 
 	public static List<UsuarioResponseDto> toResponseDto(List<Usuario> entities) {
