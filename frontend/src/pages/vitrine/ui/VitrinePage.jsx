@@ -2,16 +2,32 @@
 import estilos from './VitrinePage.module.css'
 import { Faixa, EstadoVazio, Skeleton, Card, Selo, Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha } from '@/shared/ui'
 import { PackageSearch, TriangleAlert, Check, ArrowLeft, Pencil, Search, X } from 'lucide-react'
+import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha, Modal, Gaveta, useToast } from '@/shared/ui'
+import { formatarQuantidade, formatarMoeda, formatarDataHora, formatarDataRelativa, normalizarTexto, nomeProduto } from '@/shared/lib'
+import { ArrowLeft, Pencil, Search, X } from 'lucide-react'
+
+import { http, obterMensagemErro } from '@/shared/api'
+import { useRequisicao } from '@/shared/lib'
 
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // Página de testes da Etapa 1. Cada exercício acrescenta uma <section>
 // com o componente novo em todos os estados pedidos no "Pronto quando".
+// Datas de exemplo para formatarDataRelativa (fora do componente: new Date() não é puro).
+const agora = new Date()
+const ontem = new Date(agora)
+ontem.setDate(agora.getDate() - 1)
+
 export function VitrinePage() {
 
   const [valorCampo, setValorCampo] = useState('')
   const [valorCampo2, setValorCampo2] = useState('')
+  const [modalAberto, setModalAberto] = useState(false)
+  const [gavetaAberta, setGavetaAberta] = useState(false)
+  const [painelAberto, setPainelAberto] = useState(false)
+  const toast = useToast()
+  const { dados, carregando, erro, recarregar } = useRequisicao(() => http.get('/produtos').then((r) => r.data));
 
   return (
     <main className={estilos.pagina}>
@@ -77,18 +93,108 @@ export function VitrinePage() {
         <div className={estilos.grupo}>
           <h3 className={estilos.tituloGrupo}>Campos</h3>
 
-            <CampoTexto rotulo="Nota fiscal ou fornecedor (opcional)" placeholder="Ex.: NF 12345 ou Distribuidora X" value={valorCampo} onChange={e => setValorCampo(e.target.value)} />
-            Você digitou: {valorCampo}
-            <CampoTexto rotulo="Nota fiscal ou fornecedor" value={valorCampo2} onChange={e => setValorCampo2(e.target.value)} />
-            Você digitou: {valorCampo2}
-            <CampoTexto rotulo="Quantidade recebida" obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
-            <CampoTexto rotulo="Quantidade recebida" erro='Informe um número inteiro maior que zero.' obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
-            <CampoTexto rotulo="Nome" value="Martelo" bloqueado motivoBloqueio="Vem do Bling" />
-            <CampoTexto rotulo="Qtd" value="10" bloqueado motivoBloqueio="Muda só por movimentação" />
-            <CampoAreaTexto rotulo="Observação (opcional)" />
-            <CampoAreaTexto rotulo="Justificativa" obrigatorio erro="Escreva uma justificativa com pelo menos 10 caracteres." />
-            <CampoSenha rotulo="Senha" />
+          <CampoTexto rotulo="Nota fiscal ou fornecedor (opcional)" placeholder="Ex.: NF 12345 ou Distribuidora X" value={valorCampo} onChange={e => setValorCampo(e.target.value)} />
+          Você digitou: {valorCampo}
+          <CampoTexto rotulo="Nota fiscal ou fornecedor" value={valorCampo2} onChange={e => setValorCampo2(e.target.value)} />
+          Você digitou: {valorCampo2}
+          <CampoTexto rotulo="Quantidade recebida" obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
+          <CampoTexto rotulo="Quantidade recebida" erro='Informe um número inteiro maior que zero.' obrigatorio={true} tipo='number' ajuda="Informe a quantidade que você contou, na mesma unidade do produto (un.)." />
+          <CampoTexto rotulo="Nome" value="Martelo" bloqueado motivoBloqueio="Vem do Bling" />
+          <CampoTexto rotulo="Qtd" value="10" bloqueado motivoBloqueio="Muda só por movimentação" />
+          <CampoAreaTexto rotulo="Observação (opcional)" />
+          <CampoAreaTexto rotulo="Justificativa" obrigatorio erro="Escreva uma justificativa com pelo menos 10 caracteres." />
+          <CampoSenha rotulo="Senha" />
 
+        </div>
+
+      </section>
+
+      <section className={estilos.secao} aria-labelledby="secao-modal">
+        <h2 id="secao-modal" className={estilos.tituloSecao}>
+          Modal
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>Modais</h3>
+          {<Botao onClick={() => setModalAberto(true)}>Abrir modal</Botao>}
+          <Modal aberto={modalAberto} aoFechar={() => setModalAberto(false)} titulo="Inativar produto?" acoes={<><Botao variante="secundario" onClick={() => setModalAberto(false)}>Cancelar</Botao> <Botao variante="destrutivo" onClick={() => setModalAberto(false)}>Inativar produto</Botao></>}>
+            <p>O produto 1543 – Fita veda-rosca 18 mm deixará de aparecer nas buscas.</p>
+          </Modal>
+        </div>
+
+      </section>
+
+      <section className={estilos.secao} aria-labelledby="secao-gaveta">
+        <h2 id="secao-gaveta" className={estilos.tituloSecao}>
+          Gaveta
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>Esquerda e direita</h3>
+          <div className={estilos.linha}>
+            <Botao variante="secundario" onClick={() => setGavetaAberta(true)}>Abrir menu</Botao>
+            <Botao variante="secundario" onClick={() => setPainelAberto(true)}>Abrir painel</Botao>
+          </div>
+          <Gaveta aberto={gavetaAberta} aoFechar={() => setGavetaAberta(false)} titulo="Menu">
+            <p>Itens do menu lateral (TL02).</p>
+          </Gaveta>
+          <Gaveta aberto={painelAberto} aoFechar={() => setPainelAberto(false)} titulo="Usuário" lado="direita">
+            <p>Painel lateral de Usuários (TL18).</p>
+          </Gaveta>
+        </div>
+
+      </section>
+
+      <section className={estilos.secao} aria-labelledby="secao-toast">
+        <h2 id="secao-toast" className={estilos.tituloSecao}>
+          Toast
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>Sucesso e erro (somem em 5 s)</h3>
+          <div className={estilos.linha}>
+            <Botao variante="secundario" onClick={() => toast.sucesso('Entrada registrada. Quantidade agora: 12 un.')}>Toast de sucesso</Botao>
+            <Botao variante="secundario" onClick={() => toast.erro('Não foi possível registrar. Verifique a conexão e tente de novo.')}>Toast de erro</Botao>
+          </div>
+        </div>
+
+      </section>
+
+      <section className={estilos.secao} aria-labelledby="secao-formatadores">
+        <h2 id="secao-formatadores" className={estilos.tituloSecao}>
+          Formatadores
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>shared/lib</h3>
+          <ul>
+            <li>formatarQuantidade(15) → {formatarQuantidade(15)}</li>
+            <li>formatarQuantidade(5, {'{ sinal: true }'}) → {formatarQuantidade(5, { sinal: true })}</li>
+            <li>formatarQuantidade(-3, {'{ sinal: true }'}) → {formatarQuantidade(-3, { sinal: true })}</li>
+            <li>formatarMoeda(34.9) → {formatarMoeda(34.9)}</li>
+            <li>formatarMoeda(null) → {formatarMoeda(null)}</li>
+            <li>formatarDataHora('2026-10-31T14:32:00') → {formatarDataHora('2026-10-31T14:32:00')}</li>
+            <li>formatarDataRelativa(hoje 10:15) → {formatarDataRelativa(new Date(agora).setHours(10, 15))}</li>
+            <li>formatarDataRelativa(ontem 16:22) → {formatarDataRelativa(new Date(ontem).setHours(16, 22))}</li>
+            <li>formatarDataRelativa('2026-10-28T09:00:00') → {formatarDataRelativa('2026-10-28T09:00:00')}</li>
+            <li>normalizarTexto('Espátula') → {normalizarTexto('Espátula')}</li>
+            <li>nomeProduto(...) → {nomeProduto({ sku: 1020, nome: 'Parafuso sextavado 6 mm' })}</li>
+          </ul>
+        </div>
+
+      </section>
+
+      <section className={estilos.secao} aria-labelledby="secao-requisicao">
+        <h2 id="secao-requisicao" className={estilos.tituloSecao}>
+          Requisição
+        </h2>
+
+        <div className={estilos.grupo}>
+          <h3 className={estilos.tituloGrupo}>shared/lib</h3>
+          {carregando ? <p>Carregando...</p> : erro ? <p>Erro: {obterMensagemErro(erro)}</p> : <p>{dados.length} produtos recebidos do backend.</p>}
+          <div className={estilos.linha}>
+            <Botao variante="secundario" onClick={recarregar}>Recarregar</Botao>
+          </div>
         </div>
         </section>
         <section className={estilos.secao} aria-labelledby='secao-selo'>
@@ -171,6 +277,7 @@ export function VitrinePage() {
             <Faixa>Importação concluída. 120 produtos atualizados.</Faixa>
             </div>
         </section>
+      </section>
     </main>
   )
 }

@@ -1,0 +1,40 @@
+.modal {
+    margin: auto;
+    border: none;
+    background-color: var(--cor-branco);
+    box-shadow: var(--sombra-sobreposicao);
+    border-radius: var(--raio-12);
+    width: calc(100% - 2 * var(--espaco-16));
+    max-width: 640px;
+    padding: 0;
+}
+
+.modal::backdrop {
+    background-color: rgba(0,0,0,.5);
+}
+
+.conteudo {
+    padding: var(--espaco-24);
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-16);
+}
+
+.cabecalho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titulo {
+    font-size: var(--texto-h2-tamanho);
+    font-weight: var(--texto-h2-peso);
+    line-height: var(--texto-h2-altura);
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--espaco-12);
+    align-items: center;
+}
