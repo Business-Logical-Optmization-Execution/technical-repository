@@ -1,3 +1,13 @@
+import { ROTAS } from '@/shared/config'
+import { Botao, TituloPagina } from '@/shared/ui'
+
 export function UsuariosPage() {
-  return <h1>Usuários</h1>
+  return (
+    <TituloPagina
+      titulo="Usuários" 
+      admin 
+      voltarPara={ROTAS.inicio} 
+      acoes={<Botao>Cadastrar usuário</Botao>}
+    />
+  )
 }

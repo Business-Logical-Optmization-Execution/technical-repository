@@ -1,3 +1,12 @@
+import { ROTAS } from '@/shared/config'
+import { TituloPagina } from '@/shared/ui'
+
 export function HistoricoPage() {
-  return <h1>Histórico</h1>
+  return (
+    <TituloPagina
+      titulo="Histórico"
+      admin
+      voltarPara={ROTAS.inicio}
+    />
+  )
 }

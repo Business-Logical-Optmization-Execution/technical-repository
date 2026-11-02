@@ -1,0 +1,14 @@
+.titulo{
+    font-size: var(--texto-h1-tamanho);
+    font-weight: var(--texto-h1-peso);
+    line-height: var(--texto-h1-altura);
+}
+.linha{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espaco-12);
+}
+.acoes{
+    margin-left: auto;
+}

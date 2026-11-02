@@ -1,3 +1,12 @@
+import { ROTAS } from '@/shared/config'
+import { TituloPagina } from '@/shared/ui'
+
 export function IntegracaoBlingPage() {
-  return <h1>Integração com o Bling</h1>
+  return (
+    <TituloPagina
+      titulo="Integração com o Bling"
+      admin
+      voltarPara={ROTAS.inicio}
+    />
+  )
 }
