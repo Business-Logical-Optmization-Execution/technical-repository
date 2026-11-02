@@ -1,3 +1,5 @@
+import { TituloPagina } from '@/shared/ui'
+
 export function InicioPage() {
-  return <h1>Início</h1>
+  return <TituloPagina titulo="Início" />
 }

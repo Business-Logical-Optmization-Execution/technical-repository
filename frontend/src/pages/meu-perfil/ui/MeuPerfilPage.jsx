@@ -1,3 +1,11 @@
+import { ROTAS } from '@/shared/config'
+import { TituloPagina } from '@/shared/ui'
+
 export function MeuPerfilPage() {
-  return <h1>Meu perfil</h1>
+  return (
+    <TituloPagina
+      titulo="Meu perfil"
+      voltarPara={ROTAS.inicio}
+    />
+  )
 }

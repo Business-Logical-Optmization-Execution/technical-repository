@@ -1,3 +1,12 @@
+import { ROTAS } from '@/shared/config'
+import { TituloPagina } from '@/shared/ui'
+
 export function ImportarProdutosPage() {
-  return <h1>Importar produtos</h1>
+  return (
+    <TituloPagina
+      titulo="Importar produtos do Bling"
+      admin
+      voltarPara={ROTAS.inicio}
+    />
+  )
 }

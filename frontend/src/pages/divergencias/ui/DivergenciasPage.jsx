@@ -1,3 +1,12 @@
+import { ROTAS } from '@/shared/config'
+import { TituloPagina } from '@/shared/ui'
+
 export function DivergenciasPage() {
-  return <h1>Divergências e negativos</h1>
+  return (
+    <TituloPagina
+      titulo="Divergências e negativos"
+      admin
+      voltarPara={ROTAS.inicio}
+    />
+  )
 }

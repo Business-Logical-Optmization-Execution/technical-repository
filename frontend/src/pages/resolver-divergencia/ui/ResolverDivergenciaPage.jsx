@@ -1,3 +1,12 @@
+import { ROTAS } from '@/shared/config'
+import { TituloPagina } from '@/shared/ui'
+
 export function ResolverDivergenciaPage() {
-  return <h1>Resolver divergência</h1>
+  return (
+    <TituloPagina
+      titulo="Resolver divergência"
+      admin
+      voltarPara={ROTAS.divergencias}
+    />
+  )
 }

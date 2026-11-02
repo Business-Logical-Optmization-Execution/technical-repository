@@ -1,3 +1,14 @@
+import { useParams } from 'react-router-dom'
+import { ROTAS } from '@/shared/config'
+import { TituloPagina } from '@/shared/ui'
+
 export function RegistrarSaidaPage() {
-  return <h1>Registrar saída</h1>
+  const { id } = useParams()
+
+  return (
+    <TituloPagina
+      titulo="Registrar saída"
+      voltarPara={ROTAS.produto(id)}
+    />
+  )
 }

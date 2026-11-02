@@ -1,0 +1,1 @@
+export { TituloPagina } from './TituloPagina'
