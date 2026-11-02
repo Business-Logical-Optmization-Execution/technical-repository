@@ -1,0 +1,26 @@
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-24);
+}
+
+.erro {
+    color: var(--cor-erro);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--espaco-4);
+}
+
+.acao {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.ajuda {
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
