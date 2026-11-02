@@ -1,10 +1,13 @@
 package com.portalblox.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -22,13 +25,37 @@ public class Produto {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
+	@Column(nullable = false, length = 60, unique = true)
 	private String sku;
 
+	@Column(nullable = false, length = 180)
 	private String nome;
 
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "categoria_id", nullable = false)
+	private Categoria categoria;
+
+	@ManyToOne
+	@JoinColumn(name = "fornecedor_id")
+	private Fornecedor fornecedor;
+
+	@Column(nullable = false)
 	private Integer quantidade;
 
+	@Column(precision = 14, scale = 2)
 	private BigDecimal preco;
+
+	@Column(precision = 10, scale = 3)
+	private BigDecimal peso;
+
+	@Column(length = 60)
+	private String tamanho;
+
+	@Column(length = 500)
+	private String descricao;
+
+	@Column(length = 120)
+	private String marca;
 
 	private Boolean ativo;
 
@@ -37,9 +64,7 @@ public class Produto {
 	private LocalDateTime atualizadoEm;
 
 	@OneToMany(mappedBy = "produto", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ProdutoCategoria> categorias = new ArrayList<>();
-
-	// fornecedores_id: aceita NULL no script; fora da v1, não mapear
+	private List<ProdutoLocalizacao> localizacoes = new ArrayList<>();
 
 	@PrePersist
 	public void aoCriar() {
@@ -65,6 +90,14 @@ public class Produto {
 
 	public void setNome(String nome) { this.nome = nome; }
 
+	public Categoria getCategoria() { return categoria; }
+
+	public void setCategoria(Categoria categoria) { this.categoria = categoria; }
+
+	public Fornecedor getFornecedor() { return fornecedor; }
+
+	public void setFornecedor(Fornecedor fornecedor) { this.fornecedor = fornecedor; }
+
 	public Integer getQuantidade() { return quantidade; }
 
 	public void setQuantidade(Integer quantidade) { this.quantidade = quantidade; }
@@ -72,6 +105,22 @@ public class Produto {
 	public BigDecimal getPreco() { return preco; }
 
 	public void setPreco(BigDecimal preco) { this.preco = preco; }
+
+	public BigDecimal getPeso() { return peso; }
+
+	public void setPeso(BigDecimal peso) { this.peso = peso; }
+
+	public String getTamanho() { return tamanho; }
+
+	public void setTamanho(String tamanho) { this.tamanho = tamanho; }
+
+	public String getDescricao() { return descricao; }
+
+	public void setDescricao(String descricao) { this.descricao = descricao; }
+
+	public String getMarca() { return marca; }
+
+	public void setMarca(String marca) { this.marca = marca; }
 
 	public Boolean getAtivo() { return ativo; }
 
@@ -85,8 +134,8 @@ public class Produto {
 
 	public void setAtualizadoEm(LocalDateTime atualizadoEm) { this.atualizadoEm = atualizadoEm; }
 
-	public List<ProdutoCategoria> getCategorias() { return categorias; }
+	public List<ProdutoLocalizacao> getLocalizacoes() { return localizacoes; }
 
-	public void setCategorias(List<ProdutoCategoria> categorias) { this.categorias = categorias; }
+	public void setLocalizacoes(List<ProdutoLocalizacao> localizacoes) { this.localizacoes = localizacoes; }
 
 }

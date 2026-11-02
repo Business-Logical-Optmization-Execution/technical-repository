@@ -3,7 +3,9 @@
 # apenas na PRIMEIRA subida com o volume vazio.
 FROM mysql:8.4
 
-COPY script-banco-v2.sql /docker-entrypoint-initdb.d/
+COPY script-banco-v3.sql /docker-entrypoint-initdb.d/
+# Dados de demonstracao (idempotentes) para testar a API localmente.
+COPY zz-seed-demo.sql /docker-entrypoint-initdb.d/
 
 # Saúde do container: usada pelo compose (depends_on: service_healthy)
 # e visível também em "docker run" isolado.
