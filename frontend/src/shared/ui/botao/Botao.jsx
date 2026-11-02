@@ -8,7 +8,7 @@ export function Botao({variante = 'primario', carregando, textoCarregando,childr
     return (
         <button type={resto.type || 'button'} {...resto} className={estilos.botao + ' ' + estilos[variante] + ' ' + (larguraTotal ? estilos.larguraTotal : '') } disabled={estaDesabilitado} aria-busy={carregando}>
             {icone && !carregando && <Icone aria-hidden="true" size={20}/>}
-            {carregando ? textoCarregando : children}
+            {carregando ? textoCarregando ?? children : children}
         </button>
     )
 };

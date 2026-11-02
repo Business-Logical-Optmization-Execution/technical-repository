@@ -1,6 +1,6 @@
 import estilos from './Card.module.css'
 
-export function Card({ children, clicavel, como, ...resto }) {
+export function Card({ children, clicavel, como = 'div', ...resto }) {
 
     const Elemento = clicavel ? como : 'div'
 

@@ -1,10 +1,8 @@
 // Importa o CSS Module como um objeto: estilos.pagina, estilos.secao...
 import estilos from './VitrinePage.module.css'
-import { Faixa, EstadoVazio, Skeleton, Card, Selo, Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha } from '@/shared/ui'
+import { Faixa, EstadoVazio, Skeleton, Card, Selo, Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha, Modal, Gaveta, useToast } from '@/shared/ui'
 import { PackageSearch, TriangleAlert, Check, ArrowLeft, Pencil, Search, X } from 'lucide-react'
-import { Botao, BotaoIcone, CampoTexto, CampoAreaTexto, CampoSenha, Modal, Gaveta, useToast } from '@/shared/ui'
 import { formatarQuantidade, formatarMoeda, formatarDataHora, formatarDataRelativa, normalizarTexto, nomeProduto } from '@/shared/lib'
-import { ArrowLeft, Pencil, Search, X } from 'lucide-react'
 
 import { http, obterMensagemErro } from '@/shared/api'
 import { useRequisicao } from '@/shared/lib'
@@ -277,7 +275,6 @@ export function VitrinePage() {
             <Faixa>Importação concluída. 120 produtos atualizados.</Faixa>
             </div>
         </section>
-      </section>
     </main>
   )
 }
