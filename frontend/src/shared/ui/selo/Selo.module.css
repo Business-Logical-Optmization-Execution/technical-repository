@@ -9,6 +9,8 @@
     padding: var(--espaco-4) var(--espaco-8);
     border: 1px solid transparent;
     border-radius: var(--raio-8);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .admin{
     background-color: var(--cor-destaque);

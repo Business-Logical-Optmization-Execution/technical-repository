@@ -1,0 +1,25 @@
+.campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-8);
+}
+
+.rotulo {
+    font-size: var(--texto-rotulo-tamanho);
+    font-weight: var(--texto-rotulo-peso);
+    line-height: var(--texto-rotulo-altura);
+    color: var(--cor-texto);
+    text-transform: uppercase;
+}
+
+.valor {
+    flex: 1;
+    min-height: var(--area-clicavel-min);
+    display: flex;
+    align-items: center;
+    padding: var(--espaco-12) var(--espaco-16);
+    background-color: var(--cor-fundo);
+    border: 1px solid var(--cor-divisoria);
+    border-radius: var(--raio-8);
+    color: var(--cor-texto);
+}

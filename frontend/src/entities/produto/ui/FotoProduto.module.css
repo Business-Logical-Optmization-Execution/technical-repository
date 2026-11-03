@@ -1,0 +1,14 @@
+.foto {
+    display: block;
+    width: 100%;
+    border-radius: var(--raio-8);
+    object-fit: cover;
+}
+
+.vazia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--cor-primaria-suave);
+    color: var(--cor-primaria);
+}

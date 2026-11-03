@@ -8,6 +8,7 @@
     line-height: var(--texto-botao-altura);
 
     cursor: pointer;
+    text-decoration: none;
 
     display: inline-flex;
     align-items: center;

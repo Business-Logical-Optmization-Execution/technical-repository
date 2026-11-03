@@ -1,0 +1,38 @@
+.conteudo {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: var(--espaco-16);
+}
+
+.conteudoSemFoto {
+    display: block;
+}
+
+.foto {
+    align-self: start;
+    aspect-ratio: 3 / 4;
+}
+
+.dados {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-4);
+}
+
+.nome {
+    font-size: var(--texto-h3-tamanho);
+    font-weight: var(--texto-h3-peso);
+    line-height: var(--texto-h3-altura);
+}
+
+.codigo {
+    font-family: var(--fonte-codigo);
+    font-size: var(--texto-codigo-tamanho);
+    font-weight: var(--texto-codigo-peso);
+    line-height: var(--texto-codigo-altura);
+}
+
+.local {
+    color: var(--cor-texto-secundario);
+}

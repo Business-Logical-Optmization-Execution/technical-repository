@@ -1,0 +1,57 @@
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-4);
+}
+
+.caixa {
+    position: relative;
+}
+
+.entrada {
+    width: 100%;
+    height: var(--altura-busca);
+    padding: 0 var(--espaco-16);
+    background-color: var(--cor-branco);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-8);
+    color: var(--cor-texto);
+    font-size: var(--texto-base-tamanho);
+    line-height: var(--texto-base-altura);
+
+    &::placeholder {
+        color: var(--cor-texto-secundario);
+    }
+}
+
+.comIcone {
+    padding-left: var(--espaco-48);
+}
+
+.comBotao {
+    padding-right: calc(var(--area-clicavel-min) + var(--espaco-8));
+}
+
+.icone {
+    position: absolute;
+    left: var(--espaco-16);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--cor-texto-secundario);
+    pointer-events: none;
+}
+
+.acao {
+    position: absolute;
+    right: var(--espaco-4);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+}
+
+.ajuda {
+    min-height: calc(var(--texto-legenda-tamanho) * var(--texto-legenda-altura));
+    color: var(--cor-erro);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
