@@ -1,0 +1,59 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-16);
+    width: 100%;
+    max-width: var(--largura-coluna-busca);
+    margin-inline: auto;
+}
+
+.barra {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--espaco-12);
+}
+
+.voltar {
+    margin-top: calc((var(--altura-busca) - var(--area-clicavel-min)) / 2);
+}
+
+.campo {
+    flex: 1;
+}
+
+.contagem {
+    display: flex;
+    gap: var(--espaco-16);
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
+
+.resultados {
+    font-weight: var(--texto-rotulo-peso);
+    text-transform: uppercase;
+}
+
+.grade {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--espaco-24);
+}
+
+.mais {
+    display: flex;
+    justify-content: center;
+}
+
+.erro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-16);
+}
+
+@media (max-width: 1023px) {
+    .grade {
+        grid-template-columns: 1fr;
+    }
+}

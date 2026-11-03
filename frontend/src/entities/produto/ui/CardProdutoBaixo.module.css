@@ -1,0 +1,32 @@
+.conteudo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-16);
+}
+
+.foto {
+    height: var(--foto-card-baixo-altura);
+}
+
+.rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--espaco-12);
+}
+
+.textos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-4);
+}
+
+.nome {
+    font-size: var(--texto-h3-tamanho);
+    font-weight: var(--texto-h3-peso);
+    line-height: var(--texto-h3-altura);
+}
+
+.local {
+    color: var(--cor-texto-secundario);
+}

@@ -732,7 +732,7 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 - [ ] `api/produtoApi.js`: `listarProdutos()` → `GET /produtos`; `buscarProduto(id)` → `GET /produtos/{id}`.
 - [ ] `model/situacao.js`: `calcularSituacao(produto)` → `'ZERADO'` se `quantidade <= 0`; `'BAIXO'` se `quantidade <= estoqueMinimoEfetivo`; senão `'OK'`. `ordenarPorCriticidade(lista)` → zerados primeiro, depois menor `quantidade / estoqueMinimoEfetivo`. 🤝 O `estoqueMinimoEfetivo` ainda não existe no back (ponto D3 da seção 11.0).
 - [ ] `lib/buscarPorTermo.js`: `filtrarProdutos(lista, termo)` → compara `normalizarTexto` com nome, sku e **cada item de `localizacoes`** (lista de textos, pode vir vazia); todas as palavras do termo precisam aparecer ("parafuso 6" acha "Parafuso sextavado 6 mm").
-- [ ] `ui/FotoProduto` (imagem com `alt` = nome; sem foto, inclusive com `fotoUrl` ausente → bloco `--cor-primaria-suave` com ícone `Image`), `ui/SeloSituacao` ("⚠ Qtd 2" alerta; "Qtd 0" erro; nada quando OK), `ui/CardProdutoBaixo` (TL03), `ui/CardProdutoResultado` (TL04: "ID 1020" em `texto-codigo`, "Qtd 2 · R$ 34,90", "Local C3-P2" com as localizações separadas por " · ", ou "Sem localização" com a lista vazia).
+- [ ] `ui/FotoProduto` (imagem com `alt` = nome; sem foto, inclusive com `fotoUrl` ausente → bloco `--cor-primaria-suave` com ícone `Image`), `ui/SeloSituacao` ("⚠ Qtd 2" alerta; "Qtd 0" erro; nada quando OK; com `mostrarNome`, "Baixo" e "Zerado", usado na TL04 e na TL05), `ui/CardProdutoBaixo` (TL03), `ui/CardProdutoResultado` (TL04: "ID 1020" em `texto-codigo`, "Qtd 2 · R$ 34,90", "Local C3-P2" com as localizações separadas por " · ", ou "Sem localização" com a lista vazia).
 - [ ] Os cards são `Link` para `/produtos/{id}` e aceitam `exibirFoto`.
 
 **Pronto quando:** a `/vitrine` lista os produtos do mock com os dois tipos de card, e Serrote (0 un.) aparece com selo de erro.
@@ -761,7 +761,7 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 - [ ] Ler `exibirFotos` de `GET /configuracoes` (entidade `configuracao`, `buscarConfiguracoes()`) e passar aos cards. Enquanto o Bloco C não chega, a entidade só tem essa função.
 - [ ] Espaço reservado (comentário) para o widget "Avisos de falta" (exercício 4.1).
 
-**Pronto quando:** o Início mostra Serrote e Fita veda-rosca (0 un.) primeiro, depois Martelo e Chave de fenda; o cursor já está na busca.
+**Pronto quando:** o Início mostra Serrote e Fita veda-rosca (0 un.) primeiro, depois Martelo, Parafuso sextavado e Chave de fenda; o cursor já está na busca.
 
 ### Exercício 2.8 — Página Busca (TL04)
 

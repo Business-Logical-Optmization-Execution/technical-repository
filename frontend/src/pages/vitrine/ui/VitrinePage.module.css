@@ -58,3 +58,15 @@
   align-items: center;
   gap: var(--espaco-8);
 }
+
+.grade3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--espaco-16);
+}
+
+.grade2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--espaco-16);
+}

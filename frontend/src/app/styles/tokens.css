@@ -84,4 +84,9 @@
   --altura-botao-secundario: 44px;
   --altura-busca: 56px;
   --altura-cabecalho: 80px; /* barra de 76 px + faixa de 4 px */
+  --largura-coluna-busca: 1000px;
+  --largura-coluna-detalhe: 1024px;
+  --foto-card-baixo-altura: 144px;
+  --foto-card-resultado-largura: 120px;
+  --foto-card-resultado-altura: 196px;
 }
