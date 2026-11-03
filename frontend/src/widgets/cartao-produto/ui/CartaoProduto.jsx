@@ -1,4 +1,4 @@
-import { LockKeyhole, Pencil } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { useSessao } from '@/entities/sessao'
 import { FotoProduto, SeloSituacao, formatarLocalizacoes } from '@/entities/produto'
 import { Botao, Card } from '@/shared/ui'
@@ -18,27 +18,27 @@ function textoEstoqueMinimo(produto) {
 export function CartaoProduto({ produto }) {
 
     const { ehAdmin } = useSessao();
+    const [numero, unidade] = formatarQuantidade(produto.quantidade).split(' ');
 
     return (
         <Card>
             <div className={estilos.corpo}>
                 <FotoProduto produto={produto} className={estilos.foto} />
                 <dl className={estilos.campos}>
-                    <CampoLeitura rotulo="Nome" className={estilos.inteiro}>
+                    <CampoLeitura rotulo="Nome" bloqueado className={estilos.inteiro}>
                         {produto.nome}
                     </CampoLeitura>
-                    <CampoLeitura rotulo="ID" className={estilos.terco}>
+                    <CampoLeitura rotulo="ID" bloqueado className={estilos.terco}>
                         <span className={estilos.codigo}>{produto.sku}</span>
                     </CampoLeitura>
-                    <CampoLeitura rotulo="Qtd" className={estilos.terco}>
+                    <CampoLeitura rotulo="Qtd" bloqueado className={estilos.terco}>
                         <span className={estilos.quantidade}>
-                            <LockKeyhole aria-hidden="true" size={20} className={estilos.cadeado} />
-                            <span>{formatarQuantidade(produto.quantidade)}</span>
+                            <span><span className={estilos.saldo}>{numero}</span> {unidade}</span>
                             <span className="visualmente-oculto">(muda só por movimentação)</span>
                             <SeloSituacao produto={produto} mostrarNome />
                         </span>
                     </CampoLeitura>
-                    <CampoLeitura rotulo="Valor base" className={estilos.terco}>
+                    <CampoLeitura rotulo="Valor base" bloqueado className={estilos.terco}>
                         {formatarMoeda(produto.preco)}
                     </CampoLeitura>
                     <CampoLeitura rotulo="Descrição" className={estilos.inteiro}>

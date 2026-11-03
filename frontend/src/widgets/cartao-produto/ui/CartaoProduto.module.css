@@ -6,7 +6,7 @@
 
 .foto {
     align-self: start;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 7 / 9;
 }
 
 .campos {
@@ -41,8 +41,10 @@
     gap: var(--espaco-8);
 }
 
-.cadeado {
-    color: var(--cor-texto-secundario);
+.saldo {
+    font-size: var(--texto-saldo-tamanho);
+    font-weight: var(--texto-saldo-peso);
+    line-height: var(--texto-saldo-altura);
 }
 
 .rodape {

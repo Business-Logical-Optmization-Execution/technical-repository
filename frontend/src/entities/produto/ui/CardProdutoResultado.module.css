@@ -1,7 +1,7 @@
 .conteudo {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: var(--espaco-16);
+    grid-template-columns: var(--foto-card-resultado-largura) 1fr;
+    gap: var(--espaco-24);
 }
 
 .conteudoSemFoto {
@@ -9,15 +9,14 @@
 }
 
 .foto {
-    align-self: start;
-    aspect-ratio: 3 / 4;
+    height: var(--foto-card-resultado-altura);
 }
 
 .dados {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--espaco-4);
+    gap: var(--espaco-12);
 }
 
 .nome {

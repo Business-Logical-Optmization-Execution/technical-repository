@@ -4,14 +4,21 @@
     gap: var(--espaco-4);
 }
 
+.linha {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-12);
+}
+
 .caixa {
     position: relative;
+    flex: 1;
 }
 
 .entrada {
     width: 100%;
     height: var(--altura-busca);
-    padding: 0 var(--espaco-16);
+    padding: 0 var(--espaco-16) 0 var(--espaco-48);
     background-color: var(--cor-branco);
     border: 1px solid var(--cor-borda);
     border-radius: var(--raio-8);
@@ -24,14 +31,6 @@
     }
 }
 
-.comIcone {
-    padding-left: var(--espaco-48);
-}
-
-.comBotao {
-    padding-right: calc(var(--area-clicavel-min) + var(--espaco-8));
-}
-
 .icone {
     position: absolute;
     left: var(--espaco-16);
@@ -39,14 +38,6 @@
     transform: translateY(-50%);
     color: var(--cor-texto-secundario);
     pointer-events: none;
-}
-
-.acao {
-    position: absolute;
-    right: var(--espaco-4);
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
 }
 
 .ajuda {

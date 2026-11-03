@@ -1,0 +1,28 @@
+.abas {
+    display: flex;
+    gap: var(--espaco-24);
+    border-bottom: 1px solid var(--cor-divisoria);
+}
+
+.aba {
+    min-height: var(--area-clicavel-min);
+    padding: var(--espaco-12) var(--espaco-16);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-base-tamanho);
+    line-height: var(--texto-base-altura);
+    cursor: pointer;
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+.ativa {
+    border-bottom-color: var(--cor-primaria);
+    color: var(--cor-primaria);
+    font-weight: var(--texto-rotulo-peso);
+}

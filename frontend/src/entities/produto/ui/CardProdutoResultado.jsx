@@ -16,13 +16,13 @@ export function CardProdutoResultado({ produto, exibirFoto = true }) {
             <div className={exibirFoto ? estilos.conteudo : estilos.conteudoSemFoto}>
                 {exibirFoto && <FotoProduto produto={produto} className={estilos.foto} />}
                 <div className={estilos.dados}>
-                    <h3 className={estilos.nome}>{produto.nome}</h3>
                     <p>ID <span className={estilos.codigo}>{produto.sku}</span></p>
+                    <h3 className={estilos.nome}>{produto.nome}</h3>
                     <p>Qtd {produto.quantidade} · {formatarMoeda(produto.preco)}</p>
                     <p className={estilos.local}>
                         {produto.localizacoes?.length ? 'Local ' : ''}{formatarLocalizacoes(produto)}
                     </p>
-                    <SeloSituacao produto={produto} />
+                    <SeloSituacao produto={produto} mostrarNome />
                 </div>
             </div>
         </Card>
