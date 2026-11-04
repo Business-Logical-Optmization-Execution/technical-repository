@@ -902,7 +902,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 - [ ] `TituloPagina` "Histórico" + ADMIN.
 - [ ] Filtros em linha: Produto (select com produtos), Usuário (select com usuários), Período (Hoje · Últimos 7 dias · Últimos 30 dias · Tudo → vira `de`/`ate`), Tipo (Entrada/Saída/Ajuste). Cada mudança atualiza a URL.
 - [ ] Lista: avatar + frase + "data · hora" à direita. Frases (`fraseHistorico`): "Ronaldo adicionou +10 un. de Martelo" · "Valdir removeu −1 un. de Serrote (avaria)" · "Márcia ajustou Martelo para 6 un.". Nome do produto é `Link` sublinhado para o Detalhe.
-- [ ] `fraseHistorico` também cobre `SALDO_INICIAL` ("Saldo inicial de 10 un. de Martelo") e `ESTORNO` ("Ronaldo estornou −1 un. de Serrote"), que vêm do back. O "(avaria)" da frase de saída é o rótulo de `motivo`. O filtro não oferece Estorno: o back responde 400 para esse tipo.
+- [ ] `fraseHistorico` também cobre `SALDO_INICIAL` ("Carlos cadastrou Martelo", como no brief e no Figma) e `ESTORNO` ("Ronaldo estornou −1 un. de Serrote"), que vêm do back. O "(avaria)" da frase de saída é o rótulo de `motivo`. O filtro não oferece Estorno: o back responde 400 para esse tipo.
 - [ ] 25 por vez; botão "Carregar mais" pede `limite=50`, `75`... e some quando vier menos que o pedido.
 - [ ] Vazio: "Nenhuma movimentação encontrada.".
 

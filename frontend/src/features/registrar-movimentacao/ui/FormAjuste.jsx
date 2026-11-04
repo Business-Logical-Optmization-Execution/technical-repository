@@ -76,11 +76,8 @@ export function FormAjuste({ produto, aoConcluir, aoCancelar }) {
     return (
         <form className={estilos.formulario} noValidate onSubmit={aoEnviar}>
             <ResumoProduto produto={produto} mostrarQuantidade={false} />
-            <p className={estilos.noSistema}>
-                Quantidade no sistema:{' '}
-                <span className={produto.quantidade < 0 ? estilos.negativa : undefined}>
-                    {formatarQuantidade(produto.quantidade)}
-                </span>
+            <p className={estilos.noSistema + (produto.quantidade < 0 ? ' ' + estilos.negativa : '')}>
+                Quantidade no sistema: {formatarQuantidade(produto.quantidade)}
             </p>
             <CampoTexto
                 rotulo="Quantidade contada na prateleira"

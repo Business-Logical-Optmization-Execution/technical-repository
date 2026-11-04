@@ -32,13 +32,14 @@
 
 .noSistema {
     font-size: var(--texto-base-tamanho);
+    font-weight: var(--texto-rotulo-peso);
     line-height: var(--texto-base-altura);
 }
 
 .diferenca {
-    font-size: var(--texto-h3-tamanho);
-    font-weight: var(--texto-h3-peso);
-    line-height: var(--texto-h3-altura);
+    font-size: var(--texto-saldo-tamanho);
+    font-weight: var(--texto-saldo-peso);
+    line-height: var(--texto-saldo-altura);
 }
 
 .positiva {

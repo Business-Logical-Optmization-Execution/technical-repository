@@ -26,7 +26,7 @@
     display: flex;
     align-items: center;
     gap: var(--espaco-12);
-    min-height: var(--area-clicavel-min);
+    min-height: var(--altura-botao-principal);
     padding: var(--espaco-8) var(--espaco-16);
     background-color: var(--cor-branco);
     border: 1px solid var(--cor-borda);
@@ -36,6 +36,9 @@
     cursor: pointer;
 
     & input {
+        width: calc(var(--espaco-16) + var(--espaco-4));
+        height: calc(var(--espaco-16) + var(--espaco-4));
+        margin: 0;
         accent-color: var(--cor-primaria);
     }
 
