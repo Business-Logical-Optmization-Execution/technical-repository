@@ -1,14 +1,6 @@
-import { useParams } from 'react-router-dom'
-import { ROTAS } from '@/shared/config'
-import { TituloPagina } from '@/shared/ui'
+import { FormSaida } from '@/features/registrar-movimentacao'
+import { TelaMovimentacao } from '@/widgets/tela-movimentacao'
 
 export function RegistrarSaidaPage() {
-  const { id } = useParams()
-
-  return (
-    <TituloPagina
-      titulo="Registrar saída"
-      voltarPara={ROTAS.produto(id)}
-    />
-  )
+  return <TelaMovimentacao titulo="Registrar saída" Formulario={FormSaida} />
 }

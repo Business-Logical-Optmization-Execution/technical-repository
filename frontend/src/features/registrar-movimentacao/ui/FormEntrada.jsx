@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { obterErrosDeCampo } from '@/shared/api'
-import { Botao, CampoAreaTexto, CampoTexto, useToast } from '@/shared/ui'
-import { fraseSucesso } from '@/entities/movimentacao'
-import { useRegistrarMovimentacao } from '../model/useRegistrarMovimentacao'
+import { Botao, CampoAreaTexto, CampoTexto } from '@/shared/ui'
+import { useConfirmacaoMovimentacao } from '../model/useConfirmacaoMovimentacao'
 import { ModalConfirmarMovimentacao } from './ModalConfirmarMovimentacao'
-import estilos from './FormEntrada.module.css'
+import { ResumoProduto } from './ResumoProduto'
+import estilos from './FormMovimentacao.module.css'
 
 const MAXIMO_DOCUMENTO = 120;
 const MAXIMO_OBSERVACAO = 255;
@@ -28,11 +27,9 @@ function validar({ quantidade, documento, observacao }) {
 
 export function FormEntrada({ produto, aoConcluir, aoCancelar }) {
 
-    const toast = useToast();
-    const { registrar, enviando, erro, limparErro } = useRegistrarMovimentacao();
     const [campos, setCampos] = useState({ quantidade: '', documento: '', observacao: '' });
     const [erros, setErros] = useState({});
-    const [confirmando, setConfirmando] = useState(false);
+    const { abrir, confirmar, modal } = useConfirmacaoMovimentacao({ produto, aoConcluir, aoErrarCampos: setErros });
 
     const quantidade = campos.quantidade.trim();
     const documento = campos.documento.trim();
@@ -53,38 +50,22 @@ export function FormEntrada({ produto, aoConcluir, aoCancelar }) {
         setErros(encontrados);
 
         if (Object.keys(encontrados).length === 0) {
-            setConfirmando(true);
+            abrir();
         }
     }
 
-    function voltar() {
-        limparErro();
-        setConfirmando(false);
-    }
-
-    async function confirmar() {
-
-        try {
-            const movimentacao = await registrar({
-                produtoId: produto.id,
-                tipo: 'ENTRADA',
-                quantidade: Number(quantidade),
-                documento: documento || null,
-                observacao: observacao || null,
-            });
-            toast.sucesso(fraseSucesso(movimentacao));
-            aoConcluir();
-        } catch (e) {
-            const errosDeCampo = obterErrosDeCampo(e);
-            if (Object.keys(errosDeCampo).length > 0) {
-                setErros(errosDeCampo);
-                voltar();
-            }
-        }
+    function aoConfirmar() {
+        confirmar({
+            tipo: 'ENTRADA',
+            quantidade: Number(quantidade),
+            documento: documento || null,
+            observacao: observacao || null,
+        });
     }
 
     return (
         <form className={estilos.formulario} noValidate onSubmit={aoEnviar}>
+            <ResumoProduto produto={produto} />
             <CampoTexto
                 rotulo="Quantidade recebida"
                 obrigatorio
@@ -115,14 +96,11 @@ export function FormEntrada({ produto, aoConcluir, aoCancelar }) {
                 <Botao type="submit">Registrar entrada</Botao>
             </div>
             <ModalConfirmarMovimentacao
-                aberto={confirmando}
+                {...modal}
                 tipo="ENTRADA"
                 quantidade={Number(quantidade)}
                 produto={produto}
-                enviando={enviando}
-                erro={erro}
-                aoVoltar={voltar}
-                aoConfirmar={confirmar}
+                aoConfirmar={aoConfirmar}
             />
         </form>
     )
