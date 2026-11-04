@@ -3,6 +3,7 @@ package com.portalblox.mapper;
 import com.portalblox.dto.UsuarioAtualizacaoRequestDto;
 import com.portalblox.dto.UsuarioCriacaoRequestDto;
 import com.portalblox.dto.UsuarioResponseDto;
+import com.portalblox.entity.PerfilAcesso;
 import com.portalblox.entity.Usuario;
 import java.util.List;
 
@@ -38,12 +39,14 @@ public class UsuarioMapper {
 		dto.setNome(entity.getNome());
 		dto.setEmail(entity.getEmail());
 		dto.setAtivo(entity.getAtivo());
+		dto.setPerfilAcesso(toPerfilResponseDto(entity.getPerfilAcesso()));
+		return dto;
+	}
 
-		UsuarioResponseDto.PerfilAcessoResponseDto perfilDto =
-				new UsuarioResponseDto.PerfilAcessoResponseDto();
-		perfilDto.setId(entity.getPerfilAcesso().getId());
-		perfilDto.setNome(entity.getPerfilAcesso().getNome());
-		dto.setPerfilAcesso(perfilDto);
+	public static UsuarioResponseDto.PerfilAcessoResponseDto toPerfilResponseDto(PerfilAcesso entity) {
+		UsuarioResponseDto.PerfilAcessoResponseDto dto = new UsuarioResponseDto.PerfilAcessoResponseDto();
+		dto.setId(entity.getId());
+		dto.setNome(entity.getNome());
 		return dto;
 	}
 

@@ -153,6 +153,8 @@ docker compose up --build
 | GET | `/configuracoes` | Consultar mínimo global, exibição de fotos e contagem de mínimos próprios |
 | GET | `/movimentacoes` | Listar movimentações (`produtoId`, `usuarioId`, `tipo`, `de`, `ate`, `limite`) |
 | POST | `/movimentacoes` | Registrar `ENTRADA`, `SAIDA` ou `AJUSTE` |
+| GET | `/dashboard/resumo` | Consultar todos os indicadores do dashboard em uma chamada |
+| GET | `/perfis-acesso` | Listar perfis de acesso (`id` e `nome`) |
 | GET | `/usuarios` | Listar usuários (`?incluirInativos=true` opcional) |
 | GET | `/usuarios/{id}` | Buscar usuário por id |
 | POST | `/usuarios` | Cadastrar usuário (nome, e-mail, senha, perfil) |
@@ -207,7 +209,15 @@ Regras de contrato relevantes:
 - **Fornecedor** — `cnpj` é armazenado somente com dígitos, deve ter exatamente 14 caracteres
   e é único; os dígitos verificadores não são validados.
 - **Usuário** — `POST` exige `senha`; `PUT` não a exige nem a altera. A senha é gravada em
-  texto puro neste MVP e nunca aparece nas respostas.
+  texto puro neste MVP e nunca aparece nas respostas. `DELETE` do último administrador ativo
+  responde `422`. Limite conhecido: o `PUT` ainda permite trocar o perfil desse administrador,
+  porque o contrato só protege a inativação.
+- **`GET /dashboard/resumo`** — devolve `totalProdutosAtivos`, `produtosBaixoEstoque`
+  (`0 < quantidade <= estoqueMinimoEfetivo`), `produtosZerados`, `movimentacoesHoje`,
+  `entradasSaidas7Dias` (sempre 7 itens, do mais antigo até hoje, com `saidas` positivo) e
+  `maisMovimentados` (até 5 produtos, somando o valor absoluto das variações de todo o histórico).
+- **Datas** — o backend em Docker usa `TZ=America/Sao_Paulo`, então `dataMov` e o "hoje" do
+  dashboard seguem o horário local da loja. Fora do Docker, vale o fuso da máquina.
 - Campos desconhecidos no JSON são ignorados pelo Jackson: `quantidade` no `PUT` de produto e
   `senha` no `PUT` de usuário não alteram estado.
 

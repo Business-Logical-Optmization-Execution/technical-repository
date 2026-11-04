@@ -5,6 +5,8 @@ import com.portalblox.dto.UsuarioCriacaoRequestDto;
 import com.portalblox.dto.UsuarioResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,11 +63,21 @@ public interface UsuarioApi {
 			UsuarioAtualizacaoRequestDto dto);
 
 	@Operation(summary = "Inativar usuário",
-			description = "Exclusão lógica (RN-03): define ativo=false; o registro permanece no banco.")
+			description = "Exclusão lógica (RN-03): define ativo=false; o registro permanece no banco. "
+					+ "O último administrador ativo não pode ser inativado.")
 	@ApiResponses({
 			@ApiResponse(responseCode = "204", description = "Usuário inativado"),
 			@ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
-			@ApiResponse(responseCode = "422", description = "Usuário já inativo (RN-05)")
+			@ApiResponse(responseCode = "422", description = "Usuário já inativo (RN-05) ou último administrador ativo",
+					content = @Content(mediaType = "application/json",
+							examples = @ExampleObject(name = "ultimoAdministrador",
+									value = """
+										{
+										  "status": 422,
+										  "mensagem": "Não é possível desativar o último administrador ativo.",
+										  "erros": []
+										}
+										""")))
 	})
 	ResponseEntity<Void> inativar(
 			@Parameter(description = "Identificador do usuário", example = "4") Integer id);
