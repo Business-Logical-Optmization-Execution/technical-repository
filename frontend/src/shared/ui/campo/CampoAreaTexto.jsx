@@ -3,7 +3,7 @@ import estilos from './CampoTexto.module.css'
 import estilosArea from './CampoAreaTexto.module.css'
 import { TriangleAlert } from 'lucide-react'
 
-export function CampoAreaTexto({ rotulo, obrigatorio, ajuda, erro, ...resto }) {
+export function CampoAreaTexto({ rotulo, obrigatorio, ajuda, erro, caixaAlta = true, ...resto }) {
 
     const id = useId();
     const idAjuda = id + '-ajuda';
@@ -21,7 +21,7 @@ export function CampoAreaTexto({ rotulo, obrigatorio, ajuda, erro, ...resto }) {
 
     return (
         <div className={estilos.campo}>
-            <label className={estilos.rotulo} htmlFor={id}>
+            <label className={estilos.rotulo + (caixaAlta ? '' : ' ' + estilos.rotuloComum)} htmlFor={id}>
                 {rotulo + (obrigatorio ? ' (obrigatório)' : '')}
             </label>
             <textarea rows={3} {...resto} id={id} aria-invalid={erro ? true : undefined} aria-describedby={idDescricao} className={classesEntrada} />

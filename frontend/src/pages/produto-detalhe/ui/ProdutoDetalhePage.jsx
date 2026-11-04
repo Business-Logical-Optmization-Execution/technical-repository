@@ -7,6 +7,7 @@ import { Botao, EstadoVazio, TituloPagina } from '@/shared/ui'
 import { useSessao } from '@/entities/sessao'
 import { buscarProduto } from '@/entities/produto'
 import { CartaoProduto, CartaoProdutoEsqueleto } from '@/widgets/cartao-produto'
+import { UltimasMovimentacoes } from '@/widgets/ultimas-movimentacoes'
 import estilos from './ProdutoDetalhePage.module.css'
 
 export function ProdutoDetalhePage() {
@@ -44,11 +45,12 @@ export function ProdutoDetalhePage() {
         <>
           <CartaoProduto produto={produto} />
           <div className={estilos.movimentacoes}>
-            <Botao como={Link} to={ROTAS.registrarEntrada(produto.id)}>Registrar entrada</Botao>
+            <Botao como={Link} to={ROTAS.registrarEntrada(produto.id)} state={location.state}>Registrar entrada</Botao>
             <Botao variante="secundario" disabled title="Em breve">Registrar saída</Botao>
             <Botao variante="secundario" disabled title="Em breve">Ajustar por contagem</Botao>
             <Botao variante="secundario" disabled title="Em breve">Avisar que está em falta</Botao>
           </div>
+          <UltimasMovimentacoes produtoId={produto.id} />
         </>
       )}
     </div>

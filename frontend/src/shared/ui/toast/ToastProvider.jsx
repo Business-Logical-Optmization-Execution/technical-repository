@@ -4,7 +4,7 @@ import { BotaoIcone } from '../botao'
 import { ContextoToast } from './ContextoToast'
 import estilos from './Toast.module.css'
 
-const DURACAO = 2000;
+const DURACAO = 5000;
 
 function Toast({ id, tipo, texto, remover }) {
 

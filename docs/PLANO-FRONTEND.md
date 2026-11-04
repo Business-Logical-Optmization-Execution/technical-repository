@@ -2,7 +2,7 @@
 
 > **React + React Router + axios · Vite · JavaScript · CSS próprio · Feature-Sliced Design (FSD)**
 > Backend: Spring Boot 4 (`technical-repository/backend`) · Mock: json-server 0.17.4
-> Grupo BLOX — ADS 3º semestre, 2026/2 · Versão 1.1 · 02/11/2026 (contrato revisado com o back do schema v3, ver seção 11.0) · **Entrega da Sprint 2: 05/11/2026**
+> Grupo BLOX — ADS 3º semestre, 2026/2 · Versão 1.2 · 04/11/2026 (contrato revisado com o back das paradas P1 e P2, ver seção 11.0) · **Entrega da Sprint 2: 05/11/2026**
 
 Este documento é, ao mesmo tempo, **o roteiro do projeto** e **uma prova prática de React**. Cada passo é um *exercício*: tem um conceito para aprender, um checklist do que construir e um critério objetivo de "pronto". **Quem escreve o código é o grupo**; o agente (Claude Code) atua como professor: explica, dá dicas e corrige. Ao final de todos os passos, o Portal Óttimos roda completo em `localhost`, primeiro com dados de mentira (mock) e, bloco a bloco, ligado ao backend Spring.
 
@@ -203,11 +203,11 @@ A avaliação pede **3 a 5 telas integradas + 1 dashboard integrado**. Só o Blo
 | Sáb 31/10 (tarde) | Fase 0 + exercícios 1.1 a 1.3 |
 | Dom 01/11 | Exercícios 1.4 a 1.9 e 2.1 a 2.4 |
 | Seg 02/11 | Exercícios 2.5 a 2.12 (Bloco A com mock) |
-| Ter 03/11 | 🛑 Parada do back P1 + 🔌 Integração A · exercícios 3.1 a 3.3 |
-| Qua 04/11 | Exercícios 3.4 e 3.5 · 🛑 P2 + 🔌 Integração B · Bloco C ou D conforme o tempo |
+| Ter 03/11 | Revisão do Bloco A e espera das paradas do back |
+| Qua 04/11 | 🔌 Integração A parcial (Login, Início, Busca, Detalhe) · 2.10 a 2.12 · 3.5 · 3.1 a 3.4 · 🔌 Integração B · Bloco C ou D conforme o tempo |
 | Qui 05/11 (manhã) | Etapa 6: revisão, roteiro da demonstração |
 
-Se atrasar: **o Bloco A integrado + Dashboard integrado é a linha de segurança**. Corte de trás para frente (D, depois C, depois partes do B).
+Se atrasar: **o Bloco A integrado + Dashboard integrado é a linha de segurança**. Por isso, em 04/11 o 3.5 vem antes do 3.1. Corte de trás para frente (D, depois C, depois partes do B).
 
 ---
 
@@ -533,7 +533,7 @@ Cada bloco (A, B, C) passa por três momentos:
 ROTAS_NO_SPRING=auth,produtos,movimentacoes
 ```
 
-**Atenção ao prefixo.** O proxy decide pelo começo da rota: com `produtos` no Spring, **tudo** que começa com `/api/produtos` vai para o Spring, inclusive `/api/produtos/1/quantidade`. Se uma tela nova usa um endpoint que o Spring ainda não tem, mas cujo prefixo já está em `ROTAS_NO_SPRING`, **tire esse prefixo da lista enquanto desenvolve com mock** e recoloque depois da parada do back. (Acontece no Bloco C com `produtos`, `usuarios` e `configuracoes`.)
+**Atenção ao prefixo.** O proxy decide pelo começo da rota: com `usuarios` no Spring, **tudo** que começa com `/api/usuarios` vai para o Spring, inclusive `/api/usuarios/1/senha`. Se uma tela nova usa um endpoint que o Spring ainda não tem, mas cujo prefixo já está em `ROTAS_NO_SPRING`, **tire esse prefixo da lista enquanto desenvolve com mock** e recoloque depois da parada do back. (Acontece no Bloco C com `usuarios` e `configuracoes`.)
 
 > O Vite reinicia sozinho quando o `.env.local` muda. Se não reiniciar, pare e rode `npm run dev:mock` de novo.
 
@@ -730,7 +730,7 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 **Figma:** cards da TL03 (`3:40527`) e TL04 (`3:40717`)
 
 - [ ] `api/produtoApi.js`: `listarProdutos()` → `GET /produtos`; `buscarProduto(id)` → `GET /produtos/{id}`.
-- [ ] `model/situacao.js`: `calcularSituacao(produto)` → `'ZERADO'` se `quantidade <= 0`; `'BAIXO'` se `quantidade <= estoqueMinimoEfetivo`; senão `'OK'`. `ordenarPorCriticidade(lista)` → zerados primeiro, depois menor `quantidade / estoqueMinimoEfetivo`. 🤝 O `estoqueMinimoEfetivo` ainda não existe no back (ponto D3 da seção 11.0).
+- [ ] `model/situacao.js`: `calcularSituacao(produto)` → `'ZERADO'` se `quantidade <= 0`; `'BAIXO'` se `quantidade <= estoqueMinimoEfetivo`; senão `'OK'`. `ordenarPorCriticidade(lista)` → zerados primeiro, depois menor `quantidade / estoqueMinimoEfetivo`.
 - [ ] `lib/buscarPorTermo.js`: `filtrarProdutos(lista, termo)` → compara `normalizarTexto` com nome, sku e **cada item de `localizacoes`** (lista de textos, pode vir vazia); todas as palavras do termo precisam aparecer ("parafuso 6" acha "Parafuso sextavado 6 mm").
 - [ ] `ui/FotoProduto` (imagem com `alt` = nome; sem foto, inclusive com `fotoUrl` ausente → bloco `--cor-primaria-suave` com ícone `Image`), `ui/SeloSituacao` ("⚠ Qtd 2" alerta; "Qtd 0" erro; nada quando OK; com `mostrarNome`, "Baixo" e "Zerado", usado na TL04 e na TL05), `ui/CardProdutoBaixo` (TL03), `ui/CardProdutoResultado` (TL04: "ID 1020" em `texto-codigo`, "Qtd 2 · R$ 34,90", "Local C3-P2" com as localizações separadas por " · ", ou "Sem localização" com a lista vazia).
 - [ ] Os cards são `Link` para `/produtos/{id}` e aceitam `exibirFoto`.
@@ -784,7 +784,7 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 **Figma:** `3:40778` (Admin) e `3:40890` (Operador)
 
 - [ ] `TituloPagina`: voltar + "Detalhe do produto" + selo ADMIN (só Admin). A seta preserva a busca de origem: o card envia o endereço em `state={{ de: location.pathname + location.search }}`, e o Detalhe volta para `location.state?.de ?? ROTAS.busca`.
-- [ ] `CartaoProduto` (modo leitura): foto à esquerda (~30%); campos bloqueados NOME · ID (sku) · QTD (`texto-saldo` + "un.", cadeado) · VALOR BASE (`preco` pode ser `null`: mostra "—") · DESCRIÇÃO · LOCALIZAÇÃO (itens de `localizacoes` separados por " · "; lista vazia: "Sem localização") · ESTOQUE MÍNIMO ("10 un." ou "Padrão: 5 un." quando `estoqueMinimo` é `null`). 🤝 Estoque mínimo e foto dependem dos pontos D3 e D4 da seção 11.0. Os campos `categoria`, `fornecedor`, `marca`, `peso` e `tamanho` existem no back, mas não entram nesta tela porque o Figma não os prevê.
+- [ ] `CartaoProduto` (modo leitura): foto à esquerda (~30%); campos bloqueados NOME · ID (sku) · QTD (`texto-saldo` + "un.", cadeado) · VALOR BASE (`preco` pode ser `null`: mostra "—") · DESCRIÇÃO · LOCALIZAÇÃO (itens de `localizacoes` separados por " · "; lista vazia: "Sem localização") · ESTOQUE MÍNIMO ("10 un." ou "Padrão: 5 un." quando `estoqueMinimo` é `null`). Os campos `categoria`, `fornecedor`, `marca`, `peso` e `tamanho` existem no back, mas não entram nesta tela porque o Figma não os prevê.
 - [ ] Selo de situação ao lado da QTD quando Baixo/Zerado.
 - [ ] Rodapé do card (só Admin): "✎ Editar" e "Inativar produto". Por enquanto sem ação (Bloco C).
 - [ ] Barra de movimentações: "Registrar entrada" (primário, `Link` para `/produtos/:id/entrada`), "Registrar saída", "Ajustar por contagem", "Avisar que está em falta" (secundários; os três últimos ficam `disabled` até os Blocos B/C).
@@ -797,15 +797,15 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 **Conceito:** funções de domínio que montam **texto** a partir de dados (a frase do histórico, o "antes → depois").
 **Onde:** `entities/movimentacao/`, `widgets/ultimas-movimentacoes/`
 
-- [ ] `api/movimentacaoApi.js`: `listarMovimentacoes(filtros)` → `GET /movimentacoes`; `criarMovimentacao(dados)` → `POST /movimentacoes`, só para `ENTRADA` e `SAIDA`. O ajuste usa `PATCH /produtos/{id}/quantidade` (exercício 3.2).
-- [ ] `config/motivos.js`: `MOTIVOS_SAIDA = [{ valor: 'PERDA', rotulo: 'Perda' }, { valor: 'AVARIA', rotulo: 'Avaria' }, { valor: 'USO_INTERNO', rotulo: 'Uso interno' }, { valor: 'VENDA_BALCAO', rotulo: 'Venda de balcão não lançada' }, { valor: 'OUTRO', rotulo: 'Outro' }]`, usado só no front (ponto D1 da seção 11.0). `ROTULOS_TIPO` (Saldo inicial, Entrada, Saída, Ajuste, Estorno) e `ROTULOS_ORIGEM` (Manual, Bling, Importação).
+- [ ] `api/movimentacaoApi.js`: `listarMovimentacoes(filtros)` → `GET /movimentacoes`; `criarMovimentacao(dados)` → `POST /movimentacoes`, para `ENTRADA`, `SAIDA` e `AJUSTE` (ponto D5).
+- [ ] `config/motivos.js`: `MOTIVOS_SAIDA = [{ valor: 'PERDA', rotulo: 'Perda' }, { valor: 'AVARIA', rotulo: 'Avaria' }, { valor: 'USO_INTERNO', rotulo: 'Uso interno' }, { valor: 'VENDA_BALCAO', rotulo: 'Venda de balcão não lançada' }, { valor: 'OUTRO', rotulo: 'Outro' }]`; os valores são os do enum do back (ponto D1). `ROTULOS_TIPO` (Saldo inicial, Entrada, Saída, Ajuste, Estorno) e `ROTULOS_ORIGEM` (Manual, Bling, Importação).
 - [ ] `lib/calcular.js`: `calcularQuantidadeDepois(tipo, atual, quantidade)` (entrada soma, saída subtrai, ajuste substitui).
-- [ ] `lib/frases.js`: `fraseConfirmacao(...)` → "Entrada de 10 un. de Martelo. A quantidade vai de 2 para 12." (variações de saída e ajuste conforme o brief TL09); `fraseHistorico(mov)` (usada no 3.3).
+- [ ] `lib/frases.js`: `fraseConfirmacao(...)` → "Entrada de 10 un. de Martelo. A quantidade vai de 2 para 12." (variações de saída e ajuste conforme o brief TL09); `textoJustificativa(mov)` junta o rótulo de `motivo`, `documento` e `observacao` com " — " e devolve "—" se os três forem `null`; `fraseHistorico(mov)` (usada no 3.3).
 - [ ] `ui/SeloOrigem`.
-- [ ] Widget `UltimasMovimentacoes` (recebe `produtoId`): título "Últimas movimentações" + link "Ver histórico completo" (só Admin, → `/historico?produtoId=`); tabela com Data e hora (`criadoEm`) · Tipo · Qtd. (`variacao`, com sinal) · Quantidade depois (`saldoPosterior`) · Quem · Origem · Justificativa ("—" se vazio); `limite=10`. Vazio: "Nenhuma movimentação registrada para este produto." Componente `Tabela` em `shared/ui` (cabeçalho em legenda caixa alta, zebra discreta, hover).
+- [ ] Widget `UltimasMovimentacoes` (recebe `produtoId`): título "Últimas movimentações" + link "Ver histórico completo" (só Admin, → `/historico?produtoId=`); tabela com Data e hora (`dataMov`) · Tipo · Qtd. (`quantidade`, já vem com sinal) · Quantidade depois (`quantidadeDepois`) · Quem · Origem · Motivo (`textoJustificativa`, que também mostra documento e observação); `limite=10`. Vazio: "Nenhuma movimentação registrada para este produto." Componente `Tabela` em `shared/ui` (cabeçalho em legenda caixa alta, zebra discreta, hover).
 - [ ] Encaixar o widget no Detalhe.
 
-**Pronto quando:** o Detalhe do "Parafuso sextavado 6 mm" (`/produtos/7`) mostra a entrada de +10 com "NF 12345" na justificativa, de Ronaldo. 🤝 Depende do ponto D1 e do mock atualizado.
+**Pronto quando:** o Detalhe do "Parafuso sextavado 6 mm" (`/produtos/7`) mostra a entrada de +10 com "NF 12345" na justificativa, de Ronaldo.
 
 ### Exercício 2.11 — Feature `registrar-movimentacao` (base + confirmação TL09)
 
@@ -813,10 +813,10 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 **Onde:** `features/registrar-movimentacao/` (`model/useRegistrarMovimentacao.js`, `ui/ModalConfirmarMovimentacao.jsx`, `ui/ResumoProduto.jsx`)
 **Figma:** `3:41114` (entrada), `3:41166` (saída), `3:41226` (ajuste)
 
-- [ ] `useRegistrarMovimentacao()` devolve `{ registrar(dados), enviando, erro, limparErro }`. `registrar` acrescenta `usuarioId` da sessão e chama `criarMovimentacao`.
+- [ ] `useRegistrarMovimentacao()` devolve `{ registrar(dados), enviando, erro, limparErro }`. `registrar` acrescenta `usuarioId` da sessão, chama `criarMovimentacao` e devolve a movimentação criada.
 - [ ] `ModalConfirmarMovimentacao`: título "Confirmar entrada?" / "Confirmar saída?" / "Confirmar ajuste?"; texto de `fraseConfirmacao`; botões "Voltar" e "Confirmar alteração" (carregando: "Salvando..."). Erro de rede: "Não foi possível registrar. Seus dados foram mantidos." + "Tentar de novo".
 - [ ] `ResumoProduto`: "1020 – Parafuso sextavado 6 mm · quantidade atual 10 un." (somente leitura).
-- [ ] Sucesso: `navigate('/produtos/:id')` + toast "Entrada registrada. Quantidade agora: 12 un." (saída: "Saída registrada...", ajuste: "Ajuste registrado...").
+- [ ] Sucesso: `navigate('/produtos/:id')` + toast "Entrada registrada. Quantidade agora: 12 un." (saída: "Saída registrada...", ajuste: "Ajuste registrado..."), com o número vindo de `quantidadeDepois` da resposta.
 - [ ] Nada é gravado antes de "Confirmar alteração".
 
 **Pronto quando:** o modal abre e fecha pelo teclado, e o texto antes → depois está certo para os três tipos (teste chamando o modal com dados fixos na `/vitrine`).
@@ -829,9 +829,9 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 
 - [ ] Página: `TituloPagina` "Registrar entrada" com voltar; card central com `ResumoProduto` e o `FormEntrada`.
 - [ ] Campos: "Quantidade recebida (obrigatório)" (número; ajuda "Informe a quantidade que você contou, na mesma unidade do produto (un.)."), "Nota fiscal ou fornecedor (opcional)" (placeholder "Ex.: NF 12345 ou Distribuidora X"), "Observação (opcional)".
-- [ ] Validação: inteiro maior que zero → senão "Informe um número inteiro maior que zero.".
+- [ ] Validação: inteiro maior que zero → senão "Informe um número inteiro maior que zero.". Nota fiscal até 120 caracteres e observação até 255, limites do back.
 - [ ] "Registrar entrada" abre o modal de confirmação; "Cancelar" volta ao Detalhe. Os dados digitados permanecem se o envio falhar.
-- [ ] Campos enviados: `{ produtoId, usuarioId, tipo: 'ENTRADA', quantidade, justificativa }`. 🤝 Proposta D1: `justificativa` junta os dois campos da tela, por exemplo `"NF 12345 — Caixa amassada"`, e fica `null` com os dois vazios.
+- [ ] Campos enviados: `{ produtoId, usuarioId, tipo: 'ENTRADA', quantidade, documento, observacao }`. "Nota fiscal ou fornecedor" vai em `documento`. Campo vazio vai como `null`.
 
 **Pronto quando:** a jornada inteira funciona com mock: Login (Ronaldo) → buscar "martelo" → Detalhe → Registrar entrada de 10 → Confirmar → Detalhe com "Qtd 12", toast correto e a nova linha em "Últimas movimentações".
 
@@ -839,19 +839,20 @@ Objetivo da etapa: ter as peças de Lego prontas. Nenhuma tela de verdade ainda,
 
 Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no Apêndice A):
 
-- [ ] Pontos D1 a D7 da seção 11.0 acordados
-- [ ] `@ControllerAdvice` devolvendo erros no formato `{ status, mensagem, erros }` (A.1)
-- [ ] `POST /auth/login` (A.2)
-- [ ] `estoqueMinimo`, `estoqueMinimoEfetivo` e `fotoUrl` em `Produto` (A.3)
-- [ ] Tabela `configuracoes` + `GET /configuracoes` (A.6), porque o Início lê `exibirFotos` e o mínimo efetivo depende do mínimo global
-- [ ] `POST /movimentacoes` e `GET /movimentacoes` com todos os filtros e `limite` (A.4), sobre a entidade `MovimentacaoEstoque` que já existe
-- [ ] Swagger com descrição, exemplo e respostas de cada endpoint novo
+- [x] Pontos D1 a D7 da seção 11.0 resolvidos pelo código do back
+- [x] `@ControllerAdvice` devolvendo erros no formato `{ status, mensagem, erros }` (A.1)
+- [x] `POST /auth/login` (A.2)
+- [x] `estoqueMinimo`, `estoqueMinimoEfetivo` e `fotoUrl` em `Produto` (A.3)
+- [x] Tabela `configuracoes` + `GET /configuracoes` (A.6)
+- [x] `POST /movimentacoes` e `GET /movimentacoes` com todos os filtros e `limite` (A.4)
+- [x] Swagger com descrição, exemplo e respostas de cada endpoint novo
 
 ### 🔌 Integração A
 
-- [ ] Backend no ar (`docker compose up --build`) e Swagger abrindo
+- [ ] Backend no ar (na pasta `backend/`: `docker compose down -v` na primeira vez depois do schema v4, depois `docker compose up --build`) e Swagger abrindo
 - [ ] `.env.local`: `ROTAS_NO_SPRING=auth,produtos,movimentacoes,configuracoes`
-- [ ] Login com usuário do banco funciona, com as contas do seed do back (`ana.souza@portalblox.test` e `bruno.lima@portalblox.test`, senha `senha123`); senha errada mostra a mensagem certa
+- [ ] Login com usuário do banco funciona, com as mesmas contas do mock (`ronaldo@ottimos.com`, senha `123456`); senha errada mostra a mensagem certa
+- [ ] `FormLogin` valida antes de enviar: com campo vazio ou e-mail mal formatado o back responde 400 "Confira os campos destacados.", e a tela não destaca campo nenhum
 - [ ] Início mostra o baixo estoque calculado com dados do banco
 - [ ] Busca, Detalhe e Últimas movimentações vêm do banco
 - [ ] Registrar entrada grava no MySQL (confira no Swagger: `GET /movimentacoes?produtoId=`)
@@ -872,7 +873,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 - [ ] Quantidade maior que o saldo: erro "Não dá para tirar 5 un.: a quantidade atual é 2 un. Se o número na prateleira for outro, faça um ajuste por contagem." + link "Ajustar por contagem" (→ `/produtos/:id/ajuste`); botão desabilitado enquanto o erro existir.
 - [ ] Se o back responder 422 (saldo mudou nesse meio-tempo): fechar o modal e mostrar a mensagem do back no campo.
 - [ ] Habilitar o botão "Registrar saída" no Detalhe.
-- [ ] Envio: `{ produtoId, usuarioId, tipo: 'SAIDA', quantidade, justificativa }`. 🤝 Proposta D1: `justificativa` recebe o rótulo do motivo; com "Outro", recebe `"Outro: <texto digitado>"`.
+- [ ] Envio: `{ produtoId, usuarioId, tipo: 'SAIDA', quantidade, motivo, observacao }`. Com "Outro", o texto digitado vai em `observacao` (o back também exige).
 
 **Pronto quando:** no Martelo (2 un.), digitar 5 mostra o erro com o link; tirar 1 por "Avaria" leva a "Saída registrada. Quantidade agora: 1 un.".
 
@@ -887,7 +888,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 - [ ] "Diferença: +8 un." em destaque: `--cor-sucesso` se positiva, `--cor-erro` se negativa, "Sem diferença" se zero; sempre com sinal e texto.
 - [ ] "Justificativa (obrigatório)", placeholder "Ex.: contagem da prateleira C3-P2 na quarta-feira"; mínimo 10 caracteres → "Escreva uma justificativa com pelo menos 10 caracteres.".
 - [ ] Botão "Registrar ajuste" → modal → toast "Ajuste registrado. Quantidade agora: N un.".
-- [ ] Envio: `PATCH /produtos/{id}/quantidade` com `{ quantidade: <contada>, usuarioId, justificativa }`. O mínimo de 10 caracteres é regra do front, porque o back só exige texto não vazio. Com "Sem diferença", o back responde 200 e não grava movimentação. A resposta é o `Produto`, e o toast usa a `quantidade` dele. 🤝 Ponto D5.
+- [ ] Envio: `POST /movimentacoes` com `{ produtoId, usuarioId, tipo: 'AJUSTE', quantidade: <contada>, observacao: <justificativa> }`. O mínimo de 10 caracteres também é regra do back. Com "Sem diferença", o back grava o registro com variação zero, o que documenta a contagem. O toast usa `quantidadeDepois`. Ponto D5.
 - [ ] Habilitar "Ajustar por contagem" no Detalhe.
 
 **Pronto quando:** no Serrote (0 un.), contar 6 mostra "Diferença: +6 un." em verde e, confirmado, o Detalhe mostra 6 un.
@@ -901,7 +902,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 - [ ] `TituloPagina` "Histórico" + ADMIN.
 - [ ] Filtros em linha: Produto (select com produtos), Usuário (select com usuários), Período (Hoje · Últimos 7 dias · Últimos 30 dias · Tudo → vira `de`/`ate`), Tipo (Entrada/Saída/Ajuste). Cada mudança atualiza a URL.
 - [ ] Lista: avatar + frase + "data · hora" à direita. Frases (`fraseHistorico`): "Ronaldo adicionou +10 un. de Martelo" · "Valdir removeu −1 un. de Serrote (avaria)" · "Márcia ajustou Martelo para 6 un.". Nome do produto é `Link` sublinhado para o Detalhe.
-- [ ] `fraseHistorico` também cobre `SALDO_INICIAL` ("Saldo inicial de 10 un. de Martelo") e `ESTORNO` ("Ronaldo estornou −1 un. de Serrote"), que vêm do back. O "(avaria)" da frase de saída sai da `justificativa`.
+- [ ] `fraseHistorico` também cobre `SALDO_INICIAL` ("Saldo inicial de 10 un. de Martelo") e `ESTORNO` ("Ronaldo estornou −1 un. de Serrote"), que vêm do back. O "(avaria)" da frase de saída é o rótulo de `motivo`. O filtro não oferece Estorno: o back responde 400 para esse tipo.
 - [ ] 25 por vez; botão "Carregar mais" pede `limite=50`, `75`... e some quando vier menos que o pedido.
 - [ ] Vazio: "Nenhuma movimentação encontrada.".
 
@@ -919,6 +920,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 - [ ] No cadastro, o front gera uma **senha provisória** de 8 caracteres (`gerarSenhaProvisoria()` em `features/gerenciar-usuario/lib`), envia no `POST` e mostra uma vez numa `Faixa`: "Usuário cadastrado. Senha provisória: Ab3k9xQ2. Anote e entregue ao funcionário.".
 - [ ] Erro 409 → no campo E-mail: "Já existe um usuário com este e-mail.".
 - [ ] "Desativar" → `Modal` "Desativar Ronaldo?" / "Ele não consegue mais entrar. O nome continua no histórico." / "Cancelar" + "Desativar" (destrutivo). 422 do último Admin → toast de erro "Não é possível desativar o último administrador ativo.".
+- [ ] Ao editar o último Administrador ativo, o Perfil fica bloqueado: o `PUT` do back ainda permite trocar, porque só a inativação é protegida.
 
 **Pronto quando:** cadastrar "Ana" (Operador) mostra a senha provisória, e entrar como Ana com essa senha funciona; desativar Ana a impede de entrar.
 
@@ -935,21 +937,25 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 | Título | `TituloPagina` "Dashboard" + selo ADMIN; legenda "Atualizado às 14:32" (hora da resposta) + botão secundário "Atualizar" |
 | Linha de indicadores (4 cards, 4 colunas ≥ 1024 px, 2 colunas abaixo, 1 coluna em 360 px) | "Produtos ativos" · "Com estoque baixo" (ícone ⚠, número em `--cor-alerta`) · "Zerados" (número em `--cor-erro`) · "Movimentações hoje". Número em `texto-saldo`, rótulo em `texto-legenda` |
 | Card "Entradas e saídas — últimos 7 dias" | `BarChart` agrupado: entradas em `--cor-primaria`, saídas em `--cor-borda`; eixo X com dia/mês ("31/10"); legenda com texto; tooltip "Entradas: +10 un." / "Saídas: −3 un."; abaixo, `<details>` "Ver dados em tabela" com a mesma informação |
-| Card "Mais movimentados" | Lista de até 5: "1001 – Martelo" + total em un.; nome é `Link` para o Detalhe |
-| Estados | Carregando (skeletons nos cards), erro (mensagem + "Tentar de novo"), sem movimentações ("Nenhuma movimentação nos últimos 7 dias.") |
+| Card "Mais movimentados" | Lista de até 5: "1001 – Martelo" + total em un.; nome é `Link` para o Detalhe. O total soma **todo o histórico**, então o título não cita período |
+| Estados | Carregando (skeletons nos cards), erro (mensagem + "Tentar de novo"), gráfico sem movimentações ("Nenhuma movimentação nos últimos 7 dias."), lista sem movimentações ("Nenhuma movimentação registrada.") |
 
 - [ ] Recharts lendo as cores dos tokens: `getComputedStyle(document.documentElement).getPropertyValue('--cor-primaria')` (o SVG não lê `var()` em todas as props).
 - [ ] `ResponsiveContainer` com altura fixa de 280 px.
+- [ ] Regra do back: `SALDO_INICIAL` e ajustes entram no gráfico pelo sinal da variação. Cadastrar produto com saldo gera um pico de entradas: evite na demonstração.
+- [ ] O seed tem movimentações só até 30/10. Antes de apresentar depois de 05/11, registre movimentações para o gráfico não abrir vazio.
 - [ ] Item "Dashboard" já existe no menu (exercício 2.4).
 
 **Pronto quando:** o Dashboard mostra os 4 números batendo com o Início (ex.: "Zerados" = quantidade de cards com "Qtd 0"), e registrar uma entrada e clicar em "Atualizar" muda o gráfico de hoje.
 
 ### 🛑 Parada do back P2
 
-- [ ] `GET /perfis-acesso` (A.7)
-- [ ] `PUT /usuarios/{id}` sem exigir `senha` (A.7, hoje o DTO exige)
-- [ ] Regra "não desativar o último Admin" → 422 (A.7)
-- [ ] `GET /dashboard/resumo` (A.8)
+- [x] `GET /perfis-acesso` (A.7)
+- [x] `PUT /usuarios/{id}` sem exigir `senha` (A.7)
+- [x] Regra "não desativar o último Admin" → 422 (A.7)
+- [x] `GET /dashboard/resumo` (A.8)
+
+Entregue no PR #14 (`implementar-p2-backend`); confira se já está na `main` antes de integrar.
 
 ### 🔌 Integração B
 
@@ -964,7 +970,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 
 ## 8. Etapa 4 — Bloco C: acabamento
 
-> **Antes de começar o bloco:** tire `produtos`, `usuarios` e `configuracoes` do `ROTAS_NO_SPRING` (ou deixe a lista vazia). Os endpoints novos deste bloco ainda não existem no Spring e têm o mesmo prefixo dos que já existem (seção 4). Recoloque na Integração C.
+> **Antes de começar o bloco:** tire `usuarios` e `configuracoes` do `ROTAS_NO_SPRING` enquanto desenvolve as telas que usam `PATCH /usuarios/{id}/senha` e `PUT /configuracoes`, que ainda não existem no Spring e têm o mesmo prefixo dos que já existem (seção 4). `avisos-falta` não entra na lista até o back ter a rota. Recoloque na Integração C.
 
 ### Exercício 4.1 — Avisar falta (TL10) + widget `avisos-falta` + resolver
 
@@ -987,7 +993,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 **Onde:** `features/editar-produto/` (`ui/FormEdicaoProduto.jsx`), `features/inativar-produto/` (`ui/BotaoInativarProduto.jsx`), `widgets/cartao-produto/`, entidade `produto` (`atualizarDadosLocais`, `inativarProduto`)
 **Figma:** `3:41581` (edição) e `3:41274` (inativar)
 
-- [ ] "✎ Editar" troca o `CartaoProduto` para edição: DESCRIÇÃO, LOCALIZAÇÕES (lista de textos, com placeholder "Ex.: C3-P2", converte para maiúsculas; máx. 120 caracteres por item, regra do back), ESTOQUE MÍNIMO (ajuda "Deixe vazio para usar o padrão de Configurações"; vazio → `null`), URL DA FOTO (opcional). NOME, ID, VALOR BASE com cadeado "Vem do Bling"; QTD com "Muda só por movimentação". 🤝 Estoque mínimo e foto dependem de D3 e D4.
+- [ ] "✎ Editar" troca o `CartaoProduto` para edição: DESCRIÇÃO, LOCALIZAÇÕES (lista de textos, com placeholder "Ex.: C3-P2", converte para maiúsculas; máx. 120 caracteres por item, regra do back), ESTOQUE MÍNIMO (ajuda "Deixe vazio para usar o padrão de Configurações"; vazio → `null`), URL DA FOTO (opcional). NOME, ID, VALOR BASE com cadeado "Vem do Bling"; QTD com "Muda só por movimentação".
 - [ ] "Cancelar" descarta; "Salvar alterações" → `PUT /produtos/{id}` → toast "Alterações salvas." e volta à leitura com os dados novos. O `PUT` exige `sku`, `nome` e `categoriaId` e **limpa o que não for enviado**: mande sempre todos os campos do produto, inclusive `fornecedorId`, `localizacoes`, `peso`, `tamanho`, `preco` e `marca`.
 - [ ] "Inativar produto" → `Modal` "Inativar Martelo?" / "O produto sai da busca. O histórico de movimentações é mantido." / "Cancelar" + "Inativar produto" (destrutivo) → `DELETE` → Início + toast "Produto inativado. O histórico foi mantido.".
 
@@ -1111,62 +1117,59 @@ Use a seção "Acessibilidade (WCAG 2.1 AA)" do brief como checklist. No mínimo
 
 ## 11. O que falta no backend
 
-Análise do back na `origin/main` (commit `0c7abe2`, 01/11/2026, schema v3) comparada com o que as telas precisam. Substitui a análise de 22/10.
+Análise do back na `origin/main` (`e0ec67e`, P1) e no PR #14 (`151a52a`, P2), de 04/11/2026, schema v4, comparada com o que as telas precisam. Análise feita pela leitura do código; a execução integrada é conferida nas Integrações A e B.
 
-### 11.0 Acordo de contrato entre front e back (02/11/2026)
+### 11.0 Acordo de contrato entre front e back (revisado em 04/11/2026)
 
 **Regra do grupo:**
 - **Diferença** (o back já tem, de outro jeito): vale o back codado. Front e mock se adaptam.
 - **Falta** (o back ainda não tem): o back implementa, seguindo o Apêndice A.
 
-Convenção do documento: 🤝 indica algo que depende de um ponto abaixo.
+**Pontos acordados (resolvidos pelo código do back):**
 
-**Pontos a acordar:**
+| # | Assunto | Como ficou no back | O que o front faz | Resolvido? |
+|---|---|---|---|---|
+| D1 | Nota fiscal, motivo e observação | Colunas próprias: `motivo`, `observacao`, `documento` | Envia e lê os campos separados; a tela junta com `textoJustificativa` | [x] |
+| D2 | JSON de `Movimentacao` | `quantidade` com sinal, `quantidadeAntes`, `quantidadeDepois`, `dataMov` | Usa esses nomes, os mesmos do mock | [x] |
+| D3 | Estoque mínimo | `estoqueMinimo` e `estoqueMinimoEfetivo` calculado | Nada a mudar | [x] |
+| D4 | Foto | `fotoUrl` (pode ser `null`) | Nada a mudar | [x] |
+| D5 | Ajuste por contagem | `POST /movimentacoes` aceita `AJUSTE`; o `PATCH` ficou como compatibilidade | Usa o `POST` nos três tipos | [x] |
+| D6 | Saída maior que o saldo | 422 com a mensagem de A.4 | Valida antes e trata o 422 | [x] |
+| D7 | Contas de teste | Márcia, Carlos, Ronaldo e Valdir (`123456`), iguais às do mock | Usa as mesmas contas na demonstração | [x] |
 
-| # | Assunto | Situação no back | Proposta | Quem decide | Acordado? |
-|---|---|---|---|---|---|
-| D1 | Nota fiscal, motivo e observação | `MovimentacaoEstoque` só tem `justificativa` | Sem colunas novas: o front monta o texto. Entrada: `"NF 12345 — observação"`. Saída: rótulo do motivo. Consequência: não dá para filtrar o histórico por motivo nesta sprint | Back + front | [ ] |
-| D2 | JSON de `Movimentacao` | Só a entidade existe, sem endpoint | Usar os nomes da entidade, como em A.4 | Back | [ ] |
-| D3 | Estoque mínimo | Ausente | `estoqueMinimo` (pode ser `null`) e `estoqueMinimoEfetivo` calculado, como em A.3. Sem isso não há baixo estoque, selo nem indicador do Dashboard | Back | [ ] |
-| D4 | Foto | Ausente | `fotoUrl` (pode ser `null`). Se não der tempo, o front trata a ausência como "sem foto" | Back | [ ] |
-| D5 | Ajuste por contagem | `PATCH /produtos/{id}/quantidade` já grava `AJUSTE` | O front usa esse `PATCH`. `POST /movimentacoes` aceita só `ENTRADA` e `SAIDA` | Back | [ ] |
-| D6 | Saída maior que o saldo | Regra ainda não existe | `POST` responde 422 com a mensagem de A.4 | Back | [ ] |
-| D7 | Contas de teste | Seed com Ana, Bruno e Carla (`senha123`). O mock usa Márcia, Carlos, Ronaldo e Valdir (`123456`) | Mock e back podem ter contas diferentes. Na demonstração, usar as contas do seed do back e ajustar o roteiro do exercício 6.4 | Grupo | [ ] |
-
-**Do lado do front:** mock e seed (Apêndices B e C) já atualizados para o formato de produto. Falta o formato de movimentação, depois de D1 e D2.
+**Do lado do front:** o mock já segue o formato de produto e de movimentação. Diferenças que restam, sem efeito nas telas se o front validar: o mock não exige `observacao` com `motivo: OUTRO`, não recusa movimentação em produto inativo e responde 401 (o back, 400) ao login com campo vazio.
 
 ### 11.1 O que já existe
 
 | Recurso | Endpoints | Observação |
 |---|---|---|
 | Produtos | `GET /produtos` (`?incluirInativos`), `GET /produtos/{id}`, `POST`, `PUT /{id}`, `PATCH /{id}/quantidade`, `DELETE /{id}` (inativa) | Categoria única, fornecedor e lista de localizações. `POST` exige `usuarioId`. `PUT` nunca altera saldo |
-| Usuários | `GET /usuarios` (`?incluirInativos`), `GET /{id}`, `POST`, `PUT /{id}` (sem senha), `DELETE /{id}` (inativa) | Senha em texto puro e nunca nas respostas |
+| Usuários | `GET /usuarios` (`?incluirInativos`), `GET /{id}`, `POST`, `PUT /{id}` (sem senha), `DELETE /{id}` (inativa) | Senha em texto puro e nunca nas respostas. 422 ao inativar o último Admin (PR #14) |
 | Fornecedores | `GET /fornecedores` (`?incluirInativos`), `GET /{id}`, `POST`, `PUT /{id}`, `DELETE /{id}` (inativa) | Novo. Nenhuma tela usa nesta sprint |
-| Movimentações | Só a entidade `MovimentacaoEstoque` | Registro imutável, com `saldoAnterior`, `saldoPosterior` e `variacao`. Tipos: `SALDO_INICIAL`, `AJUSTE`, `ENTRADA`, `SAIDA`, `ESTORNO`. Origens: `MANUAL`, `BLING`, `IMPORTACAO` |
-| Erros | Exceções de domínio com `@ResponseStatus` (400, 404, 409, 422) | Sem o corpo padronizado de A.1 |
+| Movimentações | `GET /movimentacoes` com filtros e `limite`, `POST /movimentacoes` | Registro imutável. Tipos no `POST`: `ENTRADA`, `SAIDA`, `AJUSTE`. Filtro `tipo` não aceita `ESTORNO`. Origens: `MANUAL`, `BLING`, `IMPORTACAO` |
+| Erros | Formato padronizado `{ status, mensagem, erros }` em todas as falhas | 400, 401, 404, 409, 422, 500 |
+| Login | `POST /auth/login` | Sem token (decisão de POC) |
+| Configurações | `GET /configuracoes` | Sem escrita nesta fase |
+| Dashboard | `GET /dashboard/resumo` | PR #14 |
+| Perfis | `GET /perfis-acesso` | PR #14 |
 | Infra | Docker Compose (MySQL 8.4 + Spring na 8080), Swagger (SpringDoc), seed em `database/zz-seed-demo.sql` | Sem CORS (resolvido pelo proxy do Vite, não precisa mexer) |
 
 ### 11.2 O que falta, por prioridade
 
 | # | Item | Telas que dependem | Parada | Detalhe |
 |---|---|---|---|---|
-| 1 | `@ControllerAdvice` com erro padronizado `{ status, mensagem, erros }` | Todas | P1 | Hoje os erros saem no formato padrão do Spring, sem `mensagem` nem `erros[].campo`, e o front cairia sempre na mensagem genérica |
-| 2 | `POST /auth/login` | TL01 | P1 | Confere e-mail + senha de usuário ativo. **Sem Spring Security/JWT nesta fase** (decisão de POC; registrar no backlog) |
-| 3 | `estoqueMinimo`, `estoqueMinimoEfetivo` e `fotoUrl` em `Produto` | TL03, TL04, TL05, TL12 | P1 | Pontos D3 e D4. Com `ddl-auto=validate`, alterar o script SQL **e** a entidade juntos |
-| 4 | Tabela `configuracoes` (linha única) + `GET /configuracoes` | TL03, TL13 | P1 | O mínimo efetivo depende do mínimo global |
-| 5 | `POST /movimentacoes` + `GET /movimentacoes` com filtros e `limite` | TL05, TL06, TL07, TL11, Dashboard | P1 | Pontos D1, D2, D5 e D6. A entidade já existe |
-| 6 | `GET /perfis-acesso` | TL18 | P2 | |
-| 7 | 422 ao inativar o último Admin | TL18 | P2 | |
-| 8 | `GET /dashboard/resumo` | Dashboard | P2 | Consultas agregadas (pode ser JPQL ou cálculo no service) |
-| 9 | `avisos_falta` (tabela + entidade + `GET`, `POST`, `PATCH /{id}/resolver`) | TL03, TL10 | P3 | `@ManyToOne` com `Produto` e `Usuario`; um aviso aberto por produto, o segundo soma |
-| 10 | `PUT /configuracoes` | TL13 | P3 | |
-| 11 | `PATCH /usuarios/{id}/senha` | TL19 (e redefinir senha na TL18, ⭐) | P3 | Com `senhaAtual`: confere; sem: redefinição pelo Admin |
-| 12 | Swagger completo (descrição, exemplo, respostas) em todos os endpoints novos | — | Sempre | Item avaliado |
+| 9 | `avisos_falta` (tabela + entidade + `GET`, `POST`, `PATCH /{id}/resolver`) | TL03, TL10 | P3 | `@ManyToOne` com `Produto` e `Usuario`; um aviso aberto por produto, o segundo soma. Enquanto faltar, a rota fica no mock |
+| 10 | `PUT /configuracoes` | TL13 | P3 | Sem isso, salvar em TL13 falha com `configuracoes` no Spring |
+| 11 | `PATCH /usuarios/{id}/senha` | TL19 (e redefinir senha na TL18, ⭐) | P3 | Com `senhaAtual`: confere; sem: redefinição pelo Admin. Sem isso, trocar senha falha com `usuarios` no Spring |
+| 12 | Swagger completo (descrição, exemplo, respostas) nos endpoints novos | — | Sempre | Item avaliado |
+
+Os itens 1 a 8 (P1 e P2) foram entregues em 04/11/2026.
 
 ### 11.3 Observações
 
 - **Saldo:** resolvido no schema v3; `produtos.quantidade` é o saldo único.
-- **`PATCH /produtos/{id}/quantidade`:** deixou de ser uma porta dos fundos, porque agora grava `AJUSTE` auditado com `usuarioId` e `justificativa`.
+- **`PATCH /produtos/{id}/quantidade`:** ficou como caminho de compatibilidade. Grava `AJUSTE` auditado mesmo sem mudança de valor. As telas usam o `POST /movimentacoes`.
+- **Sem token:** o back não sabe quem está chamando, então as rotas de Admin só são bloqueadas no front. Decisão de POC.
 - **Senha em texto puro:** aceitável para POC, mas registrar no backlog (BCrypt na próxima sprint).
 - **Movimentos vindos do Bling** ficam para a fase com Bling. Nesta fase, as telas gravam só `origem = MANUAL`.
 
@@ -1174,11 +1177,10 @@ Convenção do documento: 🤝 indica algo que depende de um ponto abaixo.
 
 ## Apêndice A — Contrato da API
 
-Base: o front chama `/api/<rota>`; o proxy remove o `/api`. Datas em ISO local sem fuso (`"2026-10-31T14:32:00"`, padrão do `LocalDateTime`). Dinheiro como número (`34.9`). **Revisado em 02/11/2026 com o back do schema v3:** o que já existe segue o código; o que falta está marcado e depende da seção 11.0. O mock (Apêndice B) já segue o formato de produto; movimentação continua no formato anterior até D1 e D2.
+Base: o front chama `/api/<rota>`; o proxy remove o `/api`. Datas em ISO local sem fuso (`"2026-10-31T14:32:00"`, padrão do `LocalDateTime`), no fuso de São Paulo quando o back roda em Docker. Dinheiro como número (`34.9`). **Revisado em 04/11/2026 com o back das paradas P1 e P2:** o que já existe segue o código; o que falta está marcado. O mock (Apêndice B) segue os mesmos formatos.
 
 ### A.1 Formato de erro (todas as rotas)
 
-⏳ **Falta no back** (11.2, item 1). Os status abaixo já são os das exceções atuais, mas o corpo ainda é o padrão do Spring.
 
 ```json
 { "status": 400, "mensagem": "Confira os campos destacados.", "erros": [ { "campo": "quantidade", "mensagem": "Informe um número inteiro maior que zero." } ] }
@@ -1194,7 +1196,6 @@ Base: o front chama `/api/<rota>`; o proxy remove o `/api`. Datas em ISO local s
 
 ### A.2 Autenticação
 
-⏳ **Falta no back** (11.2, item 2). O formato de `Usuario` abaixo já é o do back.
 
 | Método e rota | Corpo | Resposta |
 |---|---|---|
@@ -1208,9 +1209,9 @@ Base: o front chama `/api/<rota>`; o proxy remove o `/api`. Datas em ISO local s
 |---|---|---|
 | `GET /produtos` (`?incluirInativos=true`) | — | 200 `Produto[]` (só ativos por padrão) |
 | `GET /produtos/{id}` | — | 200 `Produto` · 404 |
-| `POST /produtos` | `{ "sku", "nome", "categoriaId", "quantidade", "usuarioId" }` + opcionais `peso`, `tamanho`, `descricao`, `preco`, `marca`, `fornecedorId`, `localizacoes` | 201 `Produto` · 400 · 404 · 409 |
-| `PUT /produtos/{id}` | `{ "sku", "nome", "categoriaId" }` + os mesmos opcionais (e ⏳ `estoqueMinimo` e `fotoUrl`, D3 e D4), **sem** `quantidade` nem `usuarioId` | 200 `Produto` · 400 · 404 · 409 · 422 (inativo) |
-| `PATCH /produtos/{id}/quantidade` | `{ "quantidade", "usuarioId", "justificativa" }` (valor absoluto, grava `AJUSTE`; sem mudança de valor, 200 sem movimentação) | 200 `Produto` · 400 · 404 · 422 (inativo) |
+| `POST /produtos` | `{ "sku", "nome", "categoriaId", "quantidade", "usuarioId" }` + opcionais `peso`, `tamanho`, `descricao`, `preco`, `marca`, `fornecedorId`, `localizacoes`, `estoqueMinimo`, `fotoUrl` | 201 `Produto` · 400 · 404 · 409 |
+| `PUT /produtos/{id}` | `{ "sku", "nome", "categoriaId" }` + os mesmos opcionais, **sem** `quantidade` nem `usuarioId` | 200 `Produto` · 400 · 404 · 409 · 422 (inativo) |
+| `PATCH /produtos/{id}/quantidade` | `{ "quantidade", "usuarioId", "justificativa" }` (compatibilidade: valor absoluto, grava `AJUSTE` mesmo sem mudança de valor; as telas usam o `POST /movimentacoes`) | 200 `Produto` · 400 · 404 · 422 (inativo) |
 | `DELETE /produtos/{id}` | — | 204 · 404 · 422 (já inativo) |
 
 No `PUT`, lista de localizações ausente ou `null` limpa as localizações, e `fornecedorId` nulo remove o vínculo.
@@ -1226,36 +1227,38 @@ No `PUT`, lista de localizações ausente ou `null` limpa as localizações, e `
 ```
 
 - `peso`, `tamanho`, `descricao`, `preco`, `marca` e `fornecedor` podem ser `null`; `localizacoes` pode ser vazia. Os valores acima são só um exemplo.
-- ⏳ `estoqueMinimo`, `estoqueMinimoEfetivo` e `fotoUrl` **faltam no back** (D3 e D4).
 - `estoqueMinimoEfetivo = estoqueMinimo ?? configuracoes.estoqueMinimoGlobal` (calculado pelo back, não é coluna). A **situação** (OK/Baixo/Zerado) é calculada no front (exercício 2.5).
 
 ### A.4 Movimentações
 
-⏳ **Falta no back:** só a entidade existe. O formato abaixo é a proposta D2, com os nomes da entidade `MovimentacaoEstoque`.
-
 | Método e rota | Corpo | Resposta |
 |---|---|---|
-| `GET /movimentacoes?produtoId=&usuarioId=&tipo=&de=AAAA-MM-DD&ate=AAAA-MM-DD&limite=` | — | 200 `Movimentacao[]`, mais recente primeiro; todos os filtros opcionais |
+| `GET /movimentacoes?produtoId=&usuarioId=&tipo=&de=AAAA-MM-DD&ate=AAAA-MM-DD&limite=` | — | 200 `Movimentacao[]`, mais recente primeiro; todos os filtros opcionais · 400 com `erros[].campo` |
 | `POST /movimentacoes` | ver abaixo | 201 `Movimentacao` · 400 · 404 · 422 |
 
 ```json
-// POST — só ENTRADA e SAIDA; "quantidade" é o quanto entra ou sai (> 0). O ajuste usa PATCH /produtos/{id}/quantidade (A.3).
-{ "produtoId": 1, "usuarioId": 3, "tipo": "SAIDA", "quantidade": 1, "justificativa": "Avaria" }
+// POST — "quantidade" é o quanto entra ou sai (> 0) ou, em AJUSTE, o novo saldo (>= 0).
+{ "produtoId": 1, "usuarioId": 3, "tipo": "SAIDA", "quantidade": 1, "motivo": "AVARIA", "observacao": "Lâmina quebrada", "documento": null }
 ```
 
-- `justificativa`: opcional em `ENTRADA` e obrigatória em `SAIDA` (proposta D1: o front monta o texto)
-- `SAIDA` maior que o saldo → **422** `"Não dá para tirar 5 un.: a quantidade atual é 2 un."` (D6)
-- `usuarioId` vai no corpo porque ainda não há token (POC)
+- `tipo` no `POST`: `ENTRADA` · `SAIDA` · `AJUSTE`
+- `motivo`: `PERDA` · `AVARIA` · `USO_INTERNO` · `VENDA_BALCAO` · `OUTRO`. Obrigatório em `SAIDA`, opcional nos demais
+- `observacao` (até 255): obrigatória com `motivo: OUTRO`; em `AJUSTE`, obrigatória com pelo menos 10 caracteres
+- `documento` (até 120): opcional
+- `SAIDA` maior que o saldo → **422** `"Não dá para tirar 5 un.: a quantidade atual é 2 un."`
+- Produto ou usuário inativo → 422
+- `usuarioId` vai no corpo porque não há token (POC)
 
 ```json
-// Resposta (Movimentacao): "quantidade" é sempre positiva; "variacao" tem sinal
-{ "id": 5, "tipo": "SAIDA", "quantidade": 1, "variacao": -1, "saldoAnterior": 2, "saldoPosterior": 1,
-  "justificativa": "Avaria", "origem": "MANUAL", "criadoEm": "2026-10-31T15:52:32",
+// Resposta (Movimentacao): "quantidade" tem sinal
+{ "id": 5, "tipo": "SAIDA", "quantidade": -1, "quantidadeAntes": 2, "quantidadeDepois": 1,
+  "motivo": "AVARIA", "observacao": "Lâmina quebrada", "documento": null,
+  "origem": "MANUAL", "dataMov": "2026-10-31T15:52:32",
   "produto": { "id": 1, "sku": "1001", "nome": "Martelo" },
   "usuario": { "id": 3, "nome": "Ronaldo" } }
 ```
 
-- `tipo`: `SALDO_INICIAL` · `AJUSTE` · `ENTRADA` · `SAIDA` · `ESTORNO`
+- `tipo` na resposta: `SALDO_INICIAL` · `AJUSTE` · `ENTRADA` · `SAIDA` · `ESTORNO`. O filtro `tipo` aceita os quatro primeiros
 - `origem`: `MANUAL` · `BLING` · `IMPORTACAO`. As telas desta fase gravam só `MANUAL`.
 
 ### A.5 Avisos de falta
@@ -1277,7 +1280,7 @@ No `PUT`, lista de localizações ausente ou `null` limpa as localizações, e `
 
 ### A.6 Configurações
 
-⏳ **Falta no back** (11.2, itens 4 e 10).
+⏳ `PUT /configuracoes` **falta no back** (11.2, item 10). O `GET` já existe.
 
 | Método e rota | Corpo | Resposta |
 |---|---|---|
@@ -1286,7 +1289,7 @@ No `PUT`, lista de localizações ausente ou `null` limpa as localizações, e `
 
 ### A.7 Usuários e perfis
 
-Já existem no back: `GET`, `POST`, `PUT` e `DELETE /usuarios`. ⏳ Faltam `PATCH /usuarios/{id}/senha`, `GET /perfis-acesso` e o 422 do último Admin.
+Já existem no back: `GET`, `POST`, `PUT` e `DELETE /usuarios` e `GET /perfis-acesso` (os dois últimos itens do P2 estão no PR #14). ⏳ Falta `PATCH /usuarios/{id}/senha`.
 
 | Método e rota | Corpo | Resposta |
 |---|---|---|
@@ -1300,7 +1303,7 @@ Já existem no back: `GET`, `POST`, `PUT` e `DELETE /usuarios`. ⏳ Faltam `PATC
 
 ### A.8 Dashboard
 
-⏳ **Falta no back** (11.2, item 8).
+Entregue no PR #14.
 
 | Método e rota | Resposta |
 |---|---|
@@ -1312,7 +1315,7 @@ Já existem no back: `GET`, `POST`, `PUT` e `DELETE /usuarios`. ⏳ Faltam `PATC
   "maisMovimentados": [ { "produto": { "id": 1, "sku": "1001", "nome": "Martelo" }, "totalMovimentado": 12 } ] }
 ```
 
-`produtosBaixoEstoque` conta só os com `0 < quantidade <= estoqueMinimoEfetivo` (zerados contam à parte). `entradasSaidas7Dias` tem sempre 7 itens, do mais antigo para hoje; `saidas` é positivo.
+`produtosBaixoEstoque` conta só os com `0 < quantidade <= estoqueMinimoEfetivo` (zerados contam à parte). `entradasSaidas7Dias` tem sempre 7 itens, do mais antigo para hoje, separados pelo sinal da variação; `saidas` é positivo. `maisMovimentados` tem até 5 itens e soma o valor absoluto das variações de todo o histórico. `SALDO_INICIAL` entra nos cálculos.
 
 ### A.9 Prévia Bling (só mock, somente leitura)
 
@@ -1342,7 +1345,7 @@ Nenhuma tela usa nesta sprint. Fica registrado para não haver surpresa no forma
 
 ## Apêndice B — `mock/server.cjs`
 
-> Atualizado em 02/11/2026: **produto** segue o back do schema v3. **Movimentação** continua no formato anterior até os pontos D1 e D2 da seção 11.0. Depois de atualizar o seed, rode `npm run mock:reset` e reinicie o mock.
+> Atualizado em 04/11/2026: **produto** e **movimentação** seguem o back. Depois de atualizar o seed, rode `npm run mock:reset` e reinicie o mock.
 
 > Infraestrutura, não exercício. Testado com json-server 0.17.4 e Node 22: todas as rotas do Apêndice A responderam com os status esperados.
 
@@ -1809,7 +1812,7 @@ server.listen(3001, () => console.log('Mock do Portal Óttimos em http://localho
 
 ## Apêndice C — `mock/db.seed.json`
 
-> Atualizado em 02/11/2026: **produto** segue o back do schema v3. **Movimentação** continua no formato anterior até os pontos D1 e D2 da seção 11.0. Depois de atualizar o seed, rode `npm run mock:reset` e reinicie o mock.
+> Atualizado em 04/11/2026: **produto** e **movimentação** seguem o back. Depois de atualizar o seed, rode `npm run mock:reset` e reinicie o mock.
 
 > Logins de teste (senha `123456` para todos): **marcia@ottimos.com** e **carlos@ottimos.com** (Admin) · **ronaldo@ottimos.com** e **valdir@ottimos.com** (Operador).
 > O servidor copia este arquivo para `mock/db.json` na primeira vez; `npm run mock:reset` restaura.

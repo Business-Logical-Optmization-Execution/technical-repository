@@ -5,14 +5,14 @@ import { BotaoIcone } from '../botao'
 import { Selo } from '../selo'
 import estilos from './TituloPagina.module.css'
 
-export function TituloPagina({titulo, admin, voltarPara, acoes, ...resto}){
+export function TituloPagina({titulo, admin, voltarPara, estadoVoltar, acoes, ...resto}){
 
     const navegar = useNavigate();
     useTituloDocumento(titulo);
 
     return (
         <div {...resto} className={estilos.linha}>
-            {voltarPara && <BotaoIcone icone={ArrowLeft} rotulo="Voltar" onClick={() => navegar(voltarPara)} />}
+            {voltarPara && <BotaoIcone icone={ArrowLeft} rotulo="Voltar" onClick={() => navegar(voltarPara, { state: estadoVoltar })} />}
             <h1 className={estilos.titulo}>
             {titulo}
             </h1>

@@ -12,6 +12,10 @@
     text-transform: uppercase;
 }
 
+.rotuloComum {
+    text-transform: none;
+}
+
 .entrada {
     width: 100%;
     padding: var(--espaco-12) var(--espaco-16);
