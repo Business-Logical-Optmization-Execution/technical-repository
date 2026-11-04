@@ -1,15 +1,18 @@
 package com.portalblox.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.br.CNPJ;
 
 public class FornecedorRequestDto {
 
+	@Schema(example = "Parafusos Brasil")
 	@NotBlank
 	@Size(max = 180)
 	private String nome;
 
+	@Schema(example = "33444555000181")
 	@CNPJ
 	@NotBlank
 	@Size(max = 18)

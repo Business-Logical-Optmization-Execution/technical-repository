@@ -10,7 +10,6 @@ import com.portalblox.repository.FornecedorRepository;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FornecedorService {
@@ -23,7 +22,6 @@ public class FornecedorService {
 		this.fornecedorRepository = fornecedorRepository;
 	}
 
-	@Transactional(readOnly = true)
 	public List<Fornecedor> listar(boolean incluirInativos) {
 		if (incluirInativos) {
 			return fornecedorRepository.findAllByOrderByNome();
@@ -31,13 +29,11 @@ public class FornecedorService {
 		return fornecedorRepository.findByAtivoTrueOrderByNome();
 	}
 
-	@Transactional(readOnly = true)
 	public Fornecedor buscarPorId(Integer id) {
 		return fornecedorRepository.findById(id)
 				.orElseThrow(FornecedorNaoEncontradoException::new);
 	}
 
-	@Transactional
 	public Fornecedor cadastrar(Fornecedor fornecedor) {
 		String cnpj = normalizarCnpj(fornecedor.getCnpj());
 		if (fornecedorRepository.existsByCnpj(cnpj)) {
@@ -49,7 +45,6 @@ public class FornecedorService {
 		return salvar(fornecedor);
 	}
 
-	@Transactional
 	public Fornecedor atualizar(Integer id, Fornecedor dados) {
 		Fornecedor existente = fornecedorRepository.findById(id)
 				.orElseThrow(FornecedorNaoEncontradoException::new);
@@ -62,7 +57,6 @@ public class FornecedorService {
 		return salvar(existente);
 	}
 
-	@Transactional
 	public void inativar(Integer id) {
 		Fornecedor fornecedor = fornecedorRepository.findById(id)
 				.orElseThrow(FornecedorNaoEncontradoException::new);

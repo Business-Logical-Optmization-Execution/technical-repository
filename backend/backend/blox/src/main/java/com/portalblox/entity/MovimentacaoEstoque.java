@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
@@ -42,13 +43,24 @@ public class MovimentacaoEstoque {
 	@Column(nullable = false)
 	private Integer variacao;
 
-	@Column(nullable = false)
-	private Integer saldoAnterior;
+	@Column(name = "quantidade_antes", nullable = false)
+	private Integer quantidadeAntes;
 
-	@Column(nullable = false)
-	private Integer saldoPosterior;
+	@Column(name = "quantidade_depois", nullable = false)
+	private Integer quantidadeDepois;
 
-	@Column(nullable = false, length = 255)
+	@Enumerated(EnumType.STRING)
+	@JdbcTypeCode(SqlTypes.VARCHAR)
+	@Column(length = 20)
+	private MotivoMovimentacao motivo;
+
+	@Column(length = 255)
+	private String observacao;
+
+	@Column(length = 120)
+	private String documento;
+
+	@Column(length = 255)
 	private String justificativa;
 
 	@Enumerated(EnumType.STRING)
@@ -67,22 +79,27 @@ public class MovimentacaoEstoque {
 	}
 
 	public MovimentacaoEstoque(Produto produto, Usuario usuario, TipoMovimentacao tipo,
-			Integer quantidade, Integer variacao, Integer saldoAnterior, Integer saldoPosterior,
-			String justificativa, OrigemMovimentacao origem) {
+			Integer quantidade, Integer variacao, Integer quantidadeAntes, Integer quantidadeDepois,
+			MotivoMovimentacao motivo, String observacao, String documento,
+			OrigemMovimentacao origem) {
 		this.produto = produto;
 		this.usuario = usuario;
 		this.tipo = tipo;
 		this.quantidade = quantidade;
 		this.variacao = variacao;
-		this.saldoAnterior = saldoAnterior;
-		this.saldoPosterior = saldoPosterior;
-		this.justificativa = justificativa;
+		this.quantidadeAntes = quantidadeAntes;
+		this.quantidadeDepois = quantidadeDepois;
+		this.motivo = motivo;
+		this.observacao = observacao;
+		this.documento = documento;
+		this.justificativa = null;
 		this.origem = origem;
 	}
 
 	@PrePersist
 	public void aoCriar() {
-		this.criadoEm = LocalDateTime.now();
+		// Segundos, como na coluna DATETIME: POST e GET devolvem o mesmo dataMov.
+		this.criadoEm = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 	}
 
 	public Integer getId() { return id; }
@@ -97,9 +114,15 @@ public class MovimentacaoEstoque {
 
 	public Integer getVariacao() { return variacao; }
 
-	public Integer getSaldoAnterior() { return saldoAnterior; }
+	public Integer getQuantidadeAntes() { return quantidadeAntes; }
 
-	public Integer getSaldoPosterior() { return saldoPosterior; }
+	public Integer getQuantidadeDepois() { return quantidadeDepois; }
+
+	public MotivoMovimentacao getMotivo() { return motivo; }
+
+	public String getObservacao() { return observacao; }
+
+	public String getDocumento() { return documento; }
 
 	public String getJustificativa() { return justificativa; }
 

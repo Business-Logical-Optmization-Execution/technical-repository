@@ -1,5 +1,6 @@
 package com.portalblox.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -7,15 +8,18 @@ import jakarta.validation.constraints.Size;
 
 public class UsuarioAtualizacaoRequestDto {
 
+	@Schema(example = "Ronaldo")
 	@NotBlank
 	@Size(max = 120)
 	private String nome;
 
+	@Schema(example = "ronaldo@ottimos.com")
 	@NotBlank
 	@Email
 	@Size(max = 180)
 	private String email;
 
+	@Schema(example = "2")
 	@NotNull
 	private Integer perfilAcessoId;
 

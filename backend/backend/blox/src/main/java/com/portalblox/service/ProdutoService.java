@@ -34,8 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProdutoService {
 
-	private static final String JUSTIFICATIVA_SALDO_INICIAL =
-			"Saldo inicial informado no cadastro do produto";
+	private static final String OBSERVACAO_SALDO_INICIAL = "Saldo inicial do cadastro.";
 
 	private final ProdutoRepository produtoRepository;
 	private final CategoriaRepository categoriaRepository;
@@ -55,7 +54,6 @@ public class ProdutoService {
 		this.movimentacaoService = movimentacaoService;
 	}
 
-	@Transactional(readOnly = true)
 	public List<Produto> listar(boolean incluirInativos) {
 		if (incluirInativos) {
 			return produtoRepository.findAllCompletos();
@@ -63,7 +61,6 @@ public class ProdutoService {
 		return produtoRepository.findAtivosCompletos();
 	}
 
-	@Transactional(readOnly = true)
 	public Produto buscarPorId(Integer id) {
 		return produtoRepository.findByIdCompleto(id)
 				.orElseThrow(ProdutoNaoEncontradoException::new);
@@ -87,7 +84,7 @@ public class ProdutoService {
 		if (quantidadeInicial != null && quantidadeInicial > 0) {
 			movimentacaoService.registrar(salvo, autor, TipoMovimentacao.SALDO_INICIAL,
 					quantidadeInicial, quantidadeInicial, 0, quantidadeInicial,
-					JUSTIFICATIVA_SALDO_INICIAL, OrigemMovimentacao.MANUAL);
+					null, OBSERVACAO_SALDO_INICIAL, null, OrigemMovimentacao.MANUAL);
 		}
 		return salvo;
 	}
@@ -111,6 +108,8 @@ public class ProdutoService {
 		existente.setDescricao(dados.getDescricao());
 		existente.setPreco(dados.getPreco());
 		existente.setMarca(dados.getMarca());
+		existente.setFotoUrl(dados.getFotoUrl());
+		existente.setEstoqueMinimo(dados.getEstoqueMinimo());
 		existente.setCategoria(buscarCategoria(categoriaId));
 		existente.setFornecedor(buscarFornecedorOpcional(fornecedorId));
 
@@ -132,20 +131,15 @@ public class ProdutoService {
 		Usuario autor = buscarUsuarioAtivo(usuarioId);
 
 		int saldoAnterior = produto.getQuantidade();
-		if (saldoAnterior == novaQuantidade) {
-			return produto;
-		}
-
 		int variacao = novaQuantidade - saldoAnterior;
 		produto.setQuantidade(novaQuantidade);
 		Produto salvo = produtoRepository.save(produto);
 		movimentacaoService.registrar(salvo, autor, TipoMovimentacao.AJUSTE,
-				novaQuantidade, variacao, saldoAnterior, novaQuantidade,
-				justificativa.trim(), OrigemMovimentacao.MANUAL);
+				Math.abs(variacao), variacao, saldoAnterior, novaQuantidade,
+				null, justificativa.trim(), null, OrigemMovimentacao.MANUAL);
 		return salvo;
 	}
 
-	@Transactional
 	public void inativar(Integer id) {
 		Produto produto = produtoRepository.findById(id)
 				.orElseThrow(ProdutoNaoEncontradoException::new);

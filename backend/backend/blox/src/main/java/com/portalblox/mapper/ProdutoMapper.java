@@ -22,6 +22,8 @@ public class ProdutoMapper {
 		produto.setDescricao(texto(dto.getDescricao()));
 		produto.setPreco(dto.getPreco());
 		produto.setMarca(texto(dto.getMarca()));
+		produto.setFotoUrl(texto(dto.getFotoUrl()));
+		produto.setEstoqueMinimo(dto.getEstoqueMinimo());
 
 		return produto;
 	}
@@ -38,11 +40,13 @@ public class ProdutoMapper {
 		produto.setDescricao(texto(dto.getDescricao()));
 		produto.setPreco(dto.getPreco());
 		produto.setMarca(texto(dto.getMarca()));
+		produto.setFotoUrl(texto(dto.getFotoUrl()));
+		produto.setEstoqueMinimo(dto.getEstoqueMinimo());
 
 		return produto;
 	}
 
-	public static ProdutoResponseDto toResponseDto(Produto entity) {
+	public static ProdutoResponseDto toResponseDto(Produto entity, int estoqueMinimoGlobal) {
 		if (entity == null) {
 			return null;
 		}
@@ -55,6 +59,11 @@ public class ProdutoMapper {
 		dto.setDescricao(entity.getDescricao());
 		dto.setPreco(entity.getPreco());
 		dto.setMarca(entity.getMarca());
+		dto.setFotoUrl(entity.getFotoUrl());
+		dto.setEstoqueMinimo(entity.getEstoqueMinimo());
+		dto.setEstoqueMinimoEfetivo(entity.getEstoqueMinimo() != null
+				? entity.getEstoqueMinimo()
+				: estoqueMinimoGlobal);
 		dto.setQuantidade(entity.getQuantidade());
 		dto.setAtivo(entity.getAtivo());
 
@@ -82,9 +91,9 @@ public class ProdutoMapper {
 		return dto;
 	}
 
-	public static List<ProdutoResponseDto> toResponseDto(List<Produto> entities) {
+	public static List<ProdutoResponseDto> toResponseDto(List<Produto> entities, int estoqueMinimoGlobal) {
 		return entities.stream()
-				.map(ProdutoMapper::toResponseDto)
+				.map(entity -> toResponseDto(entity, estoqueMinimoGlobal))
 				.toList();
 	}
 
