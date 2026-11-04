@@ -944,6 +944,8 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 - [ ] `ResponsiveContainer` com altura fixa de 280 px.
 - [ ] Regra do back: `SALDO_INICIAL` e ajustes entram no gráfico pelo sinal da variação. Cadastrar produto com saldo gera um pico de entradas: evite na demonstração.
 - [ ] O seed tem movimentações só até 30/10. Antes de apresentar depois de 05/11, registre movimentações para o gráfico não abrir vazio.
+- [ ] Card "Reposição por fornecedor" (acréscimo do grupo em 04/11): `estoqueMinimoEfetivo − quantidade` de cada produto, agrupado por fornecedor, do maior total para o menor, com "Sem fornecedor" por último. Cada fornecedor abre em `<details>`. Calculado no front com `GET /produtos`.
+- [ ] Card "Tempo zerado" (acréscimo do grupo em 04/11): dias desde a última movimentação com variação diferente de zero de cada produto zerado, do maior para o menor; sem movimentação, "Sem data registrada". Calculado no front com `GET /movimentacoes`; quando o histórico crescer, vale levar para `/dashboard/resumo`.
 - [ ] Item "Dashboard" já existe no menu (exercício 2.4).
 
 **Pronto quando:** o Dashboard mostra os 4 números batendo com o Início (ex.: "Zerados" = quantidade de cards com "Qtd 0"), e registrar uma entrada e clicar em "Atualizar" muda o gráfico de hoje.

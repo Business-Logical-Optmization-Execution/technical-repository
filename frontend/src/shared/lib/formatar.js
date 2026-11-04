@@ -24,6 +24,11 @@ export function formatarMoeda(valor) {
     return moeda.format(valor);
 }
 
+export function formatarHora(dataHora) {
+
+    return hora.format(dataHora);
+}
+
 export function formatarDataHora(iso) {
 
     const dataHora = new Date(iso);
