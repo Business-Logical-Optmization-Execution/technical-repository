@@ -60,7 +60,7 @@ export function UltimasMovimentacoes({ produtoId }) {
             <div className={estilos.cabecalho}>
                 <h2 id="titulo-ultimas-movimentacoes" className={estilos.titulo}>Últimas movimentações</h2>
                 {ehAdmin && (
-                    <Link to={ROTAS.historico + '?produtoId=' + produtoId} className={estilos.link}>
+                    <Link to={ROTAS.historico + '?produtoId=' + produtoId} state={{ de: ROTAS.produto(produtoId) }} className={estilos.link}>
                         Ver histórico completo
                     </Link>
                 )}

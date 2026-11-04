@@ -1,8 +1,8 @@
 import { http } from '@/shared/api';
 
-export function listarProdutos() {
+export function listarProdutos(filtros) {
 
-    return http.get('/produtos').then((r) => r.data);
+    return http.get('/produtos', { params: filtros }).then((r) => r.data);
 
 }
 

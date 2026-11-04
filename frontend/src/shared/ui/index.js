@@ -1,6 +1,6 @@
 // API pública de shared/ui (Botao, CampoTexto, Selo, Card, Modal, Toast...)
 export { Botao, BotaoIcone } from './botao'
-export { CampoTexto, CampoAreaTexto, CampoSenha } from './campo'
+export { CampoTexto, CampoAreaTexto, CampoSenha, CampoSelecao } from './campo'
 export { Selo } from './selo'
 export { Card } from './card'
 export { Skeleton } from './skeleton'
