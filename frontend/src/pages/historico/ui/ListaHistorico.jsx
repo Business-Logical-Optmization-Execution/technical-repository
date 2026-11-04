@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { History } from 'lucide-react'
 import { ROTAS } from '@/shared/config'
 import { obterMensagemErro } from '@/shared/api'
-import { formatarDataHora, useRequisicao } from '@/shared/lib'
+import { formatarDataRelativa, useRequisicao } from '@/shared/lib'
 import { Avatar, Botao, Card, EstadoVazio, Skeleton } from '@/shared/ui'
 import { fraseHistorico, listarMovimentacoes } from '@/entities/movimentacao'
 import estilos from './ListaHistorico.module.css'
@@ -56,7 +56,7 @@ export function ListaHistorico({ filtros }) {
                 </Link>
                 {depois}
               </p>
-              <time className={estilos.quando} dateTime={mov.dataMov}>{formatarDataHora(mov.dataMov)}</time>
+              <time className={estilos.quando} dateTime={mov.dataMov}>{formatarDataRelativa(mov.dataMov)}</time>
             </li>
           )
         })}

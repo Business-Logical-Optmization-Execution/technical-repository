@@ -43,7 +43,7 @@ export function fraseHistorico({ tipo, quantidade, quantidadeDepois, motivo, usu
         return { antes: usuario.nome + ' estornou ' + movimento + ' de ', depois: '' };
     }
 
-    return { antes: 'Saldo inicial de ' + formatarQuantidade(quantidade) + ' de ', depois: '' };
+    return { antes: usuario.nome + ' cadastrou ', depois: '' };
 }
 
 export function textoJustificativa({ motivo, documento, observacao }) {
