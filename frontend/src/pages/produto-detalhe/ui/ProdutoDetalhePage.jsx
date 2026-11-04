@@ -46,8 +46,8 @@ export function ProdutoDetalhePage() {
           <CartaoProduto produto={produto} />
           <div className={estilos.movimentacoes}>
             <Botao como={Link} to={ROTAS.registrarEntrada(produto.id)} state={location.state}>Registrar entrada</Botao>
-            <Botao variante="secundario" disabled title="Em breve">Registrar saída</Botao>
-            <Botao variante="secundario" disabled title="Em breve">Ajustar por contagem</Botao>
+            <Botao variante="secundario" como={Link} to={ROTAS.registrarSaida(produto.id)} state={location.state}>Registrar saída</Botao>
+            <Botao variante="secundario" como={Link} to={ROTAS.ajustarContagem(produto.id)} state={location.state}>Ajustar por contagem</Botao>
             <Botao variante="secundario" disabled title="Em breve">Avisar que está em falta</Botao>
           </div>
           <UltimasMovimentacoes produtoId={produto.id} />

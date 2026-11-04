@@ -1,14 +1,6 @@
-import { useParams } from 'react-router-dom'
-import { ROTAS } from '@/shared/config'
-import { TituloPagina } from '@/shared/ui'
+import { FormAjuste } from '@/features/registrar-movimentacao'
+import { TelaMovimentacao } from '@/widgets/tela-movimentacao'
 
 export function AjustarContagemPage() {
-  const { id } = useParams()
-
-  return (
-    <TituloPagina
-      titulo="Ajustar por contagem"
-      voltarPara={ROTAS.produto(id)}
-    />
-  )
+  return <TelaMovimentacao titulo="Ajustar por contagem" Formulario={FormAjuste} />
 }
