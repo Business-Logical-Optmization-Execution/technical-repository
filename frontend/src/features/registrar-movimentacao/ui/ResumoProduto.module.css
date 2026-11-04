@@ -1,0 +1,6 @@
+.resumo {
+    font-family: var(--fonte-codigo);
+    font-size: var(--texto-codigo-tamanho);
+    font-weight: var(--texto-codigo-peso);
+    line-height: var(--texto-codigo-altura);
+}

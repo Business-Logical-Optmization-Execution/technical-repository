@@ -12,4 +12,5 @@ export { ToastProvider, useToast } from './toast'
 export { TituloPagina } from './titulo-pagina'
 export { Avatar } from './avatar'
 export { Abas } from './abas'
+export { Tabela } from './tabela'
     

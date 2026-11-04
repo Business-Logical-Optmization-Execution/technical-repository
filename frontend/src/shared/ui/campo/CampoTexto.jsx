@@ -3,7 +3,7 @@ import estilos from './CampoTexto.module.css'
 import { TriangleAlert, LockKeyhole } from 'lucide-react'
 
 // acao: elemento clicável dentro do campo, à direita (ex.: o olho do CampoSenha).
-export function CampoTexto({ rotulo, obrigatorio, ajuda, erro, bloqueado, motivoBloqueio, acao, tipo = 'text', ...resto }) {
+export function CampoTexto({ rotulo, obrigatorio, ajuda, erro, bloqueado, motivoBloqueio, acao, tipo = 'text', caixaAlta = true, ...resto }) {
 
     const id = useId();
     const idAjuda = id + '-ajuda';
@@ -28,7 +28,7 @@ export function CampoTexto({ rotulo, obrigatorio, ajuda, erro, bloqueado, motivo
 
     return (
         <div className={estilos.campo}>
-            <label className={estilos.rotulo} htmlFor={id}>
+            <label className={estilos.rotulo + (caixaAlta ? '' : ' ' + estilos.rotuloComum)} htmlFor={id}>
                 {rotulo + (obrigatorio ? ' (obrigatório)' : '')}
             </label>
             <div className={estilos.caixa}>

@@ -14,6 +14,9 @@ import {
   CardProdutoResultado,
 } from '@/entities/produto'
 import { CampoBusca } from '@/features/buscar-produto'
+import { ModalConfirmarMovimentacao, ResumoProduto } from '@/features/registrar-movimentacao'
+
+const PRODUTO_TESTE = { id: 1, sku: '1001', nome: 'Martelo', quantidade: 2 }
 
 // Página de testes. Cada exercício acrescenta uma <section>
 // com o que precisa ser conferido no "Pronto quando".
@@ -23,6 +26,7 @@ export function VitrinePage() {
   const { usuario, ehAdmin, entrar, sair } = useSessao()
   const { dados: produtos, carregando, erro } = useRequisicao(listarProdutos)
   const [filtro, setFiltro] = useState('')
+  const [tipoModal, setTipoModal] = useState(null)
 
   const produtosVisiveis = produtos ? filtrarProdutos(ordenarPorCriticidade(produtos), filtro) : []
 
@@ -118,6 +122,28 @@ export function VitrinePage() {
           <h3 className={estilos.tituloGrupo}>Com botão de lupa (tela Busca)</h3>
           <CampoBusca comBotao valorInicial="martelo" />
         </div>
+      </section>
+
+      <section className={estilos.secao} aria-labelledby="secao-movimentacao">
+        <h2 id="secao-movimentacao" className={estilos.tituloSecao}>
+          Confirmar movimentação
+        </h2>
+        <div className={estilos.grupo}>
+          <ResumoProduto produto={PRODUTO_TESTE} />
+          <div className={estilos.linha}>
+            <Botao variante="secundario" onClick={() => setTipoModal('ENTRADA')}>Testar entrada de 10</Botao>
+            <Botao variante="secundario" onClick={() => setTipoModal('SAIDA')}>Testar saída de 1</Botao>
+            <Botao variante="secundario" onClick={() => setTipoModal('AJUSTE')}>Testar ajuste para 8</Botao>
+          </div>
+        </div>
+        <ModalConfirmarMovimentacao
+          aberto={tipoModal !== null}
+          tipo={tipoModal}
+          quantidade={{ ENTRADA: 10, SAIDA: 1, AJUSTE: 8 }[tipoModal] ?? 0}
+          produto={PRODUTO_TESTE}
+          aoVoltar={() => setTipoModal(null)}
+          aoConfirmar={() => setTipoModal(null)}
+        />
       </section>
     </main>
   )
