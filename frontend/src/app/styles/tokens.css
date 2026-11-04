@@ -1,0 +1,92 @@
+/*
+ * Design tokens do Portal Óttimos — fonte da verdade visual.
+ * Valores e nomes copiados da seção "Design Tokens" do design brief.
+ * Nunca use cores, tamanhos ou fontes soltos no código: use estas variáveis.
+ */
+:root {
+  /* ---------- Cores ---------- */
+  --cor-primaria: #24235f;
+  --cor-primaria-hover: #35347f;
+  --cor-primaria-suave: #e9e9f3;
+  --cor-destaque: #f7eb0c; /* só sobre azul ou como fundo com texto azul */
+  --cor-branco: #fafafc; /* o "branco" oficial; #FFFFFF não é usado */
+  --cor-fundo: #f1f1f6;
+  --cor-texto: #222222;
+  --cor-texto-secundario: #5a5a6e;
+  --cor-texto-sobre-azul-secundario: #c9c9dd;
+  --cor-borda: #80809a; /* limite de campos, botões secundários e cards clicáveis */
+  --cor-divisoria: #e2e2ea; /* só decorativa: nunca como limite de campo ou botão */
+  --cor-sucesso: #1e7b34;
+  --cor-alerta: #855a00; /* âmbar; não confundir com o amarelo de marca */
+  --cor-alerta-fundo: #fff7cc;
+  --cor-erro: #b42318;
+  --cor-informacao: #2f5bb7;
+  --cor-foco: #24235f; /* sobre azul, o anel usa --cor-destaque */
+
+  /* ---------- Fontes ---------- */
+  --fonte-interface: 'Inter', sans-serif;
+  --fonte-codigo: 'JetBrains Mono', monospace;
+
+  /* ---------- Tipografia (tamanho, peso, altura de linha) ---------- */
+  --texto-h1-tamanho: 28px;
+  --texto-h1-peso: 700;
+  --texto-h1-altura: 1.25;
+
+  --texto-h2-tamanho: 22px;
+  --texto-h2-peso: 600;
+  --texto-h2-altura: 1.3;
+
+  --texto-h3-tamanho: 18px;
+  --texto-h3-peso: 600;
+  --texto-h3-altura: 1.35;
+
+  --texto-base-tamanho: 16px;
+  --texto-base-peso: 400;
+  --texto-base-altura: 1.5;
+
+  --texto-saldo-tamanho: 32px;
+  --texto-saldo-peso: 700;
+  --texto-saldo-altura: 1.1;
+
+  --texto-legenda-tamanho: 14px; /* tamanho mínimo da interface */
+  --texto-legenda-peso: 400;
+  --texto-legenda-altura: 1.4;
+
+  --texto-rotulo-tamanho: 15px;
+  --texto-rotulo-peso: 600;
+  --texto-rotulo-altura: 1.4;
+
+  --texto-botao-tamanho: 16px;
+  --texto-botao-peso: 600;
+  --texto-botao-altura: 1;
+
+  --texto-codigo-tamanho: 15px; /* sempre com --fonte-codigo */
+  --texto-codigo-peso: 500;
+  --texto-codigo-altura: 1.4;
+
+  /* ---------- Espaçamento (base 4 px) ---------- */
+  --espaco-4: 4px;
+  --espaco-8: 8px;
+  --espaco-12: 12px;
+  --espaco-16: 16px; /* gap entre campos; margem da página no mobile */
+  --espaco-24: 24px; /* padding interno de card */
+  --espaco-32: 32px; /* margem da página no desktop */
+  --espaco-48: 48px;
+
+  /* ---------- Raio e sombra ---------- */
+  --raio-8: 8px; /* campos, botões */
+  --raio-12: 12px; /* cards, modais */
+  --sombra-sobreposicao: 0 8px 24px rgba(0, 0, 0, 0.5); /* só modal e menu suspenso */
+
+  /* ---------- Alturas e área clicável ---------- */
+  --area-clicavel-min: 44px; /* 44 × 44 px (WCAG 2.5.5) */
+  --altura-botao-principal: 48px;
+  --altura-botao-secundario: 44px;
+  --altura-busca: 56px;
+  --altura-cabecalho: 80px; /* barra de 76 px + faixa de 4 px */
+  --largura-coluna-busca: 1000px;
+  --largura-coluna-detalhe: 1024px;
+  --foto-card-baixo-altura: 144px;
+  --foto-card-resultado-largura: 120px;
+  --foto-card-resultado-altura: 196px;
+}

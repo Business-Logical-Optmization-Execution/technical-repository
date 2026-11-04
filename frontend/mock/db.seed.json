@@ -1,0 +1,62 @@
+{
+  "perfisAcesso": [
+    {"id": 1, "nome": "Administrador"},
+    {"id": 2, "nome": "Operador"}
+  ],
+  "usuarios": [
+    {"id": 1, "nome": "Márcia", "email": "marcia@ottimos.com", "senha": "123456", "perfilAcesso": {"id": 1, "nome": "Administrador"}, "ativo": true},
+    {"id": 2, "nome": "Carlos", "email": "carlos@ottimos.com", "senha": "123456", "perfilAcesso": {"id": 1, "nome": "Administrador"}, "ativo": true},
+    {"id": 3, "nome": "Ronaldo", "email": "ronaldo@ottimos.com", "senha": "123456", "perfilAcesso": {"id": 2, "nome": "Operador"}, "ativo": true},
+    {"id": 4, "nome": "Valdir", "email": "valdir@ottimos.com", "senha": "123456", "perfilAcesso": {"id": 2, "nome": "Operador"}, "ativo": true}
+  ],
+  "categorias": [
+    {"id": 1, "nome": "Ferragens"},
+    {"id": 2, "nome": "Fixacao"},
+    {"id": 3, "nome": "Eletrica"}
+  ],
+  "fornecedores": [
+    {"id": 1, "nome": "Ferragens Silva", "cnpj": "11222333000181", "ativo": true, "criadoEm": "2026-10-01T08:00:00", "atualizadoEm": "2026-10-01T08:00:00"},
+    {"id": 2, "nome": "Distribuidora Central", "cnpj": "22333444000172", "ativo": true, "criadoEm": "2026-10-01T08:00:00", "atualizadoEm": "2026-10-01T08:00:00"},
+    {"id": 3, "nome": "Aco Forte", "cnpj": "33444555000163", "ativo": false, "criadoEm": "2026-10-01T08:00:00", "atualizadoEm": "2026-10-01T08:00:00"}
+  ],
+  "produtos": [
+    {"id": 1, "sku": "1001", "nome": "Martelo", "peso": null, "tamanho": null, "descricao": "Martelo de unha 27 mm, cabo de madeira.", "preco": 34.9, "marca": null, "quantidade": 2, "ativo": true, "categoria": {"id": 1, "nome": "Ferragens"}, "fornecedor": {"id": 1, "nome": "Ferragens Silva", "cnpj": "11222333000181"}, "localizacoes": ["C3-P2"], "estoqueMinimo": 10, "fotoUrl": null},
+    {"id": 2, "sku": "1002", "nome": "Chave de fenda", "peso": null, "tamanho": null, "descricao": null, "preco": 12.5, "marca": null, "quantidade": 2, "ativo": true, "categoria": {"id": 1, "nome": "Ferragens"}, "fornecedor": {"id": 2, "nome": "Distribuidora Central", "cnpj": "22333444000172"}, "localizacoes": ["C3-P2"], "estoqueMinimo": null, "fotoUrl": null},
+    {"id": 3, "sku": "1003", "nome": "Serrote", "peso": null, "tamanho": null, "descricao": null, "preco": 59.9, "marca": null, "quantidade": 0, "ativo": true, "categoria": {"id": 1, "nome": "Ferragens"}, "fornecedor": {"id": 1, "nome": "Ferragens Silva", "cnpj": "11222333000181"}, "localizacoes": ["C4-P1"], "estoqueMinimo": null, "fotoUrl": null},
+    {"id": 4, "sku": "1004", "nome": "Alicate universal", "peso": null, "tamanho": null, "descricao": null, "preco": 42, "marca": null, "quantidade": 3, "ativo": true, "categoria": {"id": 1, "nome": "Ferragens"}, "fornecedor": {"id": 1, "nome": "Ferragens Silva", "cnpj": "11222333000181"}, "localizacoes": ["C3-P1"], "estoqueMinimo": null, "fotoUrl": null},
+    {"id": 5, "sku": "1005", "nome": "Trena 5 m", "peso": null, "tamanho": null, "descricao": null, "preco": 28.9, "marca": null, "quantidade": 4, "ativo": true, "categoria": {"id": 1, "nome": "Ferragens"}, "fornecedor": {"id": 1, "nome": "Ferragens Silva", "cnpj": "11222333000181"}, "localizacoes": ["C2-P3"], "estoqueMinimo": null, "fotoUrl": null},
+    {"id": 6, "sku": "1006", "nome": "Espátula 8 cm", "peso": null, "tamanho": null, "descricao": null, "preco": 9.9, "marca": null, "quantidade": 5, "ativo": true, "categoria": {"id": 1, "nome": "Ferragens"}, "fornecedor": null, "localizacoes": [], "estoqueMinimo": null, "fotoUrl": null},
+    {"id": 7, "sku": "1020", "nome": "Parafuso sextavado 6 mm", "peso": null, "tamanho": null, "descricao": "Caixa avulsa, vendido por unidade.", "preco": 0.45, "marca": null, "quantidade": 10, "ativo": true, "categoria": {"id": 2, "nome": "Fixacao"}, "fornecedor": {"id": 2, "nome": "Distribuidora Central", "cnpj": "22333444000172"}, "localizacoes": ["C1-P4", "C1-P5"], "estoqueMinimo": 50, "fotoUrl": null},
+    {"id": 8, "sku": "1543", "nome": "Fita veda-rosca 18 mm", "peso": null, "tamanho": null, "descricao": null, "preco": 4.9, "marca": null, "quantidade": 0, "ativo": true, "categoria": {"id": 2, "nome": "Fixacao"}, "fornecedor": {"id": 2, "nome": "Distribuidora Central", "cnpj": "22333444000172"}, "localizacoes": ["C5-P2"], "estoqueMinimo": null, "fotoUrl": null},
+    {"id": 9, "sku": "2001", "nome": "Fio flexível 2,5 mm (metro)", "peso": null, "tamanho": null, "descricao": null, "preco": 3.2, "marca": null, "quantidade": 120, "ativo": true, "categoria": {"id": 3, "nome": "Eletrica"}, "fornecedor": {"id": 2, "nome": "Distribuidora Central", "cnpj": "22333444000172"}, "localizacoes": ["C6-P1"], "estoqueMinimo": 30, "fotoUrl": null},
+    {"id": 10, "sku": "2002", "nome": "Tomada 2P+T 10 A", "peso": null, "tamanho": null, "descricao": null, "preco": 11.9, "marca": null, "quantidade": 35, "ativo": true, "categoria": {"id": 3, "nome": "Eletrica"}, "fornecedor": {"id": 2, "nome": "Distribuidora Central", "cnpj": "22333444000172"}, "localizacoes": ["C6-P2"], "estoqueMinimo": null, "fotoUrl": null},
+    {"id": 11, "sku": "1030", "nome": "Bucha 8 mm", "peso": null, "tamanho": null, "descricao": null, "preco": 0.2, "marca": null, "quantidade": 400, "ativo": true, "categoria": {"id": 2, "nome": "Fixacao"}, "fornecedor": {"id": 2, "nome": "Distribuidora Central", "cnpj": "22333444000172"}, "localizacoes": ["C1-P3"], "estoqueMinimo": 100, "fotoUrl": null},
+    {"id": 12, "sku": "1099", "nome": "Martelo de borracha", "peso": null, "tamanho": null, "descricao": null, "preco": 27.5, "marca": null, "quantidade": 8, "ativo": false, "categoria": {"id": 1, "nome": "Ferragens"}, "fornecedor": {"id": 1, "nome": "Ferragens Silva", "cnpj": "11222333000181"}, "localizacoes": ["C3-P2"], "estoqueMinimo": null, "fotoUrl": null}
+  ],
+  "movimentacoes": [
+    {"id": 1, "tipo": "ENTRADA", "quantidade": 10, "quantidadeAntes": 0, "quantidadeDepois": 10, "motivo": null, "observacao": null, "documento": "NF 12345", "origem": "MANUAL", "dataMov": "2026-10-28T09:12:00", "produto": {"id": 7, "sku": "1020", "nome": "Parafuso sextavado 6 mm"}, "usuario": {"id": 3, "nome": "Ronaldo"}},
+    {"id": 2, "tipo": "SAIDA", "quantidade": -1, "quantidadeAntes": 1, "quantidadeDepois": 0, "motivo": "AVARIA", "observacao": "Lâmina quebrada", "documento": null, "origem": "MANUAL", "dataMov": "2026-10-29T15:40:00", "produto": {"id": 3, "sku": "1003", "nome": "Serrote"}, "usuario": {"id": 4, "nome": "Valdir"}},
+    {"id": 3, "tipo": "AJUSTE", "quantidade": 2, "quantidadeAntes": 0, "quantidadeDepois": 2, "motivo": null, "observacao": "Contagem da prateleira C3-P2 na quarta-feira", "documento": null, "origem": "MANUAL", "dataMov": "2026-10-30T10:05:00", "produto": {"id": 1, "sku": "1001", "nome": "Martelo"}, "usuario": {"id": 1, "nome": "Márcia"}},
+    {"id": 4, "tipo": "SAIDA", "quantidade": -3, "quantidadeAntes": 38, "quantidadeDepois": 35, "motivo": "VENDA_BALCAO", "observacao": null, "documento": null, "origem": "MANUAL", "dataMov": "2026-10-30T16:22:00", "produto": {"id": 10, "sku": "2002", "nome": "Tomada 2P+T 10 A"}, "usuario": {"id": 3, "nome": "Ronaldo"}}
+  ],
+  "avisosFalta": [
+    {"id": 1, "status": "ABERTO", "observacao": "acabou na prateleira", "quantidadeAvisos": 1, "criadoEm": "2026-10-31T10:15:00", "produto": {"id": 8, "sku": "1543", "nome": "Fita veda-rosca 18 mm"}, "usuario": {"id": 4, "nome": "Valdir"}}
+  ],
+  "configuracoes": {"estoqueMinimoGlobal": 5, "exibirFotos": true},
+  "divergencias": [
+    {"id": 1, "tipo": "NEGATIVO", "quantidadePortal": 12, "quantidadeBling": -3, "abertaEm": "2026-10-27T08:00:00", "produto": {"id": 1, "sku": "1001", "nome": "Martelo"}},
+    {"id": 2, "tipo": "DIFERENTE", "quantidadePortal": 35, "quantidadeBling": 30, "abertaEm": "2026-10-29T08:00:00", "produto": {"id": 10, "sku": "2002", "nome": "Tomada 2P+T 10 A"}},
+    {"id": 3, "tipo": "NAO_ENCONTRADO", "quantidadePortal": 400, "quantidadeBling": null, "abertaEm": "2026-10-30T08:00:00", "produto": {"id": 11, "sku": "1030", "nome": "Bucha 8 mm"}}
+  ],
+  "integracao": {"conectado": false, "desconectadoDesde": "2026-10-31T14:32:00", "estagio": "SOMBRA", "ultimaSincronizacao": "2026-10-31T14:32:00", "ultimaConciliacao": "2026-10-31T06:00:00", "eventosAguardando": 0, "eventosComErro": 2},
+  "eventosIntegracao": [
+    {"id": 1, "dataHora": "2026-10-31T14:35:00", "evento": "PEDIDO", "situacao": "COM_ERRO", "detalhe": "O Bling não respondeu. Nova tentativa às 14:40."},
+    {"id": 2, "dataHora": "2026-10-31T14:20:00", "evento": "ESTOQUE", "situacao": "PROCESSADO", "detalhe": "Saldo de 1020 – Parafuso sextavado 6 mm atualizado."},
+    {"id": 3, "dataHora": "2026-10-31T13:58:00", "evento": "NOTA", "situacao": "COM_ERRO", "detalhe": "Nota 4471 sem itens reconhecidos."}
+  ],
+  "importacaoPrevia": [
+    {"id": 1, "codigo": "1001", "nome": "Martelo", "unidade": "un", "preco": 34.9, "quantidade": 2, "localizacao": "C3-P2"},
+    {"id": 2, "codigo": "1002", "nome": "Chave de fenda", "unidade": "un", "preco": 12.5, "quantidade": 2, "localizacao": "C3-P2"},
+    {"id": 3, "codigo": "1020", "nome": "Parafuso sextavado 6 mm", "unidade": "un", "preco": 0.45, "quantidade": 10, "localizacao": "C1-P4"}
+  ]
+}

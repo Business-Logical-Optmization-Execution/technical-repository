@@ -1,0 +1,9 @@
+.conteudo{
+    padding: var(--espaco-32);
+}
+
+@media (max-width: 1023px) {
+    .conteudo {
+        padding: var(--espaco-16);
+    }
+}

@@ -1,0 +1,1 @@
+export { ROTAS } from './rotas'

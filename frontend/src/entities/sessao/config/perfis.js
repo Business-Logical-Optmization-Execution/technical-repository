@@ -1,0 +1,1 @@
+export const PERFIS = { ADMIN: 'Administrador', OPERADOR: 'Operador' };

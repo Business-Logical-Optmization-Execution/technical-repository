@@ -1,0 +1,37 @@
+.conteudo {
+    display: grid;
+    grid-template-columns: var(--foto-card-resultado-largura) 1fr;
+    gap: var(--espaco-24);
+}
+
+.conteudoSemFoto {
+    display: block;
+}
+
+.foto {
+    height: var(--foto-card-resultado-altura);
+}
+
+.dados {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-12);
+}
+
+.nome {
+    font-size: var(--texto-h3-tamanho);
+    font-weight: var(--texto-h3-peso);
+    line-height: var(--texto-h3-altura);
+}
+
+.codigo {
+    font-family: var(--fonte-codigo);
+    font-size: var(--texto-codigo-tamanho);
+    font-weight: var(--texto-codigo-peso);
+    line-height: var(--texto-codigo-altura);
+}
+
+.local {
+    color: var(--cor-texto-secundario);
+}
