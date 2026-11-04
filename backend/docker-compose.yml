@@ -29,6 +29,8 @@ services:
       DB_URL: ${DB_URL:-jdbc:mysql://db:3306/controle_estoque}
       DB_USERNAME: ${DB_USERNAME}
       DB_PASSWORD: ${DB_PASSWORD}
+      # Datas da API e o "hoje" do dashboard no horario local da loja
+      TZ: America/Sao_Paulo
     ports:
       - "8080:8080"
     depends_on:

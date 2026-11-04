@@ -29,4 +29,42 @@ public interface MovimentacaoEstoqueRepository extends JpaRepository<Movimentaca
 			LocalDateTime ateExclusivo,
 			Pageable pageable);
 
+	@Query("select count(m) from MovimentacaoEstoque m where m.criadoEm >= :inicio and m.criadoEm < :fimExclusivo")
+	long contarNoPeriodo(LocalDateTime inicio, LocalDateTime fimExclusivo);
+
+	@Query("""
+			select m.criadoEm as criadoEm, m.variacao as variacao
+			from MovimentacaoEstoque m
+			where m.criadoEm >= :inicio and m.criadoEm < :fimExclusivo
+			""")
+	List<VariacaoNoTempo> buscarVariacoesNoPeriodo(LocalDateTime inicio, LocalDateTime fimExclusivo);
+
+	@Query("""
+			select p.id as id, p.sku as sku, p.nome as nome, sum(abs(m.variacao)) as total
+			from MovimentacaoEstoque m join m.produto p
+			group by p.id, p.sku, p.nome
+			order by total desc, p.id
+			""")
+	List<TotalPorProduto> buscarMaisMovimentados(Pageable pageable);
+
+	interface VariacaoNoTempo {
+
+		LocalDateTime getCriadoEm();
+
+		Integer getVariacao();
+
+	}
+
+	interface TotalPorProduto {
+
+		Integer getId();
+
+		String getSku();
+
+		String getNome();
+
+		Long getTotal();
+
+	}
+
 }

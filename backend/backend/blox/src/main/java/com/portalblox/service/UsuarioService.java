@@ -6,6 +6,7 @@ import com.portalblox.exception.CredenciaisInvalidasException;
 import com.portalblox.exception.DadosInvalidosException;
 import com.portalblox.exception.DetectorChaveDuplicada;
 import com.portalblox.exception.PerfilAcessoNaoEncontradoException;
+import com.portalblox.exception.UltimoAdministradorException;
 import com.portalblox.exception.UsuarioJaExisteException;
 import com.portalblox.exception.UsuarioJaInativoException;
 import com.portalblox.exception.UsuarioNaoEncontradoException;
@@ -13,10 +14,14 @@ import com.portalblox.repository.PerfilAcessoRepository;
 import com.portalblox.repository.UsuarioRepository;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsuarioService {
+
+	private static final String PERFIL_ADMINISTRADOR = "Administrador";
 
 	private final UsuarioRepository usuarioRepository;
 	private final PerfilAcessoRepository perfilAcessoRepository;
@@ -25,6 +30,10 @@ public class UsuarioService {
 			PerfilAcessoRepository perfilAcessoRepository) {
 		this.usuarioRepository = usuarioRepository;
 		this.perfilAcessoRepository = perfilAcessoRepository;
+	}
+
+	public List<PerfilAcesso> listarPerfis() {
+		return perfilAcessoRepository.findAll(Sort.by("id"));
 	}
 
 	public List<Usuario> listar(boolean incluirInativos) {
@@ -71,10 +80,15 @@ public class UsuarioService {
 		return salvar(existente);
 	}
 
+	@Transactional
 	public void inativar(Integer id) {
 		Usuario usuario = buscarPorId(id);
 		if (!usuario.getAtivo()) {                                    // RN-05
 			throw new UsuarioJaInativoException();
+		}
+		if (PERFIL_ADMINISTRADOR.equals(usuario.getPerfilAcesso().getNome())
+				&& usuarioRepository.findAtivosPorPerfilParaAtualizacao(PERFIL_ADMINISTRADOR).size() <= 1) {
+			throw new UltimoAdministradorException();
 		}
 		usuario.setAtivo(false);                                       // RN-03
 		usuarioRepository.save(usuario);
