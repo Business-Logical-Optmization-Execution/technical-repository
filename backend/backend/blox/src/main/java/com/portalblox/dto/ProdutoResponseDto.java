@@ -21,6 +21,12 @@ public class ProdutoResponseDto {
 
 	private String marca;
 
+	private String fotoUrl;
+
+	private Integer estoqueMinimo;
+
+	private Integer estoqueMinimoEfetivo;
+
 	private Integer quantidade;
 
 	private Boolean ativo;
@@ -100,6 +106,20 @@ public class ProdutoResponseDto {
 	public String getMarca() { return marca; }
 
 	public void setMarca(String marca) { this.marca = marca; }
+
+	public String getFotoUrl() { return fotoUrl; }
+
+	public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
+
+	public Integer getEstoqueMinimo() { return estoqueMinimo; }
+
+	public void setEstoqueMinimo(Integer estoqueMinimo) { this.estoqueMinimo = estoqueMinimo; }
+
+	public Integer getEstoqueMinimoEfetivo() { return estoqueMinimoEfetivo; }
+
+	public void setEstoqueMinimoEfetivo(Integer estoqueMinimoEfetivo) {
+		this.estoqueMinimoEfetivo = estoqueMinimoEfetivo;
+	}
 
 	public Integer getQuantidade() { return quantidade; }
 

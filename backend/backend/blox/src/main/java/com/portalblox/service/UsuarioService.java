@@ -2,6 +2,7 @@ package com.portalblox.service;
 
 import com.portalblox.entity.PerfilAcesso;
 import com.portalblox.entity.Usuario;
+import com.portalblox.exception.CredenciaisInvalidasException;
 import com.portalblox.exception.DadosInvalidosException;
 import com.portalblox.exception.DetectorChaveDuplicada;
 import com.portalblox.exception.PerfilAcessoNaoEncontradoException;
@@ -13,7 +14,6 @@ import com.portalblox.repository.UsuarioRepository;
 import java.util.List;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UsuarioService {
@@ -39,7 +39,18 @@ public class UsuarioService {
 				.orElseThrow(UsuarioNaoEncontradoException::new);
 	}
 
-	@Transactional
+	public Usuario autenticar(String email, String senha) {
+		String emailNormalizado = email == null ? "" : email.trim();
+		Usuario usuario = usuarioRepository.findByEmail(emailNormalizado)
+				.orElseThrow(CredenciaisInvalidasException::new);
+		if (!Boolean.TRUE.equals(usuario.getAtivo())
+				|| senha == null
+				|| !senha.equals(usuario.getSenha())) {
+			throw new CredenciaisInvalidasException();
+		}
+		return usuario;
+	}
+
 	public Usuario cadastrar(Usuario usuario, Integer perfilAcessoId) {
 		if (usuarioRepository.existsByEmail(usuario.getEmail())) {    // RN-02
 			throw new UsuarioJaExisteException();
@@ -49,7 +60,6 @@ public class UsuarioService {
 		return salvar(usuario);
 	}
 
-	@Transactional
 	public Usuario atualizar(Integer id, Usuario dados, Integer perfilAcessoId) {
 		Usuario existente = buscarPorId(id);
 		if (usuarioRepository.existsByEmailAndIdNot(dados.getEmail(), id)) {
@@ -61,7 +71,6 @@ public class UsuarioService {
 		return salvar(existente);
 	}
 
-	@Transactional
 	public void inativar(Integer id) {
 		Usuario usuario = buscarPorId(id);
 		if (!usuario.getAtivo()) {                                    // RN-05
