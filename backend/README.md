@@ -46,7 +46,7 @@ O compose sobe **dois containers** em uma rede privada (`blox-net`), com um **vo
 Pontos-chave da orquestração:
 
 - **Inicialização automática**: na primeira subida (volume novo), o container do banco executa
-  `database/script-banco-v3.sql` (criação idempotente do schema `controle_estoque`, 8 tabelas e
+  `database/script-banco-v4.sql` (criação idempotente do schema `controle_estoque`, 9 tabelas e
   seed de perfis/categorias) e, em seguida, `database/zz-seed-demo.sql` (dados de demonstração).
   Em volumes já inicializados os scripts **não** re-executam.
 - **Ordem de subida garantida**: o `db` tem `healthcheck` (mysqladmin ping) e o `backend` usa
@@ -75,33 +75,41 @@ backend/                        # raiz deste README
 │       ├── dto/ + mapper/      # contratos de entrada/saída
 │       └── exception/          # tratamento de erros
 ├── database/
-│   ├── Dockerfile              # mysql:8.4 + scripts de init
+│   ├── Dockerfile              # mysql:8.4 + scripts de init (v4 + seed)
 │   ├── .dockerignore
-│   ├── script-banco-v3.sql     # schema + seeds mínimos (fonte canônica)
+│   ├── script-banco-v4.sql     # schema + seeds mínimos (fonte canônica)
 │   ├── zz-seed-demo.sql        # dados de demonstração para testar a API
+│   ├── script-banco-v3.sql     # histórico da modelagem anterior
 │   └── script-banco-v2.sql     # histórico da modelagem anterior
 
 ```
 
 ### Banco de dados
 
-Schema `controle_estoque` com 8 tabelas: `categorias`, `fornecedores`, `produtos`,
-`produto_localizacoes`, `perfis_acesso`, `usuarios`, `movimentacoes_estoque` e `campanhas`.
-O Hibernate roda com `ddl-auto=validate` — o schema é gerenciado **somente** pelo
-`database/script-banco-v3.sql`, que é a fonte canônica. O `script-banco-v2.sql` permanece no
-repositório como histórico e não é executado; o `modelagem-v2.mwb` também é histórico e um
-`modelagem-v3.mwb` pode ser gerado manualmente no MySQL Workbench quando necessário.
+Schema `controle_estoque` com 9 tabelas: `categorias`, `fornecedores`, `produtos`,
+`produto_localizacoes`, `perfis_acesso`, `usuarios`, `configuracoes`, `movimentacoes_estoque` e
+`campanhas`. O Hibernate roda com `ddl-auto=validate` — o schema é gerenciado **somente** pelo
+`database/script-banco-v4.sql`, que é a fonte canônica. O `script-banco-v3.sql` e o
+`script-banco-v2.sql` permanecem no repositório como histórico e não são executados; o
+`database/Dockerfile` copia apenas o v4 e o seed. Volumes antigos precisam de
+`docker compose down -v` para receber o schema novo.
 
 Pontos do modelo:
 
 - `produtos.quantidade` é o **saldo global único** do produto; não existe saldo por localização.
 - Cada produto pertence a **exatamente uma** categoria (`produtos.categoria_id`); a antiga
   tabela `produtos_categorias` não existe mais.
+- `produtos.foto_url` (até 500 caracteres) e `produtos.estoque_minimo` (inteiro maior ou igual a
+  zero ou nulo) são opcionais. O mínimo efetivo é calculado: usa `estoque_minimo` quando
+  preenchido e, quando nulo, o `estoque_minimo_global` de `configuracoes`.
 - `produto_localizacoes` guarda apenas rótulos textuais (sem quantidade), com unicidade por
   produto e comparação case-insensitive herdada da collation `utf8mb4_unicode_ci`.
+- `configuracoes` tem **linha única** (`id = 1`) com `estoque_minimo_global` e `exibir_fotos`.
+  Não há endpoint de escrita nesta fase; alterações são feitas por seed ou SQL.
 - `movimentacoes_estoque` é um **ledger imutável**: cada linha guarda produto, autor, tipo,
-  quantidade informada, variação assinada, saldo anterior, saldo posterior, justificativa,
-  origem e data. Não há endpoint de histórico/estorno neste MVP.
+  quantidade absoluta, variação assinada, `quantidade_antes`, `quantidade_depois`, `motivo`,
+  `observacao`, `documento`, `origem` e data. `justificativa` é opcional e `observacao` é o
+  campo auditável.
 - `fornecedores` guarda `nome` e `cnpj` (somente dígitos, 14 caracteres, único), sem validação
   de dígitos verificadores.
 - A tabela `campanhas` foi preservada sem alterações.
@@ -113,14 +121,17 @@ exercitar a API:
 
 | Entidade | Conteúdo |
 |---|---|
-| Categorias | as 3 do v3 + `Parafusos` e `Porcas e Arruelas` |
-| Fornecedores | 3 ativos (`Ferragens Silva`, `Distribuidora Central`, `Aco Forte`) e 1 inativo |
-| Usuários | `ana.souza@portalblox.test` (Administrador, ativo), `bruno.lima@portalblox.test` (Operador, ativo) e `carla.dias@portalblox.test` (Operador, inativo) — senha `senha123` |
-| Produtos | 9 no total: 8 ativos (um deles com saldo 0) e 1 inativo, com categoria, fornecedor e localizações variados |
-| Movimentações | um `SALDO_INICIAL` para cada produto ativo com saldo maior que zero |
+| Perfis | `Administrador` (1) e `Operador` (2) |
+| Categorias | `Ferragens` (1), `Fixacao` (2) e `Eletrica` (3) |
+| Fornecedores | `Ferragens Silva` (1), `Distribuidora Central` (2) e `Aco Forte` (3, inativo) |
+| Usuários | `marcia@ottimos.com` e `carlos@ottimos.com` (Administrador), `ronaldo@ottimos.com` e `valdir@ottimos.com` (Operador) — senha `123456` |
+| Produtos | 12 produtos (ids 1 a 12), sendo 11 ativos e o 12 inativo; ids 1, 7, 9 e 11 têm `estoqueMinimo` próprio |
+| Configuração | `estoque_minimo_global = 5` e `exibir_fotos = 1` |
+| Movimentações | 4 registros históricos com `quantidade` absoluta, `variacao` assinada e `justificativa` nula |
 
-O script é **idempotente**: reaplicá-lo não duplica registros. Como o entrypoint do MySQL só
-executa scripts de init em volume vazio, use um dos comandos abaixo quando precisar:
+Os ids e valores replicam `planejamento/Mocks/db.seed.json`, que é o contrato executável usado
+pelo front-end. O script é **idempotente**: reaplicá-lo não duplica registros. Como o entrypoint
+do MySQL só executa scripts de init em volume vazio, use um dos comandos abaixo quando precisar:
 
 ```powershell
 # reaplicar o seed em um banco já existente (não duplica nada)
@@ -138,6 +149,10 @@ docker compose up --build
 
 | Método | Rota | Descrição |
 |---|---|---|
+| POST | `/auth/login` | Autenticar usuário ativo por e-mail e senha (sem token) |
+| GET | `/configuracoes` | Consultar mínimo global, exibição de fotos e contagem de mínimos próprios |
+| GET | `/movimentacoes` | Listar movimentações (`produtoId`, `usuarioId`, `tipo`, `de`, `ate`, `limite`) |
+| POST | `/movimentacoes` | Registrar `ENTRADA`, `SAIDA` ou `AJUSTE` |
 | GET | `/usuarios` | Listar usuários (`?incluirInativos=true` opcional) |
 | GET | `/usuarios/{id}` | Buscar usuário por id |
 | POST | `/usuarios` | Cadastrar usuário (nome, e-mail, senha, perfil) |
@@ -152,25 +167,47 @@ docker compose up --build
 | GET | `/produtos/{id}` | Buscar produto por id |
 | POST | `/produtos` | Cadastrar produto (exige `usuarioId`) |
 | PUT | `/produtos/{id}` | Atualizar dados cadastrais — não altera quantidade |
-| PATCH | `/produtos/{id}/quantidade` | Ajuste auditado de saldo (`usuarioId` + `justificativa`) |
+| PATCH | `/produtos/{id}/quantidade` | Ajuste de saldo por compatibilidade (`usuarioId` + `justificativa`) |
 | DELETE | `/produtos/{id}` | Inativar produto (exclusão lógica) |
 
 Regras de contrato relevantes:
 
+- **Formato de erro** — toda falha responde `{ "status", "mensagem", "erros": [{ "campo", "mensagem" }] }`.
+  `status` repete o código HTTP; `erros` é vazio quando a falha não é de campo. Validação responde
+  `400`, login inválido `401`, recurso inexistente `404`, conflito de unicidade `409`, regra de
+  negócio `422` e falha inesperada `500` sem stack trace, SQL ou nome de tabela.
+- **`POST /auth/login`** — recebe `email` e `senha`, exige usuário ativo e devolve `id`, `nome`,
+  `email`, `perfilAcesso` e `ativo`, sem `senha`. Credencial inválida responde `401` com
+  `Usuário ou senha incorretos.`. Não há JWT nesta fase (decisão de POC).
 - **Produto** — `sku`, `nome`, `categoriaId`, `quantidade` e `usuarioId` são obrigatórios no
   `POST` (o `usuarioId` é exigido inclusive com quantidade zero). `peso` (kg, até 3 casas),
-  `tamanho`, `descricao`, `preco`, `marca`, `fornecedorId` e `localizacoes` são opcionais.
-  `quantidade > 0` gera uma movimentação `SALDO_INICIAL`; `quantidade = 0` não gera nada.
+  `tamanho`, `descricao`, `preco`, `marca`, `fornecedorId`, `localizacoes`, `fotoUrl` (até 500
+  caracteres) e `estoqueMinimo` (inteiro maior ou igual a zero ou nulo) são opcionais.
+  `quantidade > 0` gera uma movimentação `SALDO_INICIAL` com `observacao` fixa; `quantidade = 0`
+  não gera nada. A resposta inclui `estoqueMinimoEfetivo`, que usa o mínimo próprio quando
+  preenchido e o `estoqueMinimoGlobal` quando nulo.
 - **`PUT /produtos/{id}`** não recebe `quantidade` nem `usuarioId` e nunca altera o saldo.
   Lista de localizações ausente ou `null` limpa as localizações e `fornecedorId` nulo remove
   o vínculo. Produto inativo responde `422`.
-- **`PATCH /produtos/{id}/quantidade`** exige `quantidade`, `usuarioId` e `justificativa`; grava
-  uma movimentação `AJUSTE` com saldo anterior/posterior na mesma transação. Se o valor não
-  mudar, responde `200` sem movimentação. Produto inativo responde `422`.
+- **`PATCH /produtos/{id}/quantidade`** é o caminho de compatibilidade: exige `quantidade`,
+  `usuarioId` e `justificativa`, grava a justificativa em `observacao` e registra `AJUSTE` na
+  mesma transação, **inclusive quando o valor não muda** (variação zero). Para entradas, saídas
+  e motivos, prefira `POST /movimentacoes`. Produto ou usuário inativo responde `422`.
+- **`POST /movimentacoes`** — aceita `ENTRADA` (soma), `SAIDA` (subtrai) e `AJUSTE` (substitui).
+  `ENTRADA`/`SAIDA` exigem quantidade maior que zero; `AJUSTE` aceita zero ou mais e exige
+  `observacao` com pelo menos 10 caracteres. `SAIDA` exige `motivo`; `motivo: OUTRO` exige
+  `observacao` em qualquer tipo. `observacao` tem no máximo 255 caracteres e `documento` no
+  máximo 120. Saída acima do saldo responde `422` com a mensagem contextual.
+- **`GET /movimentacoes`** — ordena da mais recente para a mais antiga e aceita `produtoId`,
+  `usuarioId`, `tipo`, `de`, `ate` (datas inclusivas em `AAAA-MM-DD`) e `limite`. Parâmetros
+  inválidos respondem `400` com `erros[].campo`.
+- **`GET /configuracoes`** — devolve `estoqueMinimoGlobal`, `exibirFotos` e
+  `produtosComMinimoProprio`; sem linha persistida usa `5` e `true`. Nesta fase não há escrita
+  da configuração.
 - **Fornecedor** — `cnpj` é armazenado somente com dígitos, deve ter exatamente 14 caracteres
   e é único; os dígitos verificadores não são validados.
 - **Usuário** — `POST` exige `senha`; `PUT` não a exige nem a altera. A senha é gravada em
-  texto puro neste MVP (não há autenticação) e nunca aparece nas respostas.
+  texto puro neste MVP e nunca aparece nas respostas.
 - Campos desconhecidos no JSON são ignorados pelo Jackson: `quantidade` no `PUT` de produto e
   `senha` no `PUT` de usuário não alteram estado.
 
@@ -246,7 +283,7 @@ docker compose up --build           # subir de novo (rebuild se mudou código/Do
 ## Rodar sem Docker (desenvolvimento local)
 
 Requisitos: Java 21, Maven (ou use o wrapper) e um MySQL em `localhost:3306` com o schema
-`controle_estoque` criado (aplique `database/script-banco-v3.sql`).
+`controle_estoque` criado (aplique `database/script-banco-v4.sql`).
 
 Sem nenhuma variável `DB_*` definida, o backend usa os defaults do `application.properties`
 (`localhost:3306/controle_estoque`, usuário `root`, senha vazia):

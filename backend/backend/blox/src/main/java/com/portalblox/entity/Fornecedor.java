@@ -9,6 +9,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Table(name = "fornecedores")
@@ -32,14 +33,14 @@ public class Fornecedor {
 
 	@PrePersist
 	public void aoCriar() {
-		LocalDateTime agora = LocalDateTime.now();
+		LocalDateTime agora = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 		this.criadoEm = agora;
 		this.atualizadoEm = agora;
 	}
 
 	@PreUpdate
 	public void aoAtualizar() {
-		this.atualizadoEm = LocalDateTime.now();
+		this.atualizadoEm = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 	}
 
 	public Integer getId() { return id; }

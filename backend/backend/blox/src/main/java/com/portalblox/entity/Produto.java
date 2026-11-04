@@ -57,6 +57,12 @@ public class Produto {
 	@Column(length = 120)
 	private String marca;
 
+	@Column(name = "foto_url", length = 500)
+	private String fotoUrl;
+
+	@Column(name = "estoque_minimo")
+	private Integer estoqueMinimo;
+
 	private Boolean ativo;
 
 	private LocalDateTime criadoEm;
@@ -121,6 +127,14 @@ public class Produto {
 	public String getMarca() { return marca; }
 
 	public void setMarca(String marca) { this.marca = marca; }
+
+	public String getFotoUrl() { return fotoUrl; }
+
+	public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
+
+	public Integer getEstoqueMinimo() { return estoqueMinimo; }
+
+	public void setEstoqueMinimo(Integer estoqueMinimo) { this.estoqueMinimo = estoqueMinimo; }
 
 	public Boolean getAtivo() { return ativo; }
 
