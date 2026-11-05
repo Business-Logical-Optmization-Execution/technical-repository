@@ -46,7 +46,7 @@ O compose sobe **dois containers** em uma rede privada (`blox-net`), com um **vo
 Pontos-chave da orquestração:
 
 - **Inicialização automática**: na primeira subida (volume novo), o container do banco executa
-  `database/script-banco-v4.sql` (criação idempotente do schema `controle_estoque`, 9 tabelas e
+  `database/script-banco-v5.sql` (criação idempotente do schema `controle_estoque`, 10 tabelas e
   seed de perfis/categorias) e, em seguida, `database/zz-seed-demo.sql` (dados de demonstração).
   Em volumes já inicializados os scripts **não** re-executam.
 - **Ordem de subida garantida**: o `db` tem `healthcheck` (mysqladmin ping) e o `backend` usa
@@ -55,6 +55,13 @@ Pontos-chave da orquestração:
   compose) via `DB_URL`/`DB_USERNAME`/`DB_PASSWORD`; o `application.properties` guarda defaults
   locais para rodar fora do Docker.
 - **Sem conflito com MySQL local**: a porta 3306 do container **não** é publicada no host.
+
+### Separação de camadas
+
+- **Controller:** HTTP, validação de entrada, DTOs, mappers e delegação.
+- **Service:** toda a regra de negócio e a orquestração entre repositories e outros services.
+  Trabalha com entidades e parâmetros simples, sem conhecer DTOs.
+- **Repository:** apenas persistência, sem regra de negócio.
 
 ### Estrutura do repositório
 
@@ -75,10 +82,11 @@ backend/                        # raiz deste README
 │       ├── dto/ + mapper/      # contratos de entrada/saída
 │       └── exception/          # tratamento de erros
 ├── database/
-│   ├── Dockerfile              # mysql:8.4 + scripts de init (v4 + seed)
+│   ├── Dockerfile              # mysql:8.4 + scripts de init (v5 + seed)
 │   ├── .dockerignore
-│   ├── script-banco-v4.sql     # schema + seeds mínimos (fonte canônica)
+│   ├── script-banco-v5.sql     # schema + seeds mínimos (fonte canônica)
 │   ├── zz-seed-demo.sql        # dados de demonstração para testar a API
+│   ├── script-banco-v4.sql     # histórico da modelagem anterior
 │   ├── script-banco-v3.sql     # histórico da modelagem anterior
 │   └── script-banco-v2.sql     # histórico da modelagem anterior
 
@@ -86,12 +94,12 @@ backend/                        # raiz deste README
 
 ### Banco de dados
 
-Schema `controle_estoque` com 9 tabelas: `categorias`, `fornecedores`, `produtos`,
-`produto_localizacoes`, `perfis_acesso`, `usuarios`, `configuracoes`, `movimentacoes_estoque` e
-`campanhas`. O Hibernate roda com `ddl-auto=validate` — o schema é gerenciado **somente** pelo
-`database/script-banco-v4.sql`, que é a fonte canônica. O `script-banco-v3.sql` e o
-`script-banco-v2.sql` permanecem no repositório como histórico e não são executados; o
-`database/Dockerfile` copia apenas o v4 e o seed. Volumes antigos precisam de
+Schema `controle_estoque` com 10 tabelas: `categorias`, `fornecedores`, `produtos`,
+`produto_localizacoes`, `perfis_acesso`, `usuarios`, `configuracoes`, `movimentacoes_estoque`,
+`avisos_falta` e `campanhas`. O Hibernate roda com `ddl-auto=validate` — o schema é gerenciado **somente** pelo
+`database/script-banco-v5.sql`, que é a fonte canônica. Os scripts `script-banco-v4.sql`,
+`script-banco-v3.sql` e `script-banco-v2.sql` permanecem no repositório como histórico e não são executados; o
+`database/Dockerfile` copia apenas o v5 e o seed. Volumes antigos precisam de
 `docker compose down -v` para receber o schema novo.
 
 Pontos do modelo:
@@ -151,6 +159,10 @@ docker compose up --build
 |---|---|---|
 | POST | `/auth/login` | Autenticar usuário ativo por e-mail e senha (sem token) |
 | GET | `/configuracoes` | Consultar mínimo global, exibição de fotos e contagem de mínimos próprios |
+| PUT | `/configuracoes` | Alterar mínimo global e exibição de fotos |
+| GET | `/avisos-falta` | Listar avisos de falta (`?status=ABERTO` ou `RESOLVIDO` opcional) |
+| POST | `/avisos-falta` | Registrar aviso ou somar ao aviso aberto do produto |
+| PATCH | `/avisos-falta/{id}/resolver` | Marcar aviso como resolvido |
 | GET | `/movimentacoes` | Listar movimentações (`produtoId`, `usuarioId`, `tipo`, `de`, `ate`, `limite`) |
 | POST | `/movimentacoes` | Registrar `ENTRADA`, `SAIDA` ou `AJUSTE` |
 | GET | `/dashboard/resumo` | Consultar todos os indicadores do dashboard em uma chamada |
@@ -159,6 +171,7 @@ docker compose up --build
 | GET | `/usuarios/{id}` | Buscar usuário por id |
 | POST | `/usuarios` | Cadastrar usuário (nome, e-mail, senha, perfil) |
 | PUT | `/usuarios/{id}` | Atualizar nome, e-mail e perfil — sem senha |
+| PATCH | `/usuarios/{id}/senha` | Alterar ou redefinir a senha |
 | DELETE | `/usuarios/{id}` | Inativar usuário (exclusão lógica) |
 | GET | `/fornecedores` | Listar fornecedores (`?incluirInativos=true` opcional) |
 | GET | `/fornecedores/{id}` | Buscar fornecedor por id |
@@ -204,8 +217,15 @@ Regras de contrato relevantes:
   `usuarioId`, `tipo`, `de`, `ate` (datas inclusivas em `AAAA-MM-DD`) e `limite`. Parâmetros
   inválidos respondem `400` com `erros[].campo`.
 - **`GET /configuracoes`** — devolve `estoqueMinimoGlobal`, `exibirFotos` e
-  `produtosComMinimoProprio`; sem linha persistida usa `5` e `true`. Nesta fase não há escrita
-  da configuração.
+  `produtosComMinimoProprio`; sem linha persistida usa `5` e `true`.
+- **`PUT /configuracoes`** — exige `estoqueMinimoGlobal` (inteiro maior ou igual a zero) e
+  `exibirFotos`, cria a linha única quando não existe e responde no formato do `GET`.
+- **`POST /avisos-falta`** — cada produto tem no máximo um aviso aberto. Sem aviso aberto, cria e
+  responde `201`; com aviso aberto, soma em `quantidadeAvisos` e responde `200`, mantendo o autor,
+  a observação e a data do primeiro aviso. `somado` vem em todas as respostas de aviso. Produto ou
+  usuário inativo responde `422`.
+- **`GET /avisos-falta`** — ordena do mais recente para o mais antigo. `status` aceita `ABERTO` ou
+  `RESOLVIDO`, em maiúsculas; outro valor responde `400`.
 - **Fornecedor** — `cnpj` é armazenado somente com dígitos, deve ter exatamente 14 caracteres
   e é único; os dígitos verificadores não são validados.
 - **Usuário** — `POST` exige `senha`; `PUT` não a exige nem a altera. A senha é gravada em
@@ -216,6 +236,10 @@ Regras de contrato relevantes:
   (`0 < quantidade <= estoqueMinimoEfetivo`), `produtosZerados`, `movimentacoesHoje`,
   `entradasSaidas7Dias` (sempre 7 itens, do mais antigo até hoje, com `saidas` positivo) e
   `maisMovimentados` (até 5 produtos, somando o valor absoluto das variações de todo o histórico).
+- **`PATCH /usuarios/{id}/senha`** — `novaSenha` tem de 8 a 150 caracteres. Com `senhaAtual`
+  preenchida, confere antes de trocar; com `senhaAtual` ausente ou nula, redefine sem conferência.
+  Usuário inativo responde `422`. **Risco de POC:** a API não tem token, então qualquer pessoa com
+  acesso à rede pode redefinir a senha de qualquer usuário. A correção depende de JWT.
 - **Datas** — o backend em Docker usa `TZ=America/Sao_Paulo`, então `dataMov` e o "hoje" do
   dashboard seguem o horário local da loja. Fora do Docker, vale o fuso da máquina.
 - Campos desconhecidos no JSON são ignorados pelo Jackson: `quantidade` no `PUT` de produto e
@@ -293,7 +317,7 @@ docker compose up --build           # subir de novo (rebuild se mudou código/Do
 ## Rodar sem Docker (desenvolvimento local)
 
 Requisitos: Java 21, Maven (ou use o wrapper) e um MySQL em `localhost:3306` com o schema
-`controle_estoque` criado (aplique `database/script-banco-v4.sql`).
+`controle_estoque` criado (aplique `database/script-banco-v5.sql`).
 
 Sem nenhuma variável `DB_*` definida, o backend usa os defaults do `application.properties`
 (`localhost:3306/controle_estoque`, usuário `root`, senha vazia):

@@ -1,5 +1,6 @@
 package com.portalblox.controller.docs;
 
+import com.portalblox.dto.AlterarSenhaRequestDto;
 import com.portalblox.dto.UsuarioAtualizacaoRequestDto;
 import com.portalblox.dto.UsuarioCriacaoRequestDto;
 import com.portalblox.dto.UsuarioResponseDto;
@@ -61,6 +62,29 @@ public interface UsuarioApi {
 	ResponseEntity<UsuarioResponseDto> atualizar(
 			@Parameter(description = "Identificador do usuário", example = "3") Integer id,
 			UsuarioAtualizacaoRequestDto dto);
+
+	@Operation(summary = "Alterar ou redefinir senha",
+			description = "Com senhaAtual preenchida, confere antes de trocar. Com senhaAtual ausente ou nula, redefine "
+					+ "a senha sem conferência. ATENÇÃO: a API ainda não tem token, então qualquer pessoa com acesso "
+					+ "à rede pode redefinir a senha de qualquer usuário; é uma decisão de POC, a ser corrigida com JWT.")
+	@ApiResponses({
+			@ApiResponse(responseCode = "204", description = "Senha alterada"),
+			@ApiResponse(responseCode = "400", description = "Senha atual incorreta ou nova senha inválida",
+					content = @Content(mediaType = "application/json",
+							examples = @ExampleObject(name = "senhaAtualIncorreta",
+									value = """
+										{
+										  "status": 400,
+										  "mensagem": "Confira os campos destacados.",
+										  "erros": [ { "campo": "senhaAtual", "mensagem": "A senha atual está incorreta." } ]
+										}
+										"""))),
+			@ApiResponse(responseCode = "404", description = "Usuário não encontrado"),
+			@ApiResponse(responseCode = "422", description = "Usuário inativo")
+	})
+	ResponseEntity<Void> alterarSenha(
+			@Parameter(description = "Identificador do usuário", example = "3") Integer id,
+			AlterarSenhaRequestDto dto);
 
 	@Operation(summary = "Inativar usuário",
 			description = "Exclusão lógica (RN-03): define ativo=false; o registro permanece no banco. "

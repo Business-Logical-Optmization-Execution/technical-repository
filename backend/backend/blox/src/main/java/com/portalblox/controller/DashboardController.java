@@ -2,6 +2,7 @@ package com.portalblox.controller;
 
 import com.portalblox.controller.docs.DashboardApi;
 import com.portalblox.dto.DashboardResumoResponseDto;
+import com.portalblox.mapper.DashboardMapper;
 import com.portalblox.service.DashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ public class DashboardController implements DashboardApi {
 
 	@GetMapping("/resumo")
 	public ResponseEntity<DashboardResumoResponseDto> obterResumo() {
-		return ResponseEntity.ok(dashboardService.obterResumo());
+		return ResponseEntity.ok(DashboardMapper.toResponseDto(dashboardService.obterResumo()));
 	}
 
 }
