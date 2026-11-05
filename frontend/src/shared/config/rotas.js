@@ -17,5 +17,4 @@ export const ROTAS = {
   divergencia: (id) => `/divergencias/${id}`,
   importar: '/importar',
   integracao: '/integracao',
-  vitrine: '/vitrine', // temporária (Etapa 1): apagar na Etapa 6
 }

@@ -17,14 +17,11 @@ import { ResolverDivergenciaPage } from '@/pages/resolver-divergencia'
 import { ImportarProdutosPage } from '@/pages/importar-produtos'
 import { IntegracaoBlingPage } from '@/pages/integracao-bling'
 import { NaoEncontradaPage } from '@/pages/nao-encontrada'
-import { VitrinePage } from '@/pages/vitrine'
 import { LayoutAutenticado } from '../layouts/LayoutAutenticado'
 import { ExigeLogin, ExigeAdmin } from './rotasProtegidas'
 
 export const router = createBrowserRouter([
   { path: ROTAS.login, element: <LoginPage /> },
-  // Temporária (Etapa 1): fora do LayoutAutenticado porque ainda não há login.
-  { path: ROTAS.vitrine, element: <VitrinePage /> },
   {
     element: <ExigeLogin />,
     children: [
