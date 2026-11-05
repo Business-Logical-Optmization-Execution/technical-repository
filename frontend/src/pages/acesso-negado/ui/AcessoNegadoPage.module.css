@@ -1,0 +1,10 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-16);
+}
+
+.link {
+    color: var(--cor-primaria);
+}

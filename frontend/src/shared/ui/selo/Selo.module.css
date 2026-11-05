@@ -1,0 +1,50 @@
+.selo{
+    display: inline-flex;
+    align-items: center;
+    gap: var(--espaco-4);
+
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+    font-weight: var(--texto-rotulo-peso);
+    padding: var(--espaco-4) var(--espaco-8);
+    border: 1px solid transparent;
+    border-radius: var(--raio-8);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.admin{
+    background-color: var(--cor-destaque);
+    color: var(--cor-primaria);
+    border-color: var(--cor-destaque);
+    text-transform: uppercase;
+}
+.alerta{
+    background-color: var(--cor-alerta-fundo);
+    color: var(--cor-alerta);
+    border-color: var(--cor-alerta);
+
+}
+.erro{
+    background-color: var(--cor-branco);
+    color: var(--cor-erro);
+    border-color: var(--cor-erro);
+
+}
+.sucesso{
+    background-color: var(--cor-branco);
+    color: var(--cor-sucesso);
+    border-color: var(--cor-sucesso);
+
+}
+.informacao{
+    background-color: var(--cor-branco);
+    color: var(--cor-informacao);
+    border-color: var(--cor-informacao);
+
+}
+.contador{
+    background-color: var(--cor-erro);
+    color: var(--cor-branco);
+    border-color: var(--cor-erro);
+
+}

@@ -1,0 +1,23 @@
+.rotulo {
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
+
+.valor {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-8);
+    margin-top: var(--espaco-8);
+    font-size: var(--texto-saldo-tamanho);
+    font-weight: var(--texto-saldo-peso);
+    line-height: var(--texto-saldo-altura);
+}
+
+.alerta {
+    color: var(--cor-alerta);
+}
+
+.erro {
+    color: var(--cor-erro);
+}

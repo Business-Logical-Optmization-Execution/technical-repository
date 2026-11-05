@@ -1,0 +1,14 @@
+.corpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-12);
+}
+
+.erro {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-4);
+    color: var(--cor-erro);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}

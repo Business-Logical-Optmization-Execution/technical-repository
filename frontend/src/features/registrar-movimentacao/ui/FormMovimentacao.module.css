@@ -1,0 +1,51 @@
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-16);
+}
+
+.acoes {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: var(--espaco-8);
+}
+
+.campoComLink {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-8);
+
+    & > * {
+        width: 100%;
+    }
+
+    & > a {
+        width: auto;
+    }
+}
+
+.link {
+    color: var(--cor-primaria);
+}
+
+.noSistema {
+    font-size: var(--texto-base-tamanho);
+    font-weight: var(--texto-rotulo-peso);
+    line-height: var(--texto-base-altura);
+}
+
+.diferenca {
+    font-size: var(--texto-saldo-tamanho);
+    font-weight: var(--texto-saldo-peso);
+    line-height: var(--texto-saldo-altura);
+}
+
+.positiva {
+    color: var(--cor-sucesso);
+}
+
+.negativa {
+    color: var(--cor-erro);
+}

@@ -1,0 +1,94 @@
+.barra {
+    height: var(--altura-cabecalho);
+    padding: 0 var(--espaco-32);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: var(--cor-primaria);
+    border-bottom: 4px solid var(--cor-destaque);
+}
+
+.abrirMenu {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-12);
+    min-height: var(--area-clicavel-min);
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: var(--raio-8);
+    color: var(--cor-branco);
+    text-align: left;
+    cursor: pointer;
+
+    &:focus-visible {
+        outline-color: var(--cor-destaque);
+    }
+}
+
+.identificacao {
+    display: flex;
+    flex-direction: column;
+}
+
+.perfil {
+    color: var(--cor-texto-sobre-azul-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
+
+.marca {
+    color: var(--cor-branco);
+    font-size: var(--texto-h3-tamanho);
+    font-weight: var(--texto-h3-peso);
+    line-height: var(--texto-h3-altura);
+}
+
+.identificacaoGaveta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--espaco-12);
+}
+
+.nomeGaveta {
+    color: var(--cor-texto);
+    font-size: var(--texto-base-tamanho);
+    font-weight: 600;
+}
+
+.divisoria {
+    width: 100%;
+    border: none;
+    border-top: 1px solid var(--cor-divisoria);
+}
+
+.lista {
+    list-style: none;
+    padding: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espaco-8);
+    min-height: var(--area-clicavel-min);
+    padding: var(--espaco-4) var(--espaco-8);
+    border-radius: var(--raio-8);
+    color: var(--cor-texto);
+    text-decoration: none;
+
+    &:hover {
+        background-color: var(--cor-primaria-suave);
+    }
+
+    &[aria-current='page'] {
+        background-color: var(--cor-primaria-suave);
+        font-weight: 600;
+    }
+}
+
+.menu {
+    flex: 1;
+}

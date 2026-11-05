@@ -1,0 +1,16 @@
+.card{
+    background-color: var(--cor-branco);
+    border: 1px solid var(--cor-divisoria);
+    border-radius: var(--raio-12);
+    padding: var(--espaco-24);
+}
+.clicavel{
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    border-color: var(--cor-borda);
+}
+
+.clicavel:hover{
+    background-color: var(--cor-primaria-suave);
+}

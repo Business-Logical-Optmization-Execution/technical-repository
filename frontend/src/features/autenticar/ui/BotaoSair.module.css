@@ -1,0 +1,17 @@
+.botao {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--espaco-4);
+    min-height: var(--area-clicavel-min);
+    padding: 0 var(--espaco-8);
+    background: none;
+    border: none;
+    border-radius: var(--raio-8);
+    color: var(--cor-erro);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--cor-primaria-suave);
+    }
+}

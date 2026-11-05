@@ -17,6 +17,19 @@ public interface ProdutoRepository extends JpaRepository<Produto, Integer> {
 
 	long countByAtivoTrueAndEstoqueMinimoIsNotNull();
 
+	long countByAtivoTrue();
+
+	@Query("select count(p) from Produto p where p.ativo = true and p.quantidade <= 0")
+	long contarZerados();
+
+	@Query("""
+			select count(p) from Produto p
+			where p.ativo = true
+			  and p.quantidade > 0
+			  and p.quantidade <= coalesce(p.estoqueMinimo, :estoqueMinimoGlobal)
+			""")
+	long contarBaixoEstoque(int estoqueMinimoGlobal);
+
 	@EntityGraph(attributePaths = {"categoria", "fornecedor", "localizacoes"})
 	@Query("select distinct p from Produto p order by p.id")
 	List<Produto> findAllCompletos();

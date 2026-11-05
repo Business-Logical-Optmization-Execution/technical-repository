@@ -1,0 +1,11 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-24);
+}
+
+.topo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-24);
+}

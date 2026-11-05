@@ -1,0 +1,77 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-24);
+    width: 100%;
+    max-width: var(--largura-coluna-detalhe);
+    margin-inline: auto;
+}
+
+.acoes {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-12);
+}
+
+.horario {
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
+
+.indicadores {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--espaco-16);
+}
+
+.paineis {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--espaco-16);
+}
+
+.paineisIguais {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--espaco-16);
+}
+
+.tituloPainel {
+    margin-bottom: var(--espaco-16);
+    font-size: var(--texto-h3-tamanho);
+    font-weight: var(--texto-h3-peso);
+    line-height: var(--texto-h3-altura);
+}
+
+.explicacao {
+    margin-top: calc(-1 * var(--espaco-12));
+    margin-bottom: var(--espaco-8);
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
+
+.esqueleto {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-16);
+}
+
+.erro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-16);
+}
+
+@media (max-width: 1023px) {
+    .indicadores {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .paineis,
+    .paineisIguais {
+        grid-template-columns: 1fr;
+    }
+}

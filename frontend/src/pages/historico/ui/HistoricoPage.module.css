@@ -1,0 +1,8 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-24);
+    width: 100%;
+    max-width: var(--largura-coluna-historico);
+    margin-inline: auto;
+}

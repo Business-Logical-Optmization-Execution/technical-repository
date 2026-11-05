@@ -1,0 +1,21 @@
+// Rotas do front (seção 3.4 do plano). Rotas com parâmetro são funções.
+export const ROTAS = {
+  login: '/login',
+  inicio: '/',
+  busca: '/busca',
+  buscaPor: (termo) => `/busca?q=${encodeURIComponent(termo)}`,
+  produto: (id) => `/produtos/${id}`,
+  registrarEntrada: (id) => `/produtos/${id}/entrada`,
+  registrarSaida: (id) => `/produtos/${id}/saida`,
+  ajustarContagem: (id) => `/produtos/${id}/ajuste`,
+  historico: '/historico',
+  usuarios: '/usuarios',
+  dashboard: '/dashboard',
+  perfil: '/perfil',
+  configuracoes: '/configuracoes',
+  divergencias: '/divergencias',
+  divergencia: (id) => `/divergencias/${id}`,
+  importar: '/importar',
+  integracao: '/integracao',
+  vitrine: '/vitrine', // temporária (Etapa 1): apagar na Etapa 6
+}

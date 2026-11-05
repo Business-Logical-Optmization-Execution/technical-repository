@@ -1,0 +1,58 @@
+.pilha {
+    position: fixed;
+    top: calc(var(--altura-cabecalho) + var(--espaco-16));
+    right: var(--espaco-16);
+    z-index: 10;
+    width: calc(100% - 2 * var(--espaco-16));
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-8);
+    pointer-events: none;
+}
+
+.regiao {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-8);
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-12);
+    padding: var(--espaco-4) var(--espaco-4) var(--espaco-4) var(--espaco-16);
+    background-color: var(--cor-branco);
+    border: 1px solid;
+    border-left-width: 4px;
+    border-radius: var(--raio-8);
+    pointer-events: auto;
+}
+
+.sucesso {
+    border-color: var(--cor-sucesso);
+
+    .icone {
+        color: var(--cor-sucesso);
+    }
+}
+
+.erro {
+    border-color: var(--cor-erro);
+
+    .icone {
+        color: var(--cor-erro);
+    }
+}
+
+.icone {
+    flex-shrink: 0;
+}
+
+.texto {
+    flex: 1;
+    color: var(--cor-texto);
+    font-size: var(--texto-base-tamanho);
+    font-weight: var(--texto-base-peso);
+    line-height: var(--texto-base-altura);
+}

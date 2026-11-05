@@ -1,0 +1,13 @@
+.skeleton{
+    background-color: var(--cor-primaria-suave);
+    border-radius: var(--raio-8);
+    animation: pulsar 1.5s ease-in-out infinite;
+}
+@keyframes pulsar{
+    0%{opacity: 1;}
+    50%{opacity: 0.5;}
+    100%{opacity: 1;}
+}
+@media (prefers-reduced-motion: reduce){
+    .skeleton{animation: none;}
+}

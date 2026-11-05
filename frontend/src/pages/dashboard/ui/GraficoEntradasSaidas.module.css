@@ -1,0 +1,65 @@
+.grafico {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-16);
+}
+
+.legenda {
+    display: flex;
+    gap: var(--espaco-16);
+    padding: 0;
+    list-style: none;
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+
+    & li {
+        display: flex;
+        align-items: center;
+        gap: var(--espaco-8);
+    }
+}
+
+.marca {
+    width: var(--espaco-12);
+    height: var(--espaco-12);
+    border-radius: var(--espaco-4);
+}
+
+.entradas {
+    background-color: var(--cor-primaria);
+}
+
+.saidas {
+    background-color: var(--cor-borda);
+}
+
+.dica {
+    padding: var(--espaco-8) var(--espaco-12);
+    background-color: var(--cor-branco);
+    border: 1px solid var(--cor-divisoria);
+    border-radius: var(--raio-8);
+    box-shadow: var(--sombra-sobreposicao);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
+
+.diaDica {
+    font-weight: var(--texto-rotulo-peso);
+}
+
+.detalhes {
+    font-size: var(--texto-base-tamanho);
+    line-height: var(--texto-base-altura);
+
+    & summary {
+        min-height: var(--area-clicavel-min);
+        padding-block: var(--espaco-8);
+        color: var(--cor-primaria);
+        cursor: pointer;
+    }
+}
+
+.vazio {
+    color: var(--cor-texto-secundario);
+}

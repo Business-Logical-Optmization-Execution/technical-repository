@@ -1,0 +1,40 @@
+.filtros {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-12);
+}
+
+.campos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--espaco-8);
+}
+
+.filtro {
+    min-height: var(--area-clicavel-min);
+    max-width: 100%;
+    padding-inline: var(--espaco-12);
+    background-color: var(--cor-branco);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio-8);
+    color: var(--cor-primaria);
+    font-size: var(--texto-rotulo-tamanho);
+    font-weight: var(--texto-rotulo-peso);
+    line-height: var(--texto-rotulo-altura);
+    cursor: pointer;
+}
+
+.ativo {
+    background-color: var(--cor-primaria-suave);
+    border-color: var(--cor-primaria);
+}
+
+.erro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--espaco-12);
+    color: var(--cor-erro);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}

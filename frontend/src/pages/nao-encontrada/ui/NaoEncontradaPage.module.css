@@ -1,0 +1,23 @@
+.pagina {
+    padding: var(--espaco-32);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-16);
+}
+
+.titulo {
+    font-size: var(--texto-h1-tamanho);
+    font-weight: var(--texto-h1-peso);
+    line-height: var(--texto-h1-altura);
+}
+
+.link {
+    color: var(--cor-primaria);
+}
+
+@media (max-width: 1023px) {
+    .pagina {
+        padding: var(--espaco-16);
+    }
+}
