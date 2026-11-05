@@ -478,7 +478,7 @@ export default defineConfig(({ mode }) => {
 # Onde roda o mock (npm run mock)
 MOCK_API_URL=http://localhost:3001
 
-# Onde roda o backend Spring (docker compose up, na pasta backend/)
+# Onde roda o backend Spring (docker compose up na raiz do repositório)
 SPRING_API_URL=http://localhost:8080
 
 # Rotas que JÁ estão prontas no Spring, separadas por vírgula.
@@ -537,7 +537,7 @@ ROTAS_NO_SPRING=auth,produtos,movimentacoes
 
 > O Vite reinicia sozinho quando o `.env.local` muda. Se não reiniciar, pare e rode `npm run dev:mock` de novo.
 
-**Como subir o backend** (na pasta `backend/` do repositório): `cp .env.example .env` (só na primeira vez) e `docker compose up --build`. Swagger: `http://localhost:8080/swagger-ui.html`.
+**Como subir o stack** (na raiz do repositório): `cp .env.example .env` (só na primeira vez) e `docker compose up --build`. Portal: `http://localhost:8081`. Swagger: `http://localhost:8080/swagger-ui.html`.
 
 **Dica:** `npm run mock:reset` devolve o mock ao estado original (útil antes de apresentar).
 
@@ -849,7 +849,7 @@ Antes de integrar o Bloco A, o Spring precisa ter (detalhes na seção 11.0 e no
 
 ### 🔌 Integração A
 
-- [ ] Backend no ar (na pasta `backend/`: `docker compose down -v` na primeira vez depois do schema v4, depois `docker compose up --build`) e Swagger abrindo
+- [ ] Stack no ar (na raiz do repositório: `docker compose down -v` na primeira vez depois do schema v4, depois `docker compose up --build`), portal em `http://localhost:8081` e Swagger abrindo
 - [ ] `.env.local`: `ROTAS_NO_SPRING=auth,produtos,movimentacoes,configuracoes`
 - [ ] Login com usuário do banco funciona, com as mesmas contas do mock (`ronaldo@ottimos.com`, senha `123456`); senha errada mostra a mensagem certa
 - [ ] `FormLogin` valida antes de enviar: com campo vazio ou e-mail mal formatado o back responde 400 "Confira os campos destacados.", e a tela não destaca campo nenhum
@@ -1154,7 +1154,7 @@ Análise do back na `origin/main` (`e0ec67e`, P1) e no PR #14 (`151a52a`, P2), d
 | Configurações | `GET /configuracoes` | Sem escrita nesta fase |
 | Dashboard | `GET /dashboard/resumo` | PR #14 |
 | Perfis | `GET /perfis-acesso` | PR #14 |
-| Infra | Docker Compose (MySQL 8.4 + Spring na 8080), Swagger (SpringDoc), seed em `database/zz-seed-demo.sql` | Sem CORS (resolvido pelo proxy do Vite, não precisa mexer) |
+| Infra | Docker Compose na raiz (MySQL 8.4 + Spring na 8080 + front-end nginx na 8081), Swagger (SpringDoc), seed em `backend/database/zz-seed-demo.sql` | Sem CORS (resolvido pelo proxy do Vite em dev e pelo nginx em container) |
 
 ### 11.2 O que falta, por prioridade
 

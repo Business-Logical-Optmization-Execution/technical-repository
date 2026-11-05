@@ -62,7 +62,23 @@ ROTAS_NO_SPRING=auth,produtos,movimentacoes
 - Rotas listadas → Spring (8080). Todo o resto → mock (3001).
 - Vazio = tudo no mock.
 - Reinicie o `npm run dev:mock` depois de mudar o `.env.local`.
-- O backend sobe com `docker compose up` na pasta `backend/`.
+- O stack completo (banco + backend + frontend) sobe com `docker compose up --build` na raiz do
+  repositório.
+
+## Rodar em container
+
+O front-end também roda em container: o `Dockerfile` compila com Vite e serve o resultado com
+nginx, que encaminha `/api/` para `backend:8080` pela rede do compose.
+
+Na raiz do repositório:
+
+```bash
+cp .env.example .env          # só na primeira vez
+docker compose up --build     # banco + backend + frontend
+```
+
+O portal fica em **http://localhost:8081** (ajuste `FRONTEND_PORT` no `.env` para trocar a porta).
+Para reconstruir apenas o front-end: `docker compose up --build frontend`.
 
 ## Logins de teste (mock)
 

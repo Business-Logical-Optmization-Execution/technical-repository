@@ -1,6 +1,8 @@
+name: portal-blox
+
 services:
   db:
-    build: ./database
+    build: ./backend/database
     image: blox-db
     environment:
       MYSQL_DATABASE: controle_estoque
@@ -23,7 +25,7 @@ services:
     #   - "3307:3306"
 
   backend:
-    build: ./backend/blox
+    build: ./backend/backend/blox
     image: blox-backend
     environment:
       DB_URL: ${DB_URL:-jdbc:mysql://db:3306/controle_estoque}
@@ -36,6 +38,20 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - blox-net
+
+  frontend:
+    build: ./frontend
+    image: blox-frontend
+    ports:
+      # Portal publicado no host; o nginx do container escuta na 80 e
+      # encaminha /api/ para o backend pela rede interna do compose.
+      - "${FRONTEND_PORT:-8081}:80"
+    depends_on:
+      backend:
+        condition: service_started
     restart: unless-stopped
     networks:
       - blox-net

@@ -2,9 +2,10 @@
 
 API REST de **controle de estoque e produtos** do projeto Portal Blox: cadastro de produtos,
 fornecedores, usuários e perfis de acesso, com saldo global por produto e histórico auditável de
-movimentações. Este repositório contém o **backend Spring Boot** e o **banco MySQL**, dockerizados
-em duas imagens independentes orquestradas por Docker Compose — qualquer máquina com Docker sobe o
-ambiente completo sem instalar Java, Maven ou MySQL localmente.
+movimentações. O repositório contém o **front-end React**, o **backend Spring Boot** e o **banco
+MySQL**, cada um em sua imagem Docker e todos orquestrados por um único Docker Compose na raiz —
+qualquer máquina com Docker sobe o ambiente completo sem instalar Node, Java, Maven ou MySQL
+localmente.
 
 ---
 
@@ -24,22 +25,26 @@ ambiente completo sem instalar Java, Maven ou MySQL localmente.
 
 ## Arquitetura
 
-O compose sobe **dois containers** em uma rede privada (`blox-net`), com um **volume nomeado**
+O compose sobe **três containers** em uma rede privada (`blox-net`), com um **volume nomeado**
 (`db-data`) que preserva os dados do banco entre subidas:
 
 ```
-                 Docker Compose
+              Docker Compose (raiz do repositório)
 ┌──────────────────────────────────────────────────────────────────┐
 │                                                                  │
-│  ┌────────────────────────┐        blox-net        ┌───────────┐ │
-│  │ backend                │   jdbc:mysql://db:3306 │ db        │ │
-│  │ Spring Boot 4 (JRE 21) │ ─────────────────────► │ MySQL 8.4 │ │
-│  │ porta 8080 publicada   │   (após healthcheck)   │ :3306     │ │
-│  │ no host  →  :8080      │                        │ interno   │ │
-│  └────────────────────────┘                        └─────┬─────┘ │
-│                                                          │       │
-│                                              volume db-data     │
-│                                              (init 1ª subida)   │
+│  ┌────────────────────┐   /api/   ┌────────────────────────┐     │
+│  │ frontend           │ ────────► │ backend                │     │
+│  │ nginx + React      │           │ Spring Boot 4 (JRE 21) │     │
+│  │ host :8081 → :80   │           │ host :8080 → :8080     │     │
+│  └────────────────────┘           └───────────┬────────────┘     │
+│                                               │ jdbc:mysql://db  │
+│                                   ┌───────────▼────────────┐     │
+│                                   │ db                     │     │
+│                                   │ MySQL 8.4 (:3306)      │     │
+│                                   └───────────┬────────────┘     │
+│                                               │                  │
+│                                     volume db-data               │
+│                                     (init 1ª subida)             │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -54,6 +59,9 @@ Pontos-chave da orquestração:
 - **Conexão por variáveis de ambiente**: o `backend` resolve o banco pelo hostname `db` (rede do
   compose) via `DB_URL`/`DB_USERNAME`/`DB_PASSWORD`; o `application.properties` guarda defaults
   locais para rodar fora do Docker.
+- **Front-end no mesmo stack**: o `frontend` é compilado pelo Vite e servido por nginx na porta
+  `8081` do host; o nginx encaminha `/api/` para `http://backend:8080` pela rede do compose, o que
+  dispensa CORS.
 - **Sem conflito com MySQL local**: a porta 3306 do container **não** é publicada no host.
 
 ### Separação de camadas
@@ -66,29 +74,34 @@ Pontos-chave da orquestração:
 ### Estrutura do repositório
 
 ```
-backend/                        # raiz deste README
-├── docker-compose.yml          # orquestração dos 2 serviços
-├── .env.example                # modelo de variáveis de ambiente (versionado)
-├── .env                        # valores reais (git ignorado)
-├── backend/blox/
-│   ├── Dockerfile              # multi-stage: Maven build → JRE runtime
-│   ├── .dockerignore
-│   ├── mvnw / mvnw.cmd         # Maven wrapper
-│   └── src/main/java/com/portalblox/
-│       ├── controller/         # endpoints REST
-│       ├── service/            # regras de negócio
-│       ├── repository/         # Spring Data JPA
-│       ├── entity/             # entidades JPA
-│       ├── dto/ + mapper/      # contratos de entrada/saída
-│       └── exception/          # tratamento de erros
-├── database/
-│   ├── Dockerfile              # mysql:8.4 + scripts de init (v5 + seed)
-│   ├── .dockerignore
-│   ├── script-banco-v5.sql     # schema + seeds mínimos (fonte canônica)
-│   ├── zz-seed-demo.sql        # dados de demonstração para testar a API
-│   ├── script-banco-v4.sql     # histórico da modelagem anterior
-│   ├── script-banco-v3.sql     # histórico da modelagem anterior
-│   └── script-banco-v2.sql     # histórico da modelagem anterior
+technical-repository/             # raiz do repositório
+├── docker-compose.yml            # orquestração dos 3 serviços (db, backend, frontend)
+├── .env.example                  # modelo de variáveis de ambiente (versionado)
+├── .env                          # valores reais (git ignorado)
+├── backend/                      # raiz deste README
+│   ├── backend/blox/
+│   │   ├── Dockerfile            # multi-stage: Maven build → JRE runtime
+│   │   ├── .dockerignore
+│   │   ├── mvnw / mvnw.cmd       # Maven wrapper
+│   │   └── src/main/java/com/portalblox/
+│   │       ├── controller/       # endpoints REST
+│   │       ├── service/          # regras de negócio
+│   │       ├── repository/       # Spring Data JPA
+│   │       ├── entity/           # entidades JPA
+│   │       ├── dto/ + mapper/    # contratos de entrada/saída
+│   │       └── exception/        # tratamento de erros
+│   └── database/
+│       ├── Dockerfile            # mysql:8.4 + scripts de init (v5 + seed)
+│       ├── .dockerignore
+│       ├── script-banco-v5.sql   # schema + seeds mínimos (fonte canônica)
+│       ├── zz-seed-demo.sql      # dados de demonstração para testar a API
+│       ├── script-banco-v4.sql   # histórico da modelagem anterior
+│       ├── script-banco-v3.sql   # histórico da modelagem anterior
+│       └── script-banco-v2.sql   # histórico da modelagem anterior
+└── frontend/
+    ├── Dockerfile                # multi-stage: Vite build → nginx
+    ├── nginx.conf                # serve o SPA e faz proxy de /api/ para o backend
+    └── src/                      # aplicação React (FSD)
 
 ```
 
@@ -139,11 +152,12 @@ exercitar a API:
 
 Os ids e valores replicam `planejamento/Mocks/db.seed.json`, que é o contrato executável usado
 pelo front-end. O script é **idempotente**: reaplicá-lo não duplica registros. Como o entrypoint
-do MySQL só executa scripts de init em volume vazio, use um dos comandos abaixo quando precisar:
+do MySQL só executa scripts de init em volume vazio, use um dos comandos abaixo **na raiz do
+repositório** quando precisar:
 
 ```powershell
 # reaplicar o seed em um banco já existente (não duplica nada)
-cmd /c "docker compose exec -T -e MYSQL_PWD=root_password db mysql -uroot controle_estoque < database\zz-seed-demo.sql"
+cmd /c "docker compose exec -T -e MYSQL_PWD=root_password db mysql -uroot controle_estoque < backend\database\zz-seed-demo.sql"
 
 # recriar o banco e rodar schema + seed do zero
 docker compose down -v
@@ -151,7 +165,7 @@ docker compose up --build
 ```
 
 > Dados apenas para desenvolvimento local. Para desativar, remova a linha
-> `COPY zz-seed-demo.sql` do `database/Dockerfile`.
+> `COPY zz-seed-demo.sql` do `backend/database/Dockerfile`.
 
 ### API (resumo)
 
@@ -249,38 +263,47 @@ Documentação interativa completa em **`http://localhost:8080/swagger-ui.html`*
 
 ---
 
-## Rodar com Docker (banco + backend em containers separados)
+## Rodar com Docker (banco + backend + frontend)
 
 ### Pré-requisitos
 
 - Docker Desktop (ou Docker Engine + Compose v2) com o daemon ligado.
-- Porta **8080** livre no host.
-- Não é preciso ter Java, Maven ou MySQL instalados.
+- Portas **8080** (API/Swagger) e **8081** (portal) livres no host — ou troque a do portal em
+  `FRONTEND_PORT`.
+- Não é preciso ter Node, Java, Maven ou MySQL instalados.
 
 ### Passo a passo
+
+Na **raiz do repositório**:
 
 ```powershell
 # 1. Criar o arquivo de ambiente (nunca versionado)
 Copy-Item .env.example .env    # no Linux/macOS: cp .env.example .env
 
-# 2. Subir banco + backend (build das duas imagens)
+# 2. Subir banco + backend + frontend (build das três imagens)
 docker compose up --build
 
-# 3. Smoke: o backend responde na porta 8080
+# 3. Smoke: portal na 8081 e Swagger na 8080
+curl http://localhost:8081
 curl http://localhost:8080/swagger-ui.html
 ```
 
 O que acontece nessa subida:
 
-1. Build das imagens `blox-db` (banco + script de init) e `blox-backend` (jar compilado em
-   multi-stage) — na primeira vez demora (downloads do Maven); depois usa cache.
+1. Build das imagens `blox-db` (banco + script de init), `blox-backend` (jar compilado em
+   multi-stage) e `blox-frontend` (Vite build + nginx) — na primeira vez demora (downloads do
+   Maven e do npm); depois usa cache.
 2. O container `db` sobe, inicializa o volume com o script SQL e passa no healthcheck.
 3. O container `backend` só então inicia, conecta em `jdbc:mysql://db:3306/controle_estoque`
    com `ddl-auto=validate` e publica a API na porta 8080.
+4. O container `frontend` sobe em seguida e publica o portal na porta 8081; o nginx encaminha
+   `/api/` para `backend:8080` pela rede do compose.
+
+> O front-end também pode ser reconstruído sozinho: `docker compose up --build frontend`.
 
 ### Variáveis de ambiente (`.env`)
 
-Copie `.env.example` para `.env` e ajuste os valores:
+Na raiz, copie `.env.example` para `.env` e ajuste os valores:
 
 | Variável | Modelo | Descrição |
 |---|---|---|
@@ -288,28 +311,38 @@ Copie `.env.example` para `.env` e ajuste os valores:
 | `DB_PASSWORD` | `blox_password` | Senha do usuário dedicado (usado pelo backend) |
 | `DB_ROOT_PASSWORD` | `root_password` | Senha do root **interna ao container** (apenas init/healthcheck) |
 | `DB_URL` | `jdbc:mysql://db:3306/controle_estoque` | URL JDBC usada pelo backend em Docker |
+| `FRONTEND_PORT` | `8081` | Porta do host que publica o portal (opcional; default do compose é 8081) |
 
-> O compose usa `${VAR:?...}` nas credenciais: **sem o `.env`, a subida falha de propósito**
-> pedindo para copiar o `.env.example` — nenhum segredo é versionado.
+> O compose usa `${VAR:?...}` nas credenciais: **sem o `.env` na raiz, a subida falha de
+> propósito** pedindo para copiar o `.env.example` — nenhum segredo é versionado.
 
 ### Comandos úteis
 
+Na **raiz do repositório**:
+
 ```powershell
-docker compose logs -f backend      # acompanhar logs
+docker compose logs -f backend      # acompanhar logs do backend
+docker compose logs -f frontend     # acompanhar logs do nginx
 docker compose ps                   # status dos containers
 docker compose down                 # parar (preserva os dados do banco)
 docker compose down -v              # parar e APAGAR o volume (reinicializa o schema)
 docker compose up --build           # subir de novo (rebuild se mudou código/Dockerfile)
 ```
 
+> **Mudou de versão do compose?** Antes desta centralização, o arquivo ficava em `backend/` e o
+> volume se chamava `backend_db-data`. O novo projeto usa `portal-blox_db-data`; o volume antigo
+> não é reaproveitado. Como os dados são de demonstração, rode `docker compose down -v` (na raiz)
+> e suba de novo para o init/seed rodar do zero.
+
 ### Solução de problemas
 
 | Sintoma | Causa / solução |
 |---|---|
-| Falha `Defina DB_USERNAME no arquivo .env` | Falta o `.env` — rode `Copy-Item .env.example .env` |
+| Falha `Defina DB_USERNAME no arquivo .env` | Falta o `.env` na raiz — rode `Copy-Item .env.example .env` |
 | Init do banco falhou, volume meio-criado | Volume em estado inconsistente — `docker compose down -v` e suba de novo |
 | `Port 8080 was already in use` | Outro processo na 8080 — libere a porta ou pare o outro backend |
-| Quer acessar o MySQL de fora (DBeaver) | Descomente o bloco `ports` do serviço `db` no `docker-compose.yml` (ex.: `3307:3306`) |
+| `Port 8081 was already in use` | Outro processo na 8081 — pare-o ou defina `FRONTEND_PORT` no `.env` |
+| Quer acessar o MySQL de fora (DBeaver) | Descomente o bloco `ports` do serviço `db` no `docker-compose.yml` da raiz (ex.: `3307:3306`) |
 | Mudou o script SQL e quer re-executar o init | `docker compose down -v` (o init só roda em volume novo) |
 
 ---
@@ -317,7 +350,7 @@ docker compose up --build           # subir de novo (rebuild se mudou código/Do
 ## Rodar sem Docker (desenvolvimento local)
 
 Requisitos: Java 21, Maven (ou use o wrapper) e um MySQL em `localhost:3306` com o schema
-`controle_estoque` criado (aplique `database/script-banco-v5.sql`).
+`controle_estoque` criado (aplique `backend/database/script-banco-v5.sql`).
 
 Sem nenhuma variável `DB_*` definida, o backend usa os defaults do `application.properties`
 (`localhost:3306/controle_estoque`, usuário `root`, senha vazia):
