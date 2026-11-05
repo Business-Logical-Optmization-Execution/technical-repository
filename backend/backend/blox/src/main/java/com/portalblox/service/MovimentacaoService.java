@@ -1,8 +1,5 @@
 package com.portalblox.service;
 
-import com.portalblox.dto.ErroResponseDto.ErroCampo;
-import com.portalblox.dto.MovimentacaoFiltro;
-import com.portalblox.dto.MovimentacaoRequestDto;
 import com.portalblox.entity.MotivoMovimentacao;
 import com.portalblox.entity.MovimentacaoEstoque;
 import com.portalblox.entity.OrigemMovimentacao;
@@ -18,6 +15,7 @@ import com.portalblox.exception.ValidacaoException;
 import com.portalblox.repository.MovimentacaoEstoqueRepository;
 import com.portalblox.repository.ProdutoRepository;
 import com.portalblox.repository.UsuarioRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
@@ -52,32 +50,33 @@ public class MovimentacaoService {
 	}
 
 	@Transactional
-	public MovimentacaoEstoque criar(MovimentacaoRequestDto dto) {
-		Produto produto = produtoRepository.findByIdParaAtualizacao(dto.getProdutoId())
+	public MovimentacaoEstoque criar(Integer produtoId, Integer usuarioId, String tipoTexto, Integer quantidade,
+			String motivo, String observacao, String documento) {
+		Produto produto = produtoRepository.findByIdParaAtualizacao(produtoId)
 				.orElseThrow(ProdutoNaoEncontradoException::new);
 		if (!Boolean.TRUE.equals(produto.getAtivo())) {
 			throw new ProdutoInativoException();
 		}
 
-		Usuario usuario = usuarioRepository.findById(dto.getUsuarioId())
+		Usuario usuario = usuarioRepository.findById(usuarioId)
 				.orElseThrow(UsuarioNaoEncontradoException::new);
 		if (!Boolean.TRUE.equals(usuario.getAtivo())) {
 			throw new UsuarioInativoException();
 		}
 
-		TipoMovimentacao tipo = validar(dto);
+		TipoMovimentacao tipo = validar(tipoTexto, quantidade, motivo, observacao, documento);
 
 		int quantidadeAntes = produto.getQuantidade();
 		int quantidadeDepois;
 		if (tipo == TipoMovimentacao.ENTRADA) {
-			quantidadeDepois = quantidadeAntes + dto.getQuantidade();
+			quantidadeDepois = quantidadeAntes + quantidade;
 		} else if (tipo == TipoMovimentacao.SAIDA) {
-			if (dto.getQuantidade() > quantidadeAntes) {
-				throw new SaldoInsuficienteException(dto.getQuantidade(), quantidadeAntes);
+			if (quantidade > quantidadeAntes) {
+				throw new SaldoInsuficienteException(quantidade, quantidadeAntes);
 			}
-			quantidadeDepois = quantidadeAntes - dto.getQuantidade();
+			quantidadeDepois = quantidadeAntes - quantidade;
 		} else {
-			quantidadeDepois = dto.getQuantidade();
+			quantidadeDepois = quantidade;
 		}
 
 		int variacao = quantidadeDepois - quantidadeAntes;
@@ -86,28 +85,28 @@ public class MovimentacaoService {
 
 		return movimentacaoEstoqueService.registrar(produto, usuario, tipo,
 				Math.abs(variacao), variacao, quantidadeAntes, quantidadeDepois,
-				motivoDe(dto.getMotivo()), textoOuNulo(dto.getObservacao()),
-				textoOuNulo(dto.getDocumento()), OrigemMovimentacao.MANUAL);
+				motivoDe(motivo), textoOuNulo(observacao),
+				textoOuNulo(documento), OrigemMovimentacao.MANUAL);
 	}
 
-	public List<MovimentacaoEstoque> listar(MovimentacaoFiltro filtro) {
-		LocalDateTime inicio = filtro.de() == null ? null : filtro.de().atStartOfDay();
-		LocalDateTime fimExclusivo = filtro.ate() == null ? null : filtro.ate().plusDays(1).atStartOfDay();
-		Pageable paginacao = filtro.limite() == null ? Pageable.unpaged() : PageRequest.of(0, filtro.limite());
-		return movimentacaoRepository.buscarComFiltros(filtro.produtoId(), filtro.usuarioId(), filtro.tipo(),
-				inicio, fimExclusivo, paginacao);
+	public List<MovimentacaoEstoque> listar(Integer produtoId, Integer usuarioId, TipoMovimentacao tipo,
+			LocalDate de, LocalDate ate, Integer limite) {
+		LocalDateTime inicio = de == null ? null : de.atStartOfDay();
+		LocalDateTime fimExclusivo = ate == null ? null : ate.plusDays(1).atStartOfDay();
+		Pageable paginacao = limite == null ? Pageable.unpaged() : PageRequest.of(0, limite);
+		return movimentacaoRepository.buscarComFiltros(produtoId, usuarioId, tipo, inicio, fimExclusivo, paginacao);
 	}
 
 	/**
 	 * Valida tipo, quantidade, motivo, observacao e documento e devolve o tipo
 	 * convertido. Reune todos os campos invalidos em uma unica resposta 400.
 	 */
-	private TipoMovimentacao validar(MovimentacaoRequestDto dto) {
+	private TipoMovimentacao validar(String tipoTexto, Integer quantidade, String motivoInformado,
+			String observacaoInformada, String documento) {
 		Map<String, String> erros = new LinkedHashMap<>();
 
-		TipoMovimentacao tipo = converterTipo(dto.getTipo(), erros);
+		TipoMovimentacao tipo = converterTipo(tipoTexto, erros);
 
-		Integer quantidade = dto.getQuantidade();
 		if (quantidade == null) {
 			erros.putIfAbsent("quantidade", "Informe a quantidade.");
 		} else if (tipo == TipoMovimentacao.AJUSTE && quantidade < 0) {
@@ -117,13 +116,13 @@ public class MovimentacaoService {
 			erros.putIfAbsent("quantidade", "Use um inteiro maior que zero.");
 		}
 
-		String motivoTexto = textoOuNulo(dto.getMotivo());
+		String motivoTexto = textoOuNulo(motivoInformado);
 		MotivoMovimentacao motivo = converterMotivo(motivoTexto, erros);
 		if (tipo == TipoMovimentacao.SAIDA && motivoTexto == null) {
 			erros.putIfAbsent("motivo", "Escolha o motivo da saída.");
 		}
 
-		String observacao = textoOuNulo(dto.getObservacao());
+		String observacao = textoOuNulo(observacaoInformada);
 		if (motivo == MotivoMovimentacao.OUTRO && observacao == null) {
 			erros.putIfAbsent("observacao", "Descreva o motivo na observação.");
 		}
@@ -135,15 +134,12 @@ public class MovimentacaoService {
 		if (observacao != null && observacao.length() > 255) {
 			erros.putIfAbsent("observacao", "Use no máximo 255 caracteres.");
 		}
-		if (dto.getDocumento() != null && dto.getDocumento().trim().length() > 120) {
+		if (documento != null && documento.trim().length() > 120) {
 			erros.putIfAbsent("documento", "Use no máximo 120 caracteres.");
 		}
 
 		if (!erros.isEmpty()) {
-			List<ErroCampo> campos = erros.entrySet().stream()
-					.map(entrada -> new ErroCampo(entrada.getKey(), entrada.getValue()))
-					.toList();
-			throw new ValidacaoException("Confira os campos destacados.", campos);
+			throw new ValidacaoException("Confira os campos destacados.", erros);
 		}
 		return tipo;
 	}

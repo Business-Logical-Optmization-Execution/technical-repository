@@ -41,17 +41,24 @@ public class ProdutoService {
 	private final FornecedorRepository fornecedorRepository;
 	private final UsuarioRepository usuarioRepository;
 	private final MovimentacaoEstoqueService movimentacaoService;
+	private final ConfiguracaoService configuracaoService;
 
 	public ProdutoService(ProdutoRepository produtoRepository,
 			CategoriaRepository categoriaRepository,
 			FornecedorRepository fornecedorRepository,
 			UsuarioRepository usuarioRepository,
-			MovimentacaoEstoqueService movimentacaoService) {
+			MovimentacaoEstoqueService movimentacaoService,
+			ConfiguracaoService configuracaoService) {
 		this.produtoRepository = produtoRepository;
 		this.categoriaRepository = categoriaRepository;
 		this.fornecedorRepository = fornecedorRepository;
 		this.usuarioRepository = usuarioRepository;
 		this.movimentacaoService = movimentacaoService;
+		this.configuracaoService = configuracaoService;
+	}
+
+	public int obterEstoqueMinimoGlobal() {
+		return configuracaoService.obterEstoqueMinimoGlobal();
 	}
 
 	public List<Produto> listar(boolean incluirInativos) {

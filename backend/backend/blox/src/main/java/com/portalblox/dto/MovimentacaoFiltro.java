@@ -1,14 +1,11 @@
 package com.portalblox.dto;
 
-import com.portalblox.dto.ErroResponseDto.ErroCampo;
 import com.portalblox.entity.TipoMovimentacao;
 import com.portalblox.exception.ValidacaoException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -17,12 +14,40 @@ import java.util.Set;
  * Filtros de GET /movimentacoes ja convertidos. Os parametros chegam como texto para
  * que todos os invalidos sejam reunidos em uma unica resposta 400.
  */
-public record MovimentacaoFiltro(Integer produtoId, Integer usuarioId, TipoMovimentacao tipo,
-		LocalDate de, LocalDate ate, Integer limite) {
+public class MovimentacaoFiltro {
 
 	private static final Set<TipoMovimentacao> TIPOS_FILTRO = EnumSet.of(
 			TipoMovimentacao.SALDO_INICIAL, TipoMovimentacao.ENTRADA,
 			TipoMovimentacao.SAIDA, TipoMovimentacao.AJUSTE);
+
+	private final Integer produtoId;
+	private final Integer usuarioId;
+	private final TipoMovimentacao tipo;
+	private final LocalDate de;
+	private final LocalDate ate;
+	private final Integer limite;
+
+	private MovimentacaoFiltro(Integer produtoId, Integer usuarioId, TipoMovimentacao tipo,
+			LocalDate de, LocalDate ate, Integer limite) {
+		this.produtoId = produtoId;
+		this.usuarioId = usuarioId;
+		this.tipo = tipo;
+		this.de = de;
+		this.ate = ate;
+		this.limite = limite;
+	}
+
+	public Integer getProdutoId() { return produtoId; }
+
+	public Integer getUsuarioId() { return usuarioId; }
+
+	public TipoMovimentacao getTipo() { return tipo; }
+
+	public LocalDate getDe() { return de; }
+
+	public LocalDate getAte() { return ate; }
+
+	public Integer getLimite() { return limite; }
 
 	public static MovimentacaoFiltro validar(String produtoId, String usuarioId, String tipo,
 			String de, String ate, String limite) {
@@ -36,9 +61,7 @@ public record MovimentacaoFiltro(Integer produtoId, Integer usuarioId, TipoMovim
 		LocalDate dataFinal = converterData(ate, "ate", erros);
 
 		if (!erros.isEmpty()) {
-			List<ErroCampo> campos = new ArrayList<>();
-			erros.forEach((campo, mensagem) -> campos.add(new ErroCampo(campo, mensagem)));
-			throw new ValidacaoException("Confira os filtros informados.", campos);
+			throw new ValidacaoException("Confira os filtros informados.", erros);
 		}
 		return new MovimentacaoFiltro(produto, usuario, tipoEnum, dataInicial, dataFinal, limiteNumerico);
 	}
