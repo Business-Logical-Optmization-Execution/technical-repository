@@ -38,10 +38,10 @@ export function UsuariosPage() {
     ...COLUNAS,
     {
       titulo: 'Ações',
-      valor: (usuario) => (
+      valor: (usuario) => usuario.ativo && (
         <div className={estilos.acoes}>
           <Botao variante="secundario" onClick={() => setPainel({ aberto: true, usuario })}>Editar</Botao>
-          {usuario.ativo && <BotaoDesativarUsuario usuario={usuario} aoDesativar={recarregar} />}
+          <BotaoDesativarUsuario usuario={usuario} aoDesativar={recarregar} />
         </div>
       ),
     },
