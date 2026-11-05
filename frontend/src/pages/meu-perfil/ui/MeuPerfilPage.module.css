@@ -1,0 +1,14 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-24);
+    width: 100%;
+    max-width: var(--largura-coluna-formulario);
+    margin-inline: auto;
+}
+
+.dados {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-16);
+}

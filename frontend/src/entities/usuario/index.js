@@ -1,1 +1,1 @@
-export { listarUsuarios, criarUsuario, atualizarUsuario, desativarUsuario, listarPerfis } from './api/usuarioApi'
+export { listarUsuarios, criarUsuario, atualizarUsuario, desativarUsuario, listarPerfis, alterarSenha } from './api/usuarioApi'
