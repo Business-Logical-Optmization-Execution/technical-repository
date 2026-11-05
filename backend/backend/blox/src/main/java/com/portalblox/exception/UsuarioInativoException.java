@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class UsuarioInativoException extends RuntimeException {
 
 	public UsuarioInativoException() {
-		super("Usuário inativo não pode ser autor de movimentação de estoque.");
+		this("Usuário inativo não pode ser autor de movimentação de estoque.");
+	}
+
+	public UsuarioInativoException(String mensagem) {
+		super(mensagem);
 	}
 
 }

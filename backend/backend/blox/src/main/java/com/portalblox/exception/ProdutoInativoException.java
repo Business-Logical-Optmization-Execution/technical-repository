@@ -7,7 +7,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ProdutoInativoException extends RuntimeException {
 
 	public ProdutoInativoException() {
-		super("Produto inativo não aceita atualização cadastral nem ajuste de saldo.");
+		this("Produto inativo não aceita atualização cadastral nem ajuste de saldo.");
+	}
+
+	public ProdutoInativoException(String mensagem) {
+		super(mensagem);
 	}
 
 }

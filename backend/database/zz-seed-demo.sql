@@ -2,7 +2,7 @@
 -- Portal Blox - dados de demonstracao para testar a API
 --
 -- Executado automaticamente pelo container do MySQL depois do
--- script-banco-v4.sql, quando o volume e inicializado (primeira subida
+-- script-banco-v5.sql, quando o volume e inicializado (primeira subida
 -- ou apos "docker compose down -v").
 --
 -- O script e idempotente: pode ser reaplicado em um banco ja populado
@@ -157,4 +157,20 @@ ON DUPLICATE KEY UPDATE
   `documento` = VALUES(`documento`),
   `justificativa` = VALUES(`justificativa`),
   `origem` = VALUES(`origem`),
+  `criado_em` = VALUES(`criado_em`);
+
+
+-- -----------------------------------------------------
+-- Avisos de falta de demonstracao
+-- -----------------------------------------------------
+INSERT INTO `avisos_falta`
+  (`id`, `produto_id`, `usuario_id`, `status`, `observacao`, `quantidade_avisos`, `criado_em`)
+VALUES
+  (1, 8, 4, 'ABERTO', 'acabou na prateleira', 1, '2026-10-31 10:15:00')
+ON DUPLICATE KEY UPDATE
+  `produto_id` = VALUES(`produto_id`),
+  `usuario_id` = VALUES(`usuario_id`),
+  `status` = VALUES(`status`),
+  `observacao` = VALUES(`observacao`),
+  `quantidade_avisos` = VALUES(`quantidade_avisos`),
   `criado_em` = VALUES(`criado_em`);

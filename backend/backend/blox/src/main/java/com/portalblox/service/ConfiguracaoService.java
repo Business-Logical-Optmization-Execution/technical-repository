@@ -29,6 +29,10 @@ public class ConfiguracaoService {
 				.orElseGet(() -> new Configuracao(ID_UNICO, ESTOQUE_MINIMO_GLOBAL_PADRAO, EXIBIR_FOTOS_PADRAO));
 	}
 
+	public Configuracao atualizar(Integer estoqueMinimoGlobal, Boolean exibirFotos) {
+		return configuracaoRepository.save(new Configuracao(ID_UNICO, estoqueMinimoGlobal, exibirFotos));
+	}
+
 	public int obterEstoqueMinimoGlobal() {
 		return obterConfiguracao().getEstoqueMinimoGlobal();
 	}
