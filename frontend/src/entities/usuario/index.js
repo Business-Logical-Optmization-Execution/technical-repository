@@ -1,2 +1,1 @@
-// API pública do slice usuario
-export { listarUsuarios } from './api/usuarioApi'
+export { listarUsuarios, criarUsuario, atualizarUsuario, desativarUsuario, listarPerfis } from './api/usuarioApi'

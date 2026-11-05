@@ -19,6 +19,24 @@ export function Gaveta({ aberto, aoFechar, titulo, lado = 'esquerda', children }
         }
     }, [aberto]);
 
+    // Sem isto, o navegador ignora o bloqueio do onCancel a partir do segundo Esc e fecha sozinho.
+    useEffect(() => {
+        if (!aberto) {
+            return undefined;
+        }
+
+        function aoTeclar(evento) {
+            if (evento.key === 'Escape') {
+                evento.preventDefault();
+                aoFechar();
+            }
+        }
+
+        document.addEventListener('keydown', aoTeclar);
+
+        return () => document.removeEventListener('keydown', aoTeclar);
+    }, [aberto, aoFechar]);
+
     function aoCancelar(evento) {
         evento.preventDefault();
         aoFechar();
