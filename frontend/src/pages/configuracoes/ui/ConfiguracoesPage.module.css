@@ -1,0 +1,21 @@
+.pagina {
+    display: flex;
+    flex-direction: column;
+    gap: var(--espaco-24);
+    width: 100%;
+    max-width: var(--largura-coluna-formulario);
+    margin-inline: auto;
+}
+
+.erro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--espaco-16);
+}
+
+.nota {
+    color: var(--cor-texto-secundario);
+    font-size: var(--texto-legenda-tamanho);
+    line-height: var(--texto-legenda-altura);
+}
