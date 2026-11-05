@@ -7,9 +7,11 @@ import com.portalblox.exception.DadosInvalidosException;
 import com.portalblox.exception.DetectorChaveDuplicada;
 import com.portalblox.exception.PerfilAcessoNaoEncontradoException;
 import com.portalblox.exception.UltimoAdministradorException;
+import com.portalblox.exception.UsuarioInativoException;
 import com.portalblox.exception.UsuarioJaExisteException;
 import com.portalblox.exception.UsuarioJaInativoException;
 import com.portalblox.exception.UsuarioNaoEncontradoException;
+import com.portalblox.exception.ValidacaoException;
 import com.portalblox.repository.PerfilAcessoRepository;
 import com.portalblox.repository.UsuarioRepository;
 import java.util.List;
@@ -78,6 +80,18 @@ public class UsuarioService {
 		existente.setEmail(dados.getEmail());                          // senha e ativo preservados
 		existente.setPerfilAcesso(buscarPerfil(perfilAcessoId));       // RN-08
 		return salvar(existente);
+	}
+
+	public void alterarSenha(Integer id, String senhaAtual, String novaSenha) {
+		Usuario usuario = buscarPorId(id);
+		if (!Boolean.TRUE.equals(usuario.getAtivo())) {
+			throw new UsuarioInativoException("Usuário inativo não pode ter a senha alterada.");
+		}
+		if (senhaAtual != null && !senhaAtual.equals(usuario.getSenha())) {
+			throw new ValidacaoException("senhaAtual", "A senha atual está incorreta.");
+		}
+		usuario.setSenha(novaSenha);
+		usuarioRepository.save(usuario);
 	}
 
 	@Transactional

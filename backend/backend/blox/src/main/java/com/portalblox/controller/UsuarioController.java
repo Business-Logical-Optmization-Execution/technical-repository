@@ -1,6 +1,7 @@
 package com.portalblox.controller;
 
 import com.portalblox.controller.docs.UsuarioApi;
+import com.portalblox.dto.AlterarSenhaRequestDto;
 import com.portalblox.dto.UsuarioAtualizacaoRequestDto;
 import com.portalblox.dto.UsuarioCriacaoRequestDto;
 import com.portalblox.dto.UsuarioResponseDto;
@@ -13,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -53,6 +55,12 @@ public class UsuarioController implements UsuarioApi {
 			@Valid @RequestBody UsuarioAtualizacaoRequestDto dto) {
 		Usuario atualizado = usuarioService.atualizar(id, UsuarioMapper.toEntity(dto), dto.getPerfilAcessoId());
 		return ResponseEntity.ok(UsuarioMapper.toResponseDto(atualizado));
+	}
+
+	@PatchMapping("/{id}/senha")
+	public ResponseEntity<Void> alterarSenha(@PathVariable Integer id, @Valid @RequestBody AlterarSenhaRequestDto dto) {
+		usuarioService.alterarSenha(id, dto.getSenhaAtual(), dto.getNovaSenha());
+		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping("/{id}")

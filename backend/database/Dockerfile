@@ -3,7 +3,7 @@
 # apenas na PRIMEIRA subida com o volume vazio.
 FROM mysql:8.4
 
-COPY script-banco-v4.sql /docker-entrypoint-initdb.d/
+COPY script-banco-v5.sql /docker-entrypoint-initdb.d/
 # Dados de demonstracao (idempotentes) para testar a API localmente.
 COPY zz-seed-demo.sql /docker-entrypoint-initdb.d/
 
