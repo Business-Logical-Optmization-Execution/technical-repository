@@ -1,0 +1,1 @@
+export { CaixaMarcar } from './CaixaMarcar'

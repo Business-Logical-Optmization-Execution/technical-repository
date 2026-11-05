@@ -14,4 +14,5 @@ export { Avatar } from './avatar'
 export { Abas } from './abas'
 export { Tabela } from './tabela'
 export { GrupoOpcoes } from './grupo-opcoes'
+export { CaixaMarcar } from './caixa-marcar'
     

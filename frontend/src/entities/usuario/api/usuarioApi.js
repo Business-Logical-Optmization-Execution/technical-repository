@@ -30,3 +30,9 @@ export function listarPerfis() {
 
 }
 
+export function alterarSenha(id, dados) {
+
+    return http.patch('/usuarios/' + id + '/senha', dados);
+
+}
+

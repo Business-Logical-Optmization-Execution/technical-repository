@@ -1,3 +1,3 @@
 // API pública do slice configuracao
-export { buscarConfiguracoes } from './api/configuracaoApi'
+export { buscarConfiguracoes, salvarConfiguracoes } from './api/configuracaoApi'
 export { useExibirFotos } from './model/useExibirFotos'
