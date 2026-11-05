@@ -62,7 +62,10 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ValidacaoException.class)
 	public ResponseEntity<ErroResponseDto> tratarValidacaoDeServico(ValidacaoException excecao) {
-		return resposta(HttpStatus.BAD_REQUEST, mensagemOuPadrao(excecao.getMessage()), excecao.getErros());
+		List<ErroCampo> erros = excecao.getErros().entrySet().stream()
+				.map(erro -> new ErroCampo(erro.getKey(), erro.getValue()))
+				.toList();
+		return resposta(HttpStatus.BAD_REQUEST, mensagemOuPadrao(excecao.getMessage()), erros);
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)

@@ -7,7 +7,6 @@ import com.portalblox.dto.ProdutoRequestDto;
 import com.portalblox.dto.ProdutoResponseDto;
 import com.portalblox.entity.Produto;
 import com.portalblox.mapper.ProdutoMapper;
-import com.portalblox.service.ConfiguracaoService;
 import com.portalblox.service.ProdutoService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -29,18 +28,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProdutoController implements ProdutoApi {
 
 	private final ProdutoService produtoService;
-	private final ConfiguracaoService configuracaoService;
 
-	public ProdutoController(ProdutoService produtoService, ConfiguracaoService configuracaoService) {
+	public ProdutoController(ProdutoService produtoService) {
 		this.produtoService = produtoService;
-		this.configuracaoService = configuracaoService;
 	}
 
 	@GetMapping
 	public ResponseEntity<List<ProdutoResponseDto>> listar(
 			@RequestParam(defaultValue = "false") boolean incluirInativos) {
 		List<Produto> produtos = produtoService.listar(incluirInativos);
-		int estoqueMinimoGlobal = configuracaoService.obterEstoqueMinimoGlobal();
+		int estoqueMinimoGlobal = produtoService.obterEstoqueMinimoGlobal();
 		return ResponseEntity.ok(ProdutoMapper.toResponseDto(produtos, estoqueMinimoGlobal));
 	}
 
@@ -79,7 +76,7 @@ public class ProdutoController implements ProdutoApi {
 	}
 
 	private ProdutoResponseDto toResponseDto(Produto produto) {
-		return ProdutoMapper.toResponseDto(produto, configuracaoService.obterEstoqueMinimoGlobal());
+		return ProdutoMapper.toResponseDto(produto, produtoService.obterEstoqueMinimoGlobal());
 	}
 
 }

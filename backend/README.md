@@ -56,6 +56,13 @@ Pontos-chave da orquestração:
   locais para rodar fora do Docker.
 - **Sem conflito com MySQL local**: a porta 3306 do container **não** é publicada no host.
 
+### Separação de camadas
+
+- **Controller:** HTTP, validação de entrada, DTOs, mappers e delegação.
+- **Service:** toda a regra de negócio e a orquestração entre repositories e outros services.
+  Trabalha com entidades e parâmetros simples, sem conhecer DTOs.
+- **Repository:** apenas persistência, sem regra de negócio.
+
 ### Estrutura do repositório
 
 ```

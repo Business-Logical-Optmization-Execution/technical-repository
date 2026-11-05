@@ -84,6 +84,11 @@ public class Produto {
 		this.atualizadoEm = LocalDateTime.now();
 	}
 
+	/** O minimo proprio do produto prevalece; sem ele, vale o minimo global da loja. */
+	public static int calcularEstoqueMinimoEfetivo(Integer estoqueMinimo, int estoqueMinimoGlobal) {
+		return estoqueMinimo != null ? estoqueMinimo : estoqueMinimoGlobal;
+	}
+
 	public Integer getId() { return id; }
 
 	public void setId(Integer id) { this.id = id; }

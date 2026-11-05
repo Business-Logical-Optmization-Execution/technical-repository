@@ -61,9 +61,8 @@ public class ProdutoMapper {
 		dto.setMarca(entity.getMarca());
 		dto.setFotoUrl(entity.getFotoUrl());
 		dto.setEstoqueMinimo(entity.getEstoqueMinimo());
-		dto.setEstoqueMinimoEfetivo(entity.getEstoqueMinimo() != null
-				? entity.getEstoqueMinimo()
-				: estoqueMinimoGlobal);
+		dto.setEstoqueMinimoEfetivo(
+				Produto.calcularEstoqueMinimoEfetivo(entity.getEstoqueMinimo(), estoqueMinimoGlobal));
 		dto.setQuantidade(entity.getQuantidade());
 		dto.setAtivo(entity.getAtivo());
 

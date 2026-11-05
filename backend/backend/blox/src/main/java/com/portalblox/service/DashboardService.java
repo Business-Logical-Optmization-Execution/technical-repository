@@ -1,12 +1,10 @@
 package com.portalblox.service;
 
-import com.portalblox.dto.DashboardResumoResponseDto;
-import com.portalblox.dto.DashboardResumoResponseDto.EntradasSaidasDia;
-import com.portalblox.dto.DashboardResumoResponseDto.ProdutoMovimentado;
-import com.portalblox.dto.DashboardResumoResponseDto.ProdutoResumo;
+import com.portalblox.entity.Produto;
 import com.portalblox.repository.MovimentacaoEstoqueRepository;
 import com.portalblox.repository.MovimentacaoEstoqueRepository.VariacaoNoTempo;
 import com.portalblox.repository.ProdutoRepository;
+import com.portalblox.repository.ProdutoRepository.EstoqueDeProduto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,21 +31,29 @@ public class DashboardService {
 		this.configuracaoService = configuracaoService;
 	}
 
-	public DashboardResumoResponseDto obterResumo() {
+	public DashboardResumo obterResumo() {
 		LocalDate hoje = LocalDate.now();
 		int estoqueMinimoGlobal = configuracaoService.obterEstoqueMinimoGlobal();
+		List<EstoqueDeProduto> estoques = produtoRepository.buscarEstoqueDeAtivos();
+
+		long baixoEstoque = 0;
+		long zerados = 0;
+		for (EstoqueDeProduto estoque : estoques) {
+			int minimoEfetivo = Produto.calcularEstoqueMinimoEfetivo(estoque.getEstoqueMinimo(), estoqueMinimoGlobal);
+			if (estoque.getQuantidade() <= 0) {
+				zerados++;
+			} else if (estoque.getQuantidade() <= minimoEfetivo) {
+				baixoEstoque++;
+			}
+		}
+
 		long movimentacoesHoje = movimentacaoRepository.contarNoPeriodo(
 				hoje.atStartOfDay(), hoje.plusDays(1).atStartOfDay());
-		return new DashboardResumoResponseDto(
-				produtoRepository.countByAtivoTrue(),
-				produtoRepository.contarBaixoEstoque(estoqueMinimoGlobal),
-				produtoRepository.contarZerados(),
-				movimentacoesHoje,
-				montarSerie(hoje),
-				buscarMaisMovimentados());
+		return new DashboardResumo(estoques.size(), baixoEstoque, zerados, movimentacoesHoje,
+				montarSerie(hoje), buscarMaisMovimentados());
 	}
 
-	private List<EntradasSaidasDia> montarSerie(LocalDate hoje) {
+	private List<DashboardResumo.EntradasSaidasDia> montarSerie(LocalDate hoje) {
 		LocalDate primeiroDia = hoje.minusDays(DIAS_DA_SERIE - 1L);
 		Map<LocalDate, Long> entradas = new HashMap<>();
 		Map<LocalDate, Long> saidas = new HashMap<>();
@@ -63,18 +69,18 @@ public class DashboardService {
 			}
 		}
 
-		List<EntradasSaidasDia> serie = new ArrayList<>();
+		List<DashboardResumo.EntradasSaidasDia> serie = new ArrayList<>();
 		for (LocalDate dia = primeiroDia; !dia.isAfter(hoje); dia = dia.plusDays(1)) {
-			serie.add(new EntradasSaidasDia(dia, entradas.getOrDefault(dia, 0L), saidas.getOrDefault(dia, 0L)));
+			serie.add(new DashboardResumo.EntradasSaidasDia(dia,
+					entradas.getOrDefault(dia, 0L), saidas.getOrDefault(dia, 0L)));
 		}
 		return serie;
 	}
 
-	private List<ProdutoMovimentado> buscarMaisMovimentados() {
+	private List<DashboardResumo.ProdutoMovimentado> buscarMaisMovimentados() {
 		return movimentacaoRepository.buscarMaisMovimentados(PageRequest.of(0, LIMITE_MAIS_MOVIMENTADOS)).stream()
-				.map(item -> new ProdutoMovimentado(
-						new ProdutoResumo(item.getId(), item.getSku(), item.getNome()),
-						item.getTotal()))
+				.map(item -> new DashboardResumo.ProdutoMovimentado(
+						item.getId(), item.getSku(), item.getNome(), item.getTotal()))
 				.toList();
 	}
 
